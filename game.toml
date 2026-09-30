@@ -7,6 +7,8 @@ id = "SCUS-94564"
 players = 1
 exe = "disc/SCUS_945.64"
 disc = "disc/MediEvil II (USA).cue"
+discs = ["disc/MediEvil II (USA).cue"]
+disc_serials = ["SCUS-94564"]
 load_address = "0x801B0000"
 entry_pc = "0x801B5220"
 text_size = "0x00023800"
@@ -18,21 +20,22 @@ out_dir = "disc"
 bin_name = "MediEvil II (USA) (Track 1).bin"
 cue_name = "MediEvil II (USA).cue"
 boot_exe = "SCUS_945.64"
-known_sizes = [483874608, 450885456]
+known_sizes = [450885456, 483874608]
 known_md5 = [
-  "c64e9bde313a5bfa8b38bea0802977bd",
   "a4bd203f3a59fa92a64c176774919293",
+  "c64e9bde313a5bfa8b38bea0802977bd",
 ]
 known_sha1 = [
-  "15d13c5ac5d9314500310ccef44619f5ac08f736",
   "017b855353abd86c22aa516690e852b641e4fa71",
+  "15d13c5ac5d9314500310ccef44619f5ac08f736",
 ]
 known_crc32 = [
-  "1934f333",
   "9ba3ab69",
+  "1934f333",
 ]
 
 [recompiler]
+bios_config = "psxrecomp/bios/SCPH1001.toml"
 seeds = "seeds/ghidra_funcs.txt"
 out_dir = "generated"
 strict = true
