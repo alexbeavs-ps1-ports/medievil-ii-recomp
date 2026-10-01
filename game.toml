@@ -45,6 +45,7 @@ window_title = "MediEvil II Recompiled"
 memcard_dir = "saves"
 bios_hle = false
 openbios = false
+overlay_cache = true
 
 [video]
 renderer = "opengl"
