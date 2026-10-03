@@ -18,6 +18,7 @@ set(PSX_SETUP_WIZARD ON CACHE BOOL
 include("${PSXRECOMP_ROOT}/runtime/runtime.cmake")
 
 psxrecomp_add_game_runtime(psx-runtime
+    PGXP
     # ENABLE_NETPLAY_IF_PRESENT
     # NETPLAY_LOBBY_URL "ws://netplay.retcomm.net:8765"
     ENABLE_SETUP_WIZARD
@@ -26,10 +27,21 @@ psxrecomp_add_game_runtime(psx-runtime
     MAX_PLAYERS 1
     # LAUNCHER_BOXART "${CMAKE_CURRENT_SOURCE_DIR}/launcher_assets/img/boxart.tga"
     APP_ICON "${CMAKE_CURRENT_SOURCE_DIR}/assets/psxrecomp.ico"
+    # Generated from the player's disc; absent from the source/setup kit.
+    GAME_OVERLAY_STATIC_C "generated/overlays_static.c"
     GEN_MARKER "generated/SCUS_945.64_dispatch.c"
     GEN_FULL_GLOB "generated/SCUS_945.64_full_*.c"
+    PRELOADED_MODS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mods/preloaded"
     CODEGEN_SETUP_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/codegen_setup.c"
 )
+
+target_include_directories(psx-runtime PRIVATE
+    "${PSXRECOMP_ROOT}/lib/recomp-net/include")
+target_sources(psx-runtime PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_frame_rate.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_widescreen.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_terrain.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_screen_layout.c")
 
 # Stage runtime configs next to the exe for direct build/ launches. Only copy
 # files that exist — never fail POST_BUILD when game_options.toml is absent.
@@ -43,4 +55,3 @@ foreach(_PSX_RUNTIME_CONFIG game.toml game_options.toml)
             VERBATIM)
     endif()
 endforeach()
-

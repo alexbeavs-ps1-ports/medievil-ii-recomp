@@ -1,0 +1,191 @@
+format_version = 7
+id = "medievil2.enhancement.widescreen"
+version = "1.0.0"
+name = "MediEvil II Adaptive View"
+author = "MediEvil II Recompiled"
+license = "GPL-3.0-only"
+description = "Render additional world geometry to fit the window."
+resolver = "declarative"
+save_compatibility = "shared"
+
+[[target]]
+game_id = "SCUS-94564"
+disc_sha256 = "dfcb8602274c70f59551e820d0f4026b0213fd68b7d2a385189d37eb767b2d97"
+
+[[feature]]
+id = "widescreen"
+name = "Adaptive View"
+description = "Fit follows the window aspect with a 4:3 minimum. Movies retain their original proportions."
+group = "Display"
+default_enabled = true
+
+[[option]]
+feature = "widescreen"
+id = "aspect"
+label = "View"
+type = "choice"
+default = "Fit"
+
+[[option.choice]]
+value = "Fit"
+label = "Fit to Window"
+[[option.choice]]
+value = "4:3"
+label = "4:3"
+[[option.choice]]
+value = "16:9"
+label = "16:9"
+[[option.choice]]
+value = "21:9"
+label = "21:9"
+[[option.choice]]
+value = "32:9"
+label = "32:9"
+
+[[plugin]]
+feature = "widescreen"
+id = "medievil2.widescreen"
+
+
+
+
+[[requirement]]
+feature = "widescreen"
+package = "psx.enhancement.8mb-ram"
+version = "1.0.0"
+requires_feature = "8mb-ram"
+
+[[plugin]]
+feature = "widescreen"
+id = "medievil2.distance"
+
+[[option]]
+feature = "widescreen"
+id = "draw_distance"
+label = "Draw distance"
+type = "choice"
+default = "3x"
+
+[[option.choice]]
+value = "1x"
+label = "Original"
+[[option.choice]]
+value = "2x"
+label = "Extended (2x)"
+[[option.choice]]
+value = "3x"
+label = "Extended (3x)"
+
+[[option]]
+feature = "widescreen"
+id = "subdivision_bypass"
+label = "Bypass terrain subdivision"
+type = "boolean"
+default = "true"
+
+# Read expanded twelve-byte capture records: 0x8007fa74.
+[[patch]]
+feature = "widescreen"
+target = "disc_user"
+offset = 108870260
+expected = "94 00 25 24"
+replace = "30 80 05 3c"
+
+# Emit original polygons instead of area-selected subdivision: 0x8007fefc.
+[[patch]]
+feature = "widescreen"
+target = "disc_user"
+offset = 108871420
+expected = "06 a8 3e 00"
+replace = "21 a8 00 00"
+when = { subdivision_bypass = "true" }
+
+# Fixed-size fog table depth step: 0x8007ff10.
+[[patch]]
+feature = "widescreen"
+target = "disc_user"
+offset = 108871440
+expected = "82 a1 14 00"
+replace = "c2 a1 14 00"
+when = { draw_distance = "2x" }
+
+# Fixed-size fog table depth step: 0x8007ff10.
+[[patch]]
+feature = "widescreen"
+target = "disc_user"
+offset = 108871440
+expected = "82 a1 14 00"
+replace = "02 a2 14 00"
+when = { draw_distance = "3x" }
+
+# Fixed-size fog table depth step: 0x800800d8.
+[[patch]]
+feature = "widescreen"
+target = "disc_user"
+offset = 108871896
+expected = "82 61 0c 00"
+replace = "c2 61 0c 00"
+when = { draw_distance = "2x" }
+
+# Fixed-size fog table depth step: 0x800800d8.
+[[patch]]
+feature = "widescreen"
+target = "disc_user"
+offset = 108871896
+expected = "82 61 0c 00"
+replace = "02 62 0c 00"
+when = { draw_distance = "3x" }
+
+# Fixed-size fog table depth step: 0x800800fc.
+[[patch]]
+feature = "widescreen"
+target = "disc_user"
+offset = 108871932
+expected = "82 61 0c 00"
+replace = "c2 61 0c 00"
+when = { draw_distance = "2x" }
+
+# Fixed-size fog table depth step: 0x800800fc.
+[[patch]]
+feature = "widescreen"
+target = "disc_user"
+offset = 108871932
+expected = "82 61 0c 00"
+replace = "02 62 0c 00"
+when = { draw_distance = "3x" }
+
+# Fixed-size fog table depth step: 0x80080124.
+[[patch]]
+feature = "widescreen"
+target = "disc_user"
+offset = 108871972
+expected = "82 61 0c 00"
+replace = "c2 61 0c 00"
+when = { draw_distance = "2x" }
+
+# Fixed-size fog table depth step: 0x80080124.
+[[patch]]
+feature = "widescreen"
+target = "disc_user"
+offset = 108871972
+expected = "82 61 0c 00"
+replace = "02 62 0c 00"
+when = { draw_distance = "3x" }
+
+# Fixed-size fog table depth step: 0x80080168.
+[[patch]]
+feature = "widescreen"
+target = "disc_user"
+offset = 108872040
+expected = "82 61 0c 00"
+replace = "c2 61 0c 00"
+when = { draw_distance = "2x" }
+
+# Fixed-size fog table depth step: 0x80080168.
+[[patch]]
+feature = "widescreen"
+target = "disc_user"
+offset = 108872040
+expected = "82 61 0c 00"
+replace = "02 62 0c 00"
+when = { draw_distance = "3x" }

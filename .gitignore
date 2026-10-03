@@ -62,6 +62,7 @@ settings.toml
 .DS_Store
 __pycache__/
 _ccache/
+/.cache/
 CMakeCache.txt
 CMakeFiles/
 compile_commands.json
