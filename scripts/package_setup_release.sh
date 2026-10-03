@@ -44,8 +44,7 @@ exec bash "${PACKAGER}" \
   --recompiler-build "${RECOMPILER_BUILD}" \
   --version-env RELEASE_VERSION \
   --disc-hint "your legally owned MediEvil II disc" \
-  --bios-hint "a legal SCPH-1001 BIOS dump (required; OpenBIOS is not supported)" \
-  --omit-openbios \
+  --ship-without-overlay-cache-because "Main-engine variants are generated from aot/overlays.json; heap-placed LVB modules retain runtime fallback." \
   --runtime-dir mods \
   --project-file CMakeLists.txt \
   --project-file project-manifest.toml \
@@ -57,5 +56,9 @@ exec bash "${PACKAGER}" \
   --project-file THIRD_PARTY_NOTICES.md \
   --project-file README.md \
   --project-dir seeds \
+  --project-dir assets \
+  --project-dir src \
+  --project-dir aot \
+  --project-dir docs \
   --project-dir launcher_assets \
   "${EXTRA_PROJECT[@]}"

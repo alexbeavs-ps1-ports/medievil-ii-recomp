@@ -142,6 +142,7 @@ tl;dr AI writes the code, but I always test it myself before pushing
 ## v0.1.1 three-platform candidate
 
 This candidate targets Windows x64, Linux x64, macOS ARM64, and macOS x64.
-These setup packages require your legally owned game disc and a supported
-regional retail BIOS. They remain unpublished until their exact package tests
+The enhancement source kit includes the game adapters, mod catalogs and AOT
+profile. Generate uses your legally owned game disc and the bundled OpenBIOS;
+a retail BIOS dump is optional. Packages remain unpublished until their exact package tests
 and release authorization pass.

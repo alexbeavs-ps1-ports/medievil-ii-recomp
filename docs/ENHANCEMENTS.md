@@ -49,6 +49,14 @@ The recomp-ui gitlink is `03d58aa098fc4c2ca944ee43659cb45ce586362a`, which suppl
 this runtime. Submodule gitlinks remain authoritative; the manifests record
 those exact pins.
 
+The source-kit wrapper stages the adapter sources, AOT profile, source mod
+catalog, assets and enhancement notes. It uses the shared OpenBIOS staging
+policy and removes obsolete retail-only arguments unsupported by this pin.
+Generated engine C remains a local Generate output. The wrapper explicitly
+records the static-engine/runtime-module contract instead of requiring an
+unrelated dynamic overlay cache. These source-kit changes do not replace
+the pending exact-package qualification.
+
 ## Default enhancements
 
 OpenBIOS replaces the default retail BIOS selection and skips the startup
