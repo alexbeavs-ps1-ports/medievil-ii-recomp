@@ -36,7 +36,7 @@ loads at `0x80010000`, enters at `0x800A757C`, and declares a `0xDF000`-byte
 body. Its file SHA-256 is
 `d1005710982394f469dcf4786af682fd9c49896dce387fb76cb1631366ffa1c1`.
 
-The framework gitlink is `3a718531cd77183beb7520312ed03497eae11e9b` (tree `197e430598b2c32baa7f46523c86ec8652fb8d4b`), a published
+The framework gitlink is `9499440dbdb4d8322e2623b67bc8fda849106be0` (tree `b350db829ea98dc94aaa665d53a9e3f4232fda01`), a published
 `feat/medievil-ii-framework` integration branch on the canonical repository.
 It combines upstream master `6b9a2d49ac76c2dbe791dfa9863467ceff4e119f` with the
 shared guarded projection and PGXP startup fixes from framework PRs
@@ -93,9 +93,47 @@ All distance/subdivision combinations have independent audited AOT input
 views. Executable RAM is not rewritten on each launch.
 
 The frame-rate package defaults to Display and offers 60, 120, 144, 240 and
-360 targets. It uses FLIP-sourced motion-adaptive temporal presentation while
-retaining original guest timing. This is image interpolation, not additional
-simulation frames or motion vectors; target choices do not promise throughput.
+360 targets. It replays the drawing span 0x80050044..0x80050114 with interpolated
+camera/model matrices, guarded against unrelated vertices and scene cuts.
+Submission is bound to the engine's call of 0x800A101C. CPU/RAM/scratch, GPU/DMA
+state and precision shadows are restored after each draw. Guest simulation,
+input and audio retain their original cadence; draw cost limits actual throughput.
+
+World Texture Filtering defaults to stable minification on proven OpenGL world
+polygons, with nearest and bilinear choices. It decodes current palette colors
+before averaging and preserves texture windows, primitive bounds, cutouts and
+STP classification. Untracked UI stays nearest. Other backends use bilinear;
+disabling the feature restores the Display filter setting.
+
+## Native-quality update (2026-10-03)
+
+Smooth Presentation now interpolates camera/model transforms and replays only
+the engine's drawing section, from `0x80050044` to `0x80050114`, followed by
+guarded SDK submission inside the render-pass sandbox. Gameplay, audio and
+input retain their original timing. The Museum route passed 227 CPU, RAM,
+device and VRAM sandbox comparisons with zero mismatches or watchdogs.
+
+Texture Filtering offers Nearest, Bilinear and Stable. Stable uses bounded
+derivative-based sampling for tracked world geometry, decodes live palettes
+before averaging, preserves cutout/STP classes and respects texture windows
+and primitive UV bounds. Untracked sprites/UI remain nearest. The shared real
+OpenGL fixture passed 325 checks.
+
+Ten-second comparisons of the same cold Museum gameplay checkpoint, with
+compilation stopped, a 1280x720 window and 5x internal scale (1200 lines):
+
+| Mode | Guest VBlanks/s | Additional geometry draws/s | Static phase residency |
+| --- | ---: | ---: | ---: |
+| Native / nearest | 59.84 | 0 | 98.93% |
+| Interpolated / nearest | 59.05 | 25.32 | 97.90% |
+| Interpolated / stable | 59.47 | 25.80 | 98.05% |
+
+The figures are event-counter deltas and host wall-time samples; they do not
+establish unique displayed FPS or complete native instruction coverage.
+Presentation rate is a target, constrained by replay cost. The shared
+`tools/measure_render_quality.py` collects these counters and settings.
+New snapshots preserve the BIOS/game handoff latch and invalidate interpolation
+histories, including when a cold launch restores directly into gameplay.
 
 ## Native code and level-module relocation
 
@@ -117,7 +155,9 @@ different RAM bases, byte for byte: 48 comparisons passed.
 
 Heap placement and executable/data boundaries still need native producer and
 dispatch integration. The decoder alone does not make those modules AOT-native;
-live module fallback remains part of the runtime.
+live module fallback remains part of the runtime. Level/cutscene coverage
+harvesting is tracked by `beads-eio.19.7` and will assess which additional
+producers the initial discoverer could have identified automatically.
 
 ## Validation and remaining qualification
 

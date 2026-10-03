@@ -4,7 +4,7 @@ version = "1.0.0"
 name = "MediEvil II Smooth Presentation"
 author = "MediEvil II Recompiled"
 license = "GPL-3.0-only"
-description = "Motion-adaptive frame blending at the display refresh or a chosen presentation rate."
+description = "Interpolate camera and model transforms and draw additional frames at the display refresh or a chosen rate."
 resolver = "declarative"
 save_compatibility = "shared"
 
@@ -14,7 +14,7 @@ game_id = "SCUS-94564"
 [[feature]]
 id = "frame-rate"
 name = "Smooth Presentation"
-description = "Blend completed game images without changing gameplay speed, input, timers or audio. Requires OpenGL."
+description = "Render intermediate camera and model poses without changing gameplay speed, input, timers or audio. Requires OpenGL."
 group = "Frame Rate"
 default_enabled = true
 
@@ -69,3 +69,15 @@ when = { rate = "240" }
 feature = "frame-rate"
 id = "medievil2.framerate.360"
 when = { rate = "360" }
+
+[[plugin]]
+feature = "frame-rate"
+id = "medievil2.framerate.tick"
+
+[[plugin]]
+feature = "frame-rate"
+id = "medievil2.framerate.capture"
+
+[[plugin]]
+feature = "frame-rate"
+id = "medievil2.framerate.submit"
