@@ -14,11 +14,32 @@ Static recompilation of **MediEvil II** built on
 
 MediEvil II recompiled for modern systems using psxrecomp.
 
-The enhancement workbench pins the current canonical PSXRecomp framework and
-records the owned USA disc, engine and level-module assessment in
-[ENHANCEMENTS.md](docs/ENHANCEMENTS.md). OpenBIOS, adaptive rendering and the
-default-on visual mods are being evaluated; this setup commit does not enable
-them or establish a new playable build.
+The enhancement workbench uses OpenBIOS, skips its startup shell, and enables
+higher internal resolution, PGXP precision, adaptive world rendering and
+display-rate presentation by default. It also supplies game-specific terrain
+capture, expanded render buffers, selectable draw distance and subdivision
+bypass. This is an enhancement workbench; full gameplay and release
+qualification are still in progress. See [ENHANCEMENTS.md](docs/ENHANCEMENTS.md)
+for the exact source pins, evidence and known limitations.
+
+| Enhancement | Default / choices |
+| --- | --- |
+| Internal resolution | 1080p preset, rounded to a whole native-resolution multiplier |
+| PGXP | Geometry, perspective textures and CPU propagation enabled |
+| World view | Fit to window; 4:3, 16:9, 21:9 and 32:9 also available |
+| Cutscene layout | Full-width letterbox bars; centered subtitles retain their original proportions |
+| Terrain distance | 3x; Original and 2x also available |
+| Terrain subdivision | Bypassed; original subdivision remains selectable |
+| Presentation rate | Display; 60, 120, 144, 240 and 360 also available |
+
+Presentation interpolates displayed images while retaining the original game
+timing. It does not create additional simulation frames or guarantee sustained
+throughput at every target. Movies retain their authored proportions.
+
+Known qualification work includes intro flicker, circular fade coverage,
+gameplay HUD anchoring, and native dispatch
+for dynamically allocated level modules. Owned disc images, extracted modules
+and generated C are local inputs and are never committed.
 
 | | |
 |---|---|
@@ -36,14 +57,14 @@ Scaffolded with the New Project Layout. See
 You can run this title **standalone** (release zip + the built-in recomp-ui
 Generate & Build flow), or manage installs, updates, ROM/BIOS wiring, and queued
 builds more intuitively with
-**[RetComM Launcher](https://github.com/TechnicallyComputers/RetComM-Launcher)** —
+**[RetComM Launcher](https://github.com/TechnicallyComputers/RetComM-Launcher)** â€”
 the Retro Compilation Manager hub for self-compiling recomps.
 
-[Downloads](https://github.com/TechnicallyComputers/RetComM-Launcher/releases) ·
+[Downloads](https://github.com/TechnicallyComputers/RetComM-Launcher/releases) Â·
 [Full README & features](https://github.com/TechnicallyComputers/RetComM-Launcher#readme)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/TechnicallyComputers/RetComM-Launcher/main/docs/screenshots/hub-and-game-launcher.png" alt="RetComM hub with a background build, next to a title’s recomp-ui launcher" width="720">
+  <img src="https://raw.githubusercontent.com/TechnicallyComputers/RetComM-Launcher/main/docs/screenshots/hub-and-game-launcher.png" alt="RetComM hub with a background build, next to a titleâ€™s recomp-ui launcher" width="720">
 </p>
 
 <p align="center">
@@ -52,7 +73,7 @@ the Retro Compilation Manager hub for self-compiling recomps.
 
 RetComM checks for updates, rebuilds with existing build data when possible,
 uses the same platform build tools as per-title launchers, and automates
-BIOS/ROM/save plumbing so you are not stuck repeating each game’s wizard by hand.
+BIOS/ROM/save plumbing so you are not stuck repeating each gameâ€™s wizard by hand.
 <!-- /retcomm-readme-launcher -->
 
 ## Legal
@@ -61,7 +82,7 @@ You must own the original game. Disc images under `disc/` are gitignored and
 must never be committed. Retail BIOS dumps are not redistributed; OpenBIOS is
 used for Generate unless you supply your own SCPH locally.
 
-Default app icon: `assets/psxrecomp.ico` (and `.png` / `.svg`) — RetComM-themed controller mark from `psxrecomp/assets/`. Windows builds embed it via `APP_ICON`.
+Default app icon: `assets/psxrecomp.ico` (and `.png` / `.svg`) â€” RetComM-themed controller mark from `psxrecomp/assets/`. Windows builds embed it via `APP_ICON`.
 
 Optional box art under `launcher_assets/img/` may come from
 [libretro-thumbnails](https://github.com/libretro-thumbnails/libretro-thumbnails)
@@ -82,7 +103,7 @@ Zip prefix for CI artifacts: `medievil-ii-recomp`.
 
 ## Symbols
 
-Progressive map: `symbols.toml` → `python3 tools/sync_symbols.py` →
+Progressive map: `symbols.toml` â†’ `python3 tools/sync_symbols.py` â†’
 `psx_symbols.h` (`PSX_FN_*`). See `psxrecomp/docs/SYMBOLS.md`.
 
 ## Framework pins
@@ -90,7 +111,7 @@ Progressive map: `symbols.toml` → `python3 tools/sync_symbols.py` →
 Submodule gitlinks (`psxrecomp`, optional `recomp-ui`, nested `recomp-net`)
 are authoritative. `framework_pins.txt` is an optional scaffold snapshot;
 release CI logs SHAs with `record_pins.sh` but builds whatever the gitlinks
-resolve to. Bump submodules deliberately — do not float on `main`/`master`
+resolve to. Bump submodules deliberately â€” do not float on `main`/`master`
 in release CI.
 
 +## About this project
@@ -110,7 +131,7 @@ tl;dr AI writes the code, but I always test it myself before pushing
 ---
 
 <p align="center">
-  <sub><b>R.A.I.D. — Retro AI Development</b> · a Discord for AI-assisted retro reverse-engineering, decomp &amp; recomp</sub>
+  <sub><b>R.A.I.D. â€” Retro AI Development</b> Â· a Discord for AI-assisted retro reverse-engineering, decomp &amp; recomp</sub>
 </p>
 
 <p align="center">
