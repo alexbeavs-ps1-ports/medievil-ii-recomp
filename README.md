@@ -14,6 +14,12 @@ Static recompilation of **MediEvil II** built on
 
 MediEvil II recompiled for modern systems using psxrecomp.
 
+The enhancement workbench pins the current canonical PSXRecomp framework and
+records the owned USA disc, engine and level-module assessment in
+[ENHANCEMENTS.md](docs/ENHANCEMENTS.md). OpenBIOS, adaptive rendering and the
+default-on visual mods are being evaluated; this setup commit does not enable
+them or establish a new playable build.
+
 | | |
 |---|---|
 | Players | 1 |
