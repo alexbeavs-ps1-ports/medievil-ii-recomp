@@ -375,3 +375,19 @@ and mod choices, sustained target throughput, audio, saves, later levels and
 exact release packages still require qualification. These findings are tracked
 under the central game epic `beads-eio.19`; the intro/masks/HUD task is
 `beads-eio.19.4`. This workbench is not a new release qualification receipt.
+
+## Upstream review series
+
+Review game PRs [1](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/pull/1),
+[2](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/pull/2) and
+[3](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/pull/3) in that order.
+The shared framework changes are stacked as
+[485](https://github.com/RetroPortingToolKit/psxrecomp/pull/485),
+[486](https://github.com/RetroPortingToolKit/psxrecomp/pull/486),
+[498](https://github.com/RetroPortingToolKit/psxrecomp/pull/498),
+[499](https://github.com/RetroPortingToolKit/psxrecomp/pull/499),
+[500](https://github.com/RetroPortingToolKit/psxrecomp/pull/500) and
+[501](https://github.com/RetroPortingToolKit/psxrecomp/pull/501).
+The game keeps its already-qualified public framework pin; the upstream
+series preserves newer upstream PGXP session and projection behavior.
+The bounded coverage and remaining qualification limits above still apply.
