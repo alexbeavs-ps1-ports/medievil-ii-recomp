@@ -36,7 +36,7 @@ loads at `0x80010000`, enters at `0x800A757C`, and declares a `0xDF000`-byte
 body. Its file SHA-256 is
 `d1005710982394f469dcf4786af682fd9c49896dce387fb76cb1631366ffa1c1`.
 
-The framework gitlink is `bf5555c6ae84908a8522e9c411442ab6dbaf4877` (tree `3b92f133cd0aa6f3716060169bba935d31451c26`), a published
+The framework gitlink is `1fc379534b1c72db475defcc6d7f4a6e03165772` (tree `de85c61900045e169e70dbd05aaaf5f24324f879`), a published
 `feat/medievil-native-quality-20261003` integration branch on the canonical repository.
 It combines upstream master `6b9a2d49ac76c2dbe791dfa9863467ceff4e119f` with the
 shared guarded projection and PGXP startup fixes from framework PRs
@@ -159,8 +159,20 @@ signs even when both native results collapse to zero, together with stale,
 near-depth, replay and 4:3 rejection. This preserves the original guest MAC0.
 Fresh-boot captures reach the owner's hands-off torch hallway and New Game.
 A controlled comparison restores the same complete checkpoint and changes only
-the subdivision instruction. Both choices reach that doorway; the small
-close-camera edge report still needs a precisely identified visual comparison.
+the subdivision instruction. The owner identified premature disappearance of
+the hallway side walls. Captured GP0 packets then exposed projected wall
+triangles taller than the PS1's 511-pixel limit, rejected before mirroring into
+the additional view. The shared frontend admits these only with exact packet
+provenance, positive depth, unsaturated Y and bounded projected X. OpenGL clips
+them to the added columns while retaining hardware rejection in canonical VRAM.
+Ordinary mod-generated triangles keep their existing backend behavior.
+The real GL regression passes 181 checks at both 1x and 4x, including canonical
+authority, painter order and ordinary lines/textured draws after recovered
+faces. At 32:11 the exact hallway run counted 957 recovered triangles and the
+comparison restores wall sections in previously black gaps. Default Stable
+filtering and interpolation produced 222 render passes with no aborts,
+watchdogs, VRAM leaks or span failures in that sample. This is bounded evidence;
+owner visual validation and later-level qualification remain open.
 
 ## Native code and level-module relocation
 
