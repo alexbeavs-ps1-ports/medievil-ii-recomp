@@ -19,6 +19,10 @@ static void activate(void) {
     const uint32_t sites[] = {0x8007FCE0u, 0x8007FCE8u, 0x8007FD18u};
     const uint32_t words[] = {0x1F000003u, 0x07210255u, 0x1BC00249u};
     psx_mod_set_native_wide_nclip_sites(sites, words, 3);
+    /* The quad funnel saves MAC0 for both triangles before testing either.
+     * Its first branch at FCE0 therefore consumes the preceding NCLIP, while
+     * FCE8 and the single-triangle branch consume the latest command. */
+    psx_mod_set_native_wide_nclip_previous_site(sites[0], words[0]);
     if (!strcmp(view, "4:3")) {
         (void)psx_mod_set_fixed_display_aspect(4, 3);
         return;

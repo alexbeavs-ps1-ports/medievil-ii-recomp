@@ -36,8 +36,8 @@ loads at `0x80010000`, enters at `0x800A757C`, and declares a `0xDF000`-byte
 body. Its file SHA-256 is
 `d1005710982394f469dcf4786af682fd9c49896dce387fb76cb1631366ffa1c1`.
 
-The framework gitlink is `9499440dbdb4d8322e2623b67bc8fda849106be0` (tree `b350db829ea98dc94aaa665d53a9e3f4232fda01`), a published
-`feat/medievil-ii-framework` integration branch on the canonical repository.
+The framework gitlink is `bf5555c6ae84908a8522e9c411442ab6dbaf4877` (tree `3b92f133cd0aa6f3716060169bba935d31451c26`), a published
+`feat/medievil-native-quality-20261003` integration branch on the canonical repository.
 It combines upstream master `6b9a2d49ac76c2dbe791dfa9863467ceff4e119f` with the
 shared guarded projection and PGXP startup fixes from framework PRs
 [483](https://github.com/RetroPortingToolKit/psxrecomp/pull/483) and
@@ -74,7 +74,7 @@ world polygons must not be mistaken for HUD.
 The terrain adapter emits this game's twelve-byte capture records, retains
 byte-6 source-cell marks and cleanup, and selects a conservative horizontal
 footprint that does not reject tall walls using ground-plane intersections.
-Separate expanded-RAM arenas hold up to 4096 capture records, 8192 polygon
+Separate expanded-RAM arenas hold up to 4096 capture records, 16384 polygon
 marks and two 1 MiB primitive buffers. The original terrain and primitive heap
 allocations remain owned by their guest teardown routines. Near, depth,
 winding and vertical rejection remain in the original polygon funnel.
@@ -119,7 +119,7 @@ before averaging, preserves cutout/STP classes and respects texture windows
 and primitive UV bounds. Untracked sprites/UI remain nearest. The shared real
 OpenGL fixture passed 325 checks.
 
-Ten-second comparisons of the same cold Museum gameplay checkpoint, with
+Ten-second comparisons of the same Museum gameplay checkpoint, with
 compilation stopped, a 1280x720 window and 5x internal scale (1200 lines):
 
 | Mode | Guest VBlanks/s | Additional geometry draws/s | Static phase residency |
@@ -135,13 +135,42 @@ Presentation rate is a target, constrained by replay cost. The shared
 New snapshots preserve the BIOS/game handoff latch and invalidate interpolation
 histories, including when a cold launch restores directly into gameplay.
 
+The hands-off movie sequence exposed stale pixels around successive movies.
+Depth24 presentation consumes CPU VRAM; its clears and copies must update that
+same copy while movie framebuffer uploads are deferred. The shared renderer now
+preserves that authority and command order through entry, consecutive movies
+and return to geometry. The real OpenGL regression fixture failed five checks
+before the fix and passes all 167 checks at both 1x and 4x after it. Actual
+presentation captures show black movie borders, including the Dan/dragon scene.
+
+The conservative 3x title terrain capture also exhausted its old 8192-polygon
+candidate budget and rejected 21 whole cells. The 16384-pointer reservation
+retains 10062 candidates across 363 cells with no skips in the observed title
+route. The regression fixture retains and cleans up two cells totaling 8300
+polygons. Emitted primitive buffers remain 1 MiB each. Close-camera clipping and
+later levels still require visual qualification beyond these capacity checks.
+
+The quad funnel computes both triangle winding results before testing either.
+Its first branch at `0x8007FCE0` consumes the preceding NCLIP command; the next
+quad branch and single-triangle branch consume the latest command. The shared
+guarded recovery now retains both results, and this adapter binds that first
+consumer explicitly. The real GTE and interpreter tests cover opposite exact
+signs even when both native results collapse to zero, together with stale,
+near-depth, replay and 4:3 rejection. This preserves the original guest MAC0.
+Fresh-boot captures reach the owner's hands-off torch hallway and New Game.
+A controlled comparison restores the same complete checkpoint and changes only
+the subdivision instruction. Both choices reach that doorway; the small
+close-camera edge report still needs a precisely identified visual comparison.
+
 ## Native code and level-module relocation
 
 The boot executable and main `MED2.EXE` engine are compiled offline. Named
 strings, jump/data tables and padding after `0x800BCA2C` are explicitly excluded
 from native producers by an owned-byte hash. The final transform's return and
 stack restore are at `0x800BCA24/28`. The latest audit covers seven original/mod
-engine views, 32,880 guarded static variants in nine generated files, with all
+engine views plus title, Museum, Museum boss and Professor lab modules,
+40,284 guarded static variants in
+thirteen generated files, with all
 guards matching their known input bytes. It does not claim full static coverage.
 
 All 24 `RELOCS/*.LVB` files contain plain counted image containers with separate
@@ -153,13 +182,43 @@ overlay base. The generic reader preserves opcode fields and accepts relocation
 offset zero. All 24 modules matched execution of the original routine at two
 different RAM bases, byte for byte: 48 comparisons passed.
 
-Heap placement and executable/data boundaries still need native producer and
-dispatch integration. The decoder alone does not make those modules AOT-native;
-live module fallback remains part of the runtime. Level/cutscene coverage
+The counted-relocated producer compiles original disc images at loader-verified
+heap placements, with byte guards and explicit header/data exclusions. Museum
+at `0x80131190` and title at `0x80109BA4` are now declared. Live dispatch confirms
+the former Museum fallbacks `0x80131444/FC` and title callback `0x8010A804` run
+natively. Stock Complete Level also reached Museum boss at `0x8013097C` and
+Professor lab at `0x80134150`; their original images, relocation streams and
+MIPS/script boundaries now supply two more guarded native producers.
+The rebuilt boss and lab modules dispatch their former fallbacks
+`0x80130DF4` and `0x80134D94` natively (515 and 566 hits in the sampled arrivals).
+Fresh Museum entry still matches the
+declared `0x80131190` placement and has no recorded module interpreter fallback
+in that route. These observations qualify the sampled placements and entries.
+Other placements and modules retain interpreter fallback.
+The remaining sampled title fallback `0x8010CD50` is a loop inside the leaf
+routine at `0x8010CD04`, whose entry also runs natively (104 observed hits).
+It is not evidence of an undiscovered disc function; internal resume/dispatch
+coverage must be assessed separately from initial function discovery.
+The initial disc discoverer now identifies complete counted containers and
+emits relocation metadata instead of guessing a fixed RAM base. Proven loader
+callback fields can seed discovery; script/data pointers do not become code
+roots merely because they resemble addresses. Level/cutscene coverage
 harvesting is tracked by `beads-eio.19.7` and will assess which additional
 producers the initial discoverer could have identified automatically.
 
 ## Validation and remaining qualification
+
+The latest GCC diagnostic executable cold-restored a newly captured lab state
+with the v9 latch intact. Default interpolation, Stable filtering and 5x
+internal scale ran at approximately 59.9 guest VBlanks/s over the initial
+50 seconds, with 1536 extra render passes and zero pass aborts, watchdogs,
+VRAM leaks or span failures. This is a scene-specific smoke check, not a
+throughput guarantee for every map or target rate. A separate forced sandbox
+verification run passed 292 comparisons with zero mismatches, then hit the
+normal starvation watchdog; that diagnostic/restore qualification stays open
+under `beads-eio.3.251`. Older checkpoints with a different codegen integrity
+key remain rejected; the tests used recaptured checkpoints rather than
+weakening compatibility checks.
 
 The Clang diagnostic build linked successfully with OpenBIOS, PGXP and the
 shared presentation service. Live engine dispatch, precision hits, adaptive
@@ -194,7 +253,9 @@ aspect. This qualifies that subtitle and panel path; it does not qualify all
 fonts or gameplay HUD widgets. Circular fade transitions still need live
 qualification. Both asset-free contract tests pass, including line breaks,
 extended font characters, font ownership and recycled-command rejection.
-Gameplay HUD anchoring and the cause of the reported flicker remain open. Starting-level movement and boundary coverage, all view
+The movie-border flicker is fixed as described above. Gameplay HUD anchoring
+and remaining close-camera edge reports remain open. Starting-level movement
+and boundary coverage, all view
 and mod choices, sustained target throughput, audio, saves, later levels and
 exact release packages still require qualification. These findings are tracked
 under the central game epic `beads-eio.19`; the intro/masks/HUD task is

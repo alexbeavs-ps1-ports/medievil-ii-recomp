@@ -94,6 +94,17 @@ int main(void) {
     psx_mod_write_word(0x1F80006C, PRIMITIVE0 + 1024);
     configure_arenas(&cpu);
     assert(psx_mod_read_word(0x1F80006C) == PRIMITIVE0 + 1024);
+    /* Conservative radial capture can include more than 8192 candidates even
+     * when only a fraction survive the stock frustum/near-plane funnel. Do
+     * not lose an entire visible cell at the old candidate budget. */
+    begin_capture(&cpu, 0x8007ED4C);
+    psx_mod_write_half(cells, 4100);
+    psx_mod_write_half(cells+12, 4200);
+    assert(capture(&cpu, entry) == 1 && cpu.gpr[2] == 2);
+    assert(psx_mod_read_word(META+8) == 8300 && psx_mod_read_word(META+12) == 0);
+    assert(psx_mod_read_byte(cells+6) == 0xA1 && psx_mod_read_byte(cells+18) == 0xA1);
+    teardown(&cpu, 0x8007ED0C);
+    assert(psx_mod_read_byte(cells+6) == 0xA0 && psx_mod_read_byte(cells+18) == 0xA0);
     /* Unsupported data routes the stock 100-cell capture to the same arena. */
     cpu.gpr[4] = 0x801FFFFC; cpu.gpr[5] = 4096; cpu.gpr[6] = 0;
     assert(capture(&cpu, entry) == 0 && cpu.gpr[5] == 100 && cpu.gpr[6] == CAPTURES);
