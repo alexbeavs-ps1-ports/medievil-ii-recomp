@@ -1192,5 +1192,58 @@
       }
     ],
     "qualification": "Bounded original-loader arrival and input samples on rebuilt native code; other paths and placements remain unproven."
+  },
+  "alternate_route_subsample": {
+    "samples": [
+      {
+        "sample": "kensington-hub",
+        "modules": [
+          {
+            "module": "VT_LVL1.LVB",
+            "load_addr": "0x801309c0",
+            "declared_addr": "0x801309c0",
+            "same_placement": true,
+            "text_matches_original": true,
+            "native_entries": 9,
+            "native_hits": 568,
+            "fallback_entries": []
+          }
+        ],
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        },
+        "extra_passes": 1
+      },
+      {
+        "sample": "lab-after-exit",
+        "modules": [
+          {
+            "module": "PL_LEVEL.LVB",
+            "load_addr": "0x80134150",
+            "declared_addr": "0x80134150",
+            "same_placement": true,
+            "text_matches_original": true,
+            "native_entries": 14,
+            "native_hits": 753,
+            "fallback_entries": []
+          }
+        ],
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        },
+        "extra_passes": 17
+      }
+    ],
+    "routes": [
+      "Unlocked stock hub selector into Kensington",
+      "Pause > Exit Level > Yes from Kensington back to Professor lab"
+    ],
+    "scope": "Small post-arrival sample; both placements unchanged. Death/retry and real memory-card save/reload remain unqualified; owner limited additional testing before upstream delivery."
   }
 }

@@ -272,6 +272,13 @@ module units were byte-identical to the swept build. The source receipt
 records per-module results and the targeted callback retest. This verifies
 these arrival/input samples, not a complete playthrough.
 
+A limited follow-up entered Kensington from the hub and used the stock
+Pause > Exit Level flow back to the Professor lab. Both loaded at their
+already declared addresses with exact original text and zero module
+interpreter fallbacks during the post-arrival samples. Death/retry and
+actual memory-card save/reload remain unqualified; further sampling was
+deferred when the owner requested upstream delivery.
+
 For repeatable QA, use a private runtime/save directory, enable the built-in
 Cheats menu, select Invulnerability and Open All Levels, finish the first
 Professor dialogue, and stand on the projector plate. Save a runtime checkpoint
