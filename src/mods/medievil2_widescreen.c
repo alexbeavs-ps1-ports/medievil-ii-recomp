@@ -16,6 +16,7 @@ static void activate(void) {
                               "aspect", view, sizeof view))
         strcpy(view, "Fit");
     psx_mod_set_native_wide_projection_correction(1);
+    psx_mod_set_native_wide_near_clip(1);
     const uint32_t sites[] = {0x8007FCE0u, 0x8007FCE8u, 0x8007FD18u};
     const uint32_t words[] = {0x1F000003u, 0x07210255u, 0x1BC00249u};
     psx_mod_set_native_wide_nclip_sites(sites, words, 3);

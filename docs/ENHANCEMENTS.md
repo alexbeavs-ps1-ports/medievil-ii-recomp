@@ -36,7 +36,7 @@ loads at `0x80010000`, enters at `0x800A757C`, and declares a `0xDF000`-byte
 body. Its file SHA-256 is
 `d1005710982394f469dcf4786af682fd9c49896dce387fb76cb1631366ffa1c1`.
 
-The framework gitlink is `1fc379534b1c72db475defcc6d7f4a6e03165772` (tree `de85c61900045e169e70dbd05aaaf5f24324f879`), a published
+The framework gitlink is `084719fc56a606f9aca9222ad30066f525b7b123` (tree `c701ccd201597271965e4cd448a03e72a7ee4a2d`), a published
 `feat/medievil-native-quality-20261003` integration branch on the canonical repository.
 It combines upstream master `6b9a2d49ac76c2dbe791dfa9863467ceff4e119f` with the
 shared guarded projection and PGXP startup fixes from framework PRs
@@ -163,16 +163,42 @@ the subdivision instruction. The owner identified premature disappearance of
 the hallway side walls. Captured GP0 packets then exposed projected wall
 triangles taller than the PS1's 511-pixel limit, rejected before mirroring into
 the additional view. The shared frontend admits these only with exact packet
-provenance, positive depth, unsaturated Y and bounded projected X. OpenGL clips
-them to the added columns while retaining hardware rejection in canonical VRAM.
+provenance, positive depth, unsaturated Y and bounded projected X. Admitted
+faces use the same normal OpenGL geometry in the canonical and wide passes,
+with coherent GPU readback. The first margin-only implementation left a wall
+split at the canonical center-copy boundary; owner feedback exposed that
+remaining defect, and the revised path removes its special clipping/batching.
 Ordinary mod-generated triangles keep their existing backend behavior.
-The real GL regression passes 181 checks at both 1x and 4x, including canonical
-authority, painter order and ordinary lines/textured draws after recovered
-faces. At 32:11 the exact hallway run counted 957 recovered triangles and the
-comparison restores wall sections in previously black gaps. Default Stable
-filtering and interpolation produced 222 render passes with no aborts,
-watchdogs, VRAM leaks or span failures in that sample. This is bounded evidence;
-owner visual validation and later-level qualification remain open.
+The real GL regression passes 182 checks at both 1x and 4x, including a wall
+crossing the center-copy boundary, painter order, readback coherence and
+ordinary lines/textured draws after recovered faces. The previous path fails
+five targeted checks at each scale. At 32:11 the exact hallway sample counted
+775 recovered triangles with Stable filtering, interpolation and 5x resolution.
+The extended diagnostic passed 835 sandbox state comparisons with no mismatch,
+abort, watchdog, VRAM leak or span failure. The owner still observed folding
+at the furthest edges after this change.
+
+Submission-time tracing then isolated a separate near-camera failure. A wall
+had signed corner depths 243, -158, 530 and 129 with H=300. The negative corner
+had already become SZ=0; the 129-depth corner used the hardware divider cap.
+Both effects destroy the projected wall shape before horizontal recovery.
+The adapter now explicitly enables signed homogeneous projection transport
+through PGXP. The GL path clips camera-crossing textured faces and their UVs
+before dividing by depth, retaining the visible part in both canonical and
+wide passes. The source words must all have exact intact provenance; partial
+writes, stale words, 4:3 and software rendering retain their existing paths.
+The guest GTE registers and its original culling branches remain unchanged.
+
+The GL fixture now passes 197 checks at both 1x and 4x, including a crossing
+wall, an entirely behind-camera face, painter order and CPU/GPU readback.
+Six focused runtime tests pass. The diagnostic build passed 440 sandbox
+comparisons with no mismatch, abort, watchdog, VRAM leak or span failure.
+At 32:11, two repeated captures retain the walls where the prior sequence
+revealed triangular holes and the purple scene beyond. The owner validated
+the repeated hallway sequence: "Walls stay intact." The default run completed
+4573 additional render passes with no abort, watchdog, VRAM leak or span
+failure. This resolves the reported hallway defect; later-level qualification
+stays open.
 
 ## Native code and level-module relocation
 
@@ -265,8 +291,8 @@ aspect. This qualifies that subtitle and panel path; it does not qualify all
 fonts or gameplay HUD widgets. Circular fade transitions still need live
 qualification. Both asset-free contract tests pass, including line breaks,
 extended font characters, font ownership and recycled-command rejection.
-The movie-border flicker is fixed as described above. Gameplay HUD anchoring
-and remaining close-camera edge reports remain open. Starting-level movement
+The movie-border flicker and reported title-hallway wall folding are fixed as
+described above. Gameplay HUD anchoring remains open. Starting-level movement
 and boundary coverage, all view
 and mod choices, sustained target throughput, audio, saves, later levels and
 exact release packages still require qualification. These findings are tracked
