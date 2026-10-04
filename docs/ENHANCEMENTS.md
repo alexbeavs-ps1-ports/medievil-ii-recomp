@@ -1,5 +1,13 @@
 # MediEvil II enhancement workbench
 
+Current framework: canonical upstream `master` at `a916ed52e00f364a8615b97cd597858aa7f385dc`
+(tree `7293a6e386ffdcf81ac74adc6d26a5505f7319d0`). The shared PRs 485, 486 and 498-501
+are merged. The combined framework passed the bounded MMX6, Tomba, Tomba 2
+and Ape Escape regression suite plus focused runtime, codegen and real-GL tests.
+Historical integration pins below describe earlier work; the gitlink and
+`project-manifest.toml` identify the current dependency. This does not expand
+the gameplay coverage claims or qualify a release package.
+
 The 2026-10-02 workbench starts from Alex's
 [MediEvil II repository](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp)
 at `9837687` on `feat/medievil-ii-enhancements`. The intent is the same
