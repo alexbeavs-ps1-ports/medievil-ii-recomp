@@ -1,0 +1,1196 @@
+{
+  "schema": "MediEvil II projector coverage v1",
+  "disc_sha256": "dfcb8602274c70f59551e820d0f4026b0213fd68b7d2a385189d37eb767b2d97",
+  "scope": "Observed module placements and bounded arrival/input coverage; not every scene, allocation history, puzzle, or cutscene path.",
+  "native_producer_inputs": "Original owned-disc containers and relocation streams only. Runtime RAM verifies placement and text equality; no captured bytes are generation inputs.",
+  "cheat_reference": "https://gamehacking.org/game/89269",
+  "modules": [
+    {
+      "module": "RELOCS/VT_LVL1.LVB",
+      "scene": "Kensington",
+      "load_addr": "0x801309c0",
+      "image_bytes": 69976,
+      "image_sha256": "fbcfeab8ce085a163beee4f170973d5f8b6d5b16bca0edb59d1ecd57307a2b5d",
+      "relocated_matching_bytes": 69858,
+      "text_start": "0x260",
+      "text_end": "0xd1f8",
+      "text_matches_original": true,
+      "text_sha256": "1749e7ef10b90785023231d4712aa4690423eb5aefaec21d9b65df450b4e0fc1",
+      "loader_exports": [
+        "0x80130cec",
+        "0x0",
+        "0x80130d34"
+      ],
+      "route": "Stock unlocked projector; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/FS_LEVEL.LVB",
+      "scene": "The Freakshow",
+      "load_addr": "0x801309fc",
+      "image_bytes": 100024,
+      "image_sha256": "178a155d2b51ab91c4f573971851d4f67befc697af55a4925409ec586950b0a0",
+      "relocated_matching_bytes": 99923,
+      "text_start": "0x35c",
+      "text_end": "0x13b2c",
+      "text_matches_original": true,
+      "text_sha256": "67a58a6fd4b1201486bdfcd297de8b83f4665735b4d98a858bcae44fa62e6597",
+      "loader_exports": [
+        "0x80130d58",
+        "0x0",
+        "0x0"
+      ],
+      "route": "Stock unlocked projector; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/GD_LVL1.LVB",
+      "scene": "Greenwich Observatory",
+      "load_addr": "0x801309e0",
+      "image_bytes": 61628,
+      "image_sha256": "7c3d513af856883e3846ea60d7d91582e7297a108da1b10128b425c9bea5cdd7",
+      "relocated_matching_bytes": 61550,
+      "text_start": "0x208",
+      "text_end": "0xb50c",
+      "text_matches_original": true,
+      "text_sha256": "aa113cf5c659a5003d8e411186936ef41feac4aa6b76374f86ec735ef962cf98",
+      "loader_exports": [
+        "0x80130fd8",
+        "0x80130ec8",
+        "0x80130ff8"
+      ],
+      "route": "Stock unlocked projector; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/KG_LEVEL.LVB",
+      "scene": "Kew Gardens",
+      "load_addr": "0x80130c48",
+      "image_bytes": 61124,
+      "image_sha256": "9ace58b1c9433baad9111a804416d961ed2ea47b9adbb83ce5e46309ecf3f89f",
+      "relocated_matching_bytes": 61012,
+      "text_start": "0x1fc",
+      "text_end": "0xb170",
+      "text_matches_original": true,
+      "text_sha256": "c49a52e0d1a7fe4b757c5baaec51f63ba01587642b8c7d3138eeac3a5eea40df",
+      "loader_exports": [
+        "0x80130e44",
+        "0x80130e58",
+        "0x80130f48"
+      ],
+      "route": "Stock unlocked projector; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/DK_LEVEL.LVB",
+      "scene": "Dankenstein",
+      "load_addr": "0x80130e9c",
+      "image_bytes": 74796,
+      "image_sha256": "abd550f049e2943408d5efdc81385731897f15d5e3102c2b62888b8c6ef4fba5",
+      "relocated_matching_bytes": 74686,
+      "text_start": "0x584",
+      "text_end": "0xe158",
+      "text_matches_original": true,
+      "text_sha256": "ba86b167d4e9770de40ab5fab079b97d18ee2adc4c64c25b9a3d2760000c05a4",
+      "loader_exports": [
+        "0x80131420",
+        "0x80131470",
+        "0x801317e0"
+      ],
+      "route": "Stock unlocked projector; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/DB_LEVEL.LVB",
+      "scene": "Iron Slugger",
+      "load_addr": "0x80130e3c",
+      "image_bytes": 56040,
+      "image_sha256": "22f6c668e454c4d3e287d3446670d21f7966c37f611965a1c0c460026e510cd0",
+      "relocated_matching_bytes": 55972,
+      "text_start": "0x220",
+      "text_end": "0xa7b8",
+      "text_matches_original": true,
+      "text_sha256": "b754642302af06266344e6fafbaea5a69295f80d5aaf35ea11bf9ed79e65daf4",
+      "loader_exports": [
+        "0x801344c8",
+        "0x0",
+        "0x0"
+      ],
+      "route": "Stock unlocked projector; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/VM_LEVEL.LVB",
+      "scene": "Wulfrun Hall",
+      "load_addr": "0x80130b74",
+      "image_bytes": 88736,
+      "image_sha256": "5e81a4749484f37451845b6248762f0cfef7739eaf69cf8647e9c4fa50eb5106",
+      "relocated_matching_bytes": 88662,
+      "text_start": "0x254",
+      "text_end": "0x10e34",
+      "text_matches_original": true,
+      "text_sha256": "3b4b5cc59f43b273ddd33aef662f83cc7b7409c1bb24d8398e8253c3fd866623",
+      "loader_exports": [
+        "0x80130dc8",
+        "0x0",
+        "0x0"
+      ],
+      "route": "Stock unlocked projector; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/VB_LEVEL.LVB",
+      "scene": "The Count",
+      "load_addr": "0x80130948",
+      "image_bytes": 79524,
+      "image_sha256": "c714785249613be67e70fb32a875ddcf5fd7bf593d916090a24e4c69fe53aba4",
+      "relocated_matching_bytes": 79345,
+      "text_start": "0x574",
+      "text_end": "0x1084c",
+      "text_matches_original": true,
+      "text_sha256": "9df09112a8d89dcad70d1f7de07e9e152d44d78755c38e83903f55980ca7ee36",
+      "loader_exports": [
+        "0x0",
+        "0x80131030",
+        "0x0"
+      ],
+      "route": "Stock unlocked projector; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/LR_LEVEL.LVB",
+      "scene": "Whitechapel",
+      "load_addr": "0x80130d00",
+      "image_bytes": 68944,
+      "image_sha256": "496c6a8231c828054cc3502f21c4e7bc2a7a9022c8da01f2bceb63772e24848e",
+      "relocated_matching_bytes": 68870,
+      "text_start": "0x270",
+      "text_end": "0xc424",
+      "text_matches_original": true,
+      "text_sha256": "578596f22056d5a0125b8cf932d3b69488db8b18600cdb74f35e8716fa80dd75",
+      "loader_exports": [
+        "0x80130f70",
+        "0x0",
+        "0x80130fcc"
+      ],
+      "route": "Stock unlocked projector; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/SU_LEVEL.LVB",
+      "scene": "The Sewers",
+      "load_addr": "0x80130bc8",
+      "image_bytes": 90768,
+      "image_sha256": "62f44b45dd3a00aa8bf622a261ba3faf392a31a5843a3a83cee31e75d0e4def3",
+      "relocated_matching_bytes": 90663,
+      "text_start": "0x4f0",
+      "text_end": "0x10ce8",
+      "text_matches_original": true,
+      "text_sha256": "f4f66e633210a94d7fe0393db49b95078825d64326e26cbd9ac53a901f65ad21",
+      "loader_exports": [
+        "0x80131134",
+        "0x0",
+        "0x80131180"
+      ],
+      "route": "Stock unlocked projector; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/TM_LVL1.LVB",
+      "scene": "The Time Machine",
+      "load_addr": "0x80130e30",
+      "image_bytes": 45040,
+      "image_sha256": "57269f49843a4dd8a0bf06e50378bfc15f7714f8a2658efa88c8c46b3b7a6310",
+      "relocated_matching_bytes": 45006,
+      "text_start": "0x2bc",
+      "text_end": "0x82f4",
+      "text_matches_original": true,
+      "text_sha256": "8643b3b52977c3ebd90004d3c67889c6c746c6dfcf338857a496dbb57e49dcac",
+      "loader_exports": [
+        "0x80131954",
+        "0x0",
+        "0x801310ec"
+      ],
+      "route": "Stock unlocked projector; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/CS_LVL1.LVB",
+      "scene": "Cathedral Spires",
+      "load_addr": "0x801308e8",
+      "image_bytes": 39536,
+      "image_sha256": "48f787ff1f91bebc2611f9c8a56d6a38be1d78bcd3af77b75829fb0650a902fc",
+      "relocated_matching_bytes": 39459,
+      "text_start": "0x1b8",
+      "text_end": "0x7168",
+      "text_matches_original": true,
+      "text_sha256": "d3eef13b0dbe2b256e6c18be40efc03ed4486c32816437a0f1d5b5befbe0e2b0",
+      "loader_exports": [
+        "0x8013123c",
+        "0x80130ab4",
+        "0x80131078"
+      ],
+      "route": "Stock unlocked projector; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/CB_LEVEL.LVB",
+      "scene": "The Demon",
+      "load_addr": "0x80138ce0",
+      "image_bytes": 95856,
+      "image_sha256": "c52788a77b3f9ce8e7800121881aceb363d9f0054eee9a1f22909e060430f484",
+      "relocated_matching_bytes": 95811,
+      "text_start": "0x4d8",
+      "text_end": "0x14468",
+      "text_matches_original": true,
+      "text_sha256": "2930f52b741d542f1eedc3434e18b8d4f53fce83a2c76cf5e7e323082eb4466a",
+      "loader_exports": [
+        "0x801391b8",
+        "0x80139298",
+        "0x801392a0"
+      ],
+      "route": "Stock unlocked projector; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/VT_LVL2.LVB",
+      "scene": "Kensington secondary map",
+      "load_addr": "0x801307b0",
+      "image_bytes": 44600,
+      "image_sha256": "02e6f148b62bdfa107ba4619d5a05315202daf787cdfa98c6c26eb4b63772452",
+      "relocated_matching_bytes": 44495,
+      "text_start": "0x360",
+      "text_end": "0x84c0",
+      "text_matches_original": true,
+      "text_sha256": "82f6ac6a68790ca94f60f83cfc58fd5ad290e145436d9ae50400dd57363b8aea",
+      "loader_exports": [
+        "0x80130bdc",
+        "0x0",
+        "0x0"
+      ],
+      "route": "QA-only selector target override to original hidden level id; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/GD_LVL2.LVB",
+      "scene": "Greenwich secondary map",
+      "load_addr": "0x801309a0",
+      "image_bytes": 108448,
+      "image_sha256": "8e92c4cdd65376b0193eefb7f80aa1857897dc445ee20e568c9c8857c5265359",
+      "relocated_matching_bytes": 108336,
+      "text_start": "0x560",
+      "text_end": "0x15554",
+      "text_matches_original": true,
+      "text_sha256": "90d1fb9224ac99595319af8d901b8ea855ecc52b716dd33c39c9990f826851b7",
+      "loader_exports": [
+        "0x801312f0",
+        "0x801311e0",
+        "0x80131170"
+      ],
+      "route": "QA-only selector target override to original hidden level id; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/TM_LVL2.LVB",
+      "scene": "Time Machine secondary map 28",
+      "load_addr": "0x801308d0",
+      "image_bytes": 43556,
+      "image_sha256": "c9faccfbcec8cfdf3bf083ec8457b163c108f206cc4e212643d4cbe398fb94d4",
+      "relocated_matching_bytes": 43501,
+      "text_start": "0x23c",
+      "text_end": "0x8328",
+      "text_matches_original": true,
+      "text_sha256": "74035a250b24c4fa84b409069a0dc9d04d04a4254d51f893c50dec38b6c25fb1",
+      "loader_exports": [
+        "0x80131374",
+        "0x0",
+        "0x80131384"
+      ],
+      "route": "QA-only selector target override to original hidden level id; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/TM_LVL3.LVB",
+      "scene": "Time Machine secondary map 29",
+      "load_addr": "0x801307b0",
+      "image_bytes": 56188,
+      "image_sha256": "4603ac86a0eb2ccd0da8415d0add3c1df92dd4c8fd531fb70cb348b5eed004c1",
+      "relocated_matching_bytes": 56094,
+      "text_start": "0x358",
+      "text_end": "0xb334",
+      "text_matches_original": true,
+      "text_sha256": "b829777670ff5df37ed5c7922da46b03fba64710d213b0499301715fd7e3e7fa",
+      "loader_exports": [
+        "0x80130d3c",
+        "0x0",
+        "0x80130d4c"
+      ],
+      "route": "QA-only selector target override to original hidden level id; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    },
+    {
+      "module": "RELOCS/CS_LVL2.LVB",
+      "scene": "Cathedral Spires secondary map",
+      "load_addr": "0x80130808",
+      "image_bytes": 79916,
+      "image_sha256": "c1dbf4d7b6991fb53a361b1a00bb393458de2c40c6e724b86e9d21afbf28a41d",
+      "relocated_matching_bytes": 79829,
+      "text_start": "0x4b8",
+      "text_end": "0xecac",
+      "text_matches_original": true,
+      "text_sha256": "730a1d3a6cec76e8845356e4268268c0ad455cab599eddb8c82b4c0adbdb391f",
+      "loader_exports": [
+        "0x8013145c",
+        "0x801314f0",
+        "0x80131298"
+      ],
+      "route": "QA-only selector target override to original hidden level id; original level loader",
+      "sample": "Arrival and short input sample, not full-map gameplay qualification"
+    }
+  ],
+  "previously_qualified_modules": [
+    "RELOCS/TL_LEVEL.LVB",
+    "RELOCS/MU_LEVEL.LVB",
+    "RELOCS/MB_LEVEL.LVB",
+    "RELOCS/PL_LEVEL.LVB"
+  ],
+  "generation": {
+    "recipe_count": 29,
+    "engine_views": 7,
+    "level_modules": 22,
+    "guarded_variants": 75043,
+    "files": 31,
+    "all_guards_match_known_input_bytes": true,
+    "full_static_coverage_proven": false
+  },
+  "remaining_scope": [
+    "CREDITS.LVB and FLAG.LVB were not reached by this level sweep.",
+    "Other heap placements and allocation histories retain guarded interpreter fallback.",
+    "Arrival and short input samples do not cover every puzzle, boss phase, cutscene branch, or level exit."
+  ],
+  "discovery_findings": [
+    "Complete counted-container inventory and original relocation expose all level images during initial discovery; disc entry scanning alone misses this producer.",
+    "Read proven loader callback fields after relocation, including unframed initialization routines.",
+    "Code/data exclusions require disassembly evidence: leading and trailing leaf routines and instructions before the stack decrement must remain inside code bounds.",
+    "The shared discoverer already supports frameless leaves; the observed early/late leaves are a profile boundary risk, not a missing prologue-scanning feature.",
+    "This backend still needs verified load addresses. Relocation-independent native overlay code would avoid separate declarations for unseen heap placements; that is not implemented here.",
+    "Sewer object callback at relocated pointer field +0x10D80 targets text +0x4F0. Its LUI/LW prefix precedes the stack decrement by two instructions and was missed by the prologue seed. The producer now declares the original callback field, avoiding runtime bytes as code inputs. General discovery could use relocation-backed callback fields to validate such prefixes without broadly guessing earlier function starts."
+  ],
+  "sewer_callback_correction": {
+    "image_pointer_offset": "0x10D80",
+    "target_offset": "0x4F0",
+    "original_relocation_kind": 0,
+    "engine_indirect_call": "0x8004471C",
+    "earlier_sample_fallback_hits": 488,
+    "added_native_variants": [
+      {
+        "entry": "0x801310B8",
+        "crc": "0x4238EBF8",
+        "recipe": "020-RELOCS/SU_LEVEL.LVB:IMAGE_0000@80130BC8"
+      }
+    ],
+    "removed_native_variants": 0,
+    "validated_native_hit_delta": 490
+  },
+  "validation_builds": {
+    "initial_sweep_guarded_variants": 75042,
+    "callback_fix_guarded_variants": 75043,
+    "unchanged_generated_files": [
+      "overlays_static_0000.c",
+      "overlays_static_0001.c",
+      "overlays_static_0002.c",
+      "overlays_static_0003.c",
+      "overlays_static_0004.c",
+      "overlays_static_0005.c",
+      "overlays_static_0006.c",
+      "overlays_static_0007.c",
+      "overlays_static_0008.c",
+      "overlays_static_0009.c",
+      "overlays_static_0010.c",
+      "overlays_static_0011.c",
+      "overlays_static_0012.c",
+      "overlays_static_0013.c",
+      "overlays_static_0014.c",
+      "overlays_static_0015.c",
+      "overlays_static_0016.c",
+      "overlays_static_0017.c",
+      "overlays_static_0018.c",
+      "overlays_static_0019.c",
+      "overlays_static_0021.c",
+      "overlays_static_0022.c",
+      "overlays_static_0023.c",
+      "overlays_static_0024.c",
+      "overlays_static_0025.c",
+      "overlays_static_0026.c",
+      "overlays_static_0027.c",
+      "overlays_static_0028.c",
+      "overlays_static_0029.c"
+    ],
+    "changed_generated_files": [
+      "overlays_static.c",
+      "overlays_static_0020.c"
+    ],
+    "scope": "Initial rebuilt-native sweep plus targeted sewer callback retest; other native module translation units are byte-identical across the callback correction."
+  },
+  "native_validation": {
+    "modules": [
+      {
+        "module": "RELOCS/VT_LVL1.LVB",
+        "route": "right-00",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 71,
+        "native_hit_lower_bound": 1989,
+        "busiest_native": [
+          {
+            "addr": "0x80134250",
+            "hits": 410
+          },
+          {
+            "addr": "0x80134260",
+            "hits": 410
+          },
+          {
+            "addr": "0x80130d48",
+            "hits": 205
+          },
+          {
+            "addr": "0x8013d1e0",
+            "hits": 124
+          },
+          {
+            "addr": "0x8013d2ec",
+            "hits": 124
+          },
+          {
+            "addr": "0x8013d4f8",
+            "hits": 124
+          }
+        ],
+        "extra_passes": 274,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/FS_LEVEL.LVB",
+        "route": "right-01",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 92,
+        "native_hit_lower_bound": 10066,
+        "busiest_native": [
+          {
+            "addr": "0x80136eac",
+            "hits": 2080
+          },
+          {
+            "addr": "0x80136f04",
+            "hits": 2080
+          },
+          {
+            "addr": "0x8013100c",
+            "hits": 657
+          },
+          {
+            "addr": "0x80136d70",
+            "hits": 634
+          },
+          {
+            "addr": "0x80136d80",
+            "hits": 634
+          },
+          {
+            "addr": "0x80136fb4",
+            "hits": 465
+          }
+        ],
+        "extra_passes": 467,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/GD_LVL1.LVB",
+        "route": "right-02",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 35,
+        "native_hit_lower_bound": 944,
+        "busiest_native": [
+          {
+            "addr": "0x80130ec8",
+            "hits": 268
+          },
+          {
+            "addr": "0x80138974",
+            "hits": 268
+          },
+          {
+            "addr": "0x801389ec",
+            "hits": 268
+          },
+          {
+            "addr": "0x8013b2b0",
+            "hits": 39
+          },
+          {
+            "addr": "0x80134d94",
+            "hits": 36
+          },
+          {
+            "addr": "0x8013b478",
+            "hits": 36
+          }
+        ],
+        "extra_passes": 307,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/KG_LEVEL.LVB",
+        "route": "right-03",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 36,
+        "native_hit_lower_bound": 1931,
+        "busiest_native": [
+          {
+            "addr": "0x80131534",
+            "hits": 1059
+          },
+          {
+            "addr": "0x80130e58",
+            "hits": 364
+          },
+          {
+            "addr": "0x80131328",
+            "hits": 361
+          },
+          {
+            "addr": "0x8013b2b0",
+            "hits": 38
+          },
+          {
+            "addr": "0x80134d94",
+            "hits": 37
+          },
+          {
+            "addr": "0x8013b478",
+            "hits": 37
+          }
+        ],
+        "extra_passes": 743,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/DK_LEVEL.LVB",
+        "route": "right-04",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 153,
+        "native_hit_lower_bound": 22879,
+        "busiest_native": [
+          {
+            "addr": "0x80137840",
+            "hits": 2904
+          },
+          {
+            "addr": "0x8013776c",
+            "hits": 1236
+          },
+          {
+            "addr": "0x801321e0",
+            "hits": 1230
+          },
+          {
+            "addr": "0x80137870",
+            "hits": 968
+          },
+          {
+            "addr": "0x80137b1c",
+            "hits": 968
+          },
+          {
+            "addr": "0x8013e7bc",
+            "hits": 840
+          }
+        ],
+        "extra_passes": 324,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/DB_LEVEL.LVB",
+        "route": "right-05",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 39,
+        "native_hit_lower_bound": 4511,
+        "busiest_native": [
+          {
+            "addr": "0x8013b444",
+            "hits": 871
+          },
+          {
+            "addr": "0x8013b454",
+            "hits": 871
+          },
+          {
+            "addr": "0x8013b468",
+            "hits": 871
+          },
+          {
+            "addr": "0x80131f6c",
+            "hits": 351
+          },
+          {
+            "addr": "0x80131fcc",
+            "hits": 351
+          },
+          {
+            "addr": "0x80131fd4",
+            "hits": 351
+          }
+        ],
+        "extra_passes": 568,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/VM_LEVEL.LVB",
+        "route": "right-06",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 55,
+        "native_hit_lower_bound": 2879,
+        "busiest_native": [
+          {
+            "addr": "0x8013f050",
+            "hits": 571
+          },
+          {
+            "addr": "0x801318b0",
+            "hits": 570
+          },
+          {
+            "addr": "0x8013f1f0",
+            "hits": 570
+          },
+          {
+            "addr": "0x80131864",
+            "hits": 274
+          },
+          {
+            "addr": "0x80131874",
+            "hits": 274
+          },
+          {
+            "addr": "0x8013d1e0",
+            "hits": 125
+          }
+        ],
+        "extra_passes": 346,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/VB_LEVEL.LVB",
+        "route": "right-07",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 73,
+        "native_hit_lower_bound": 8376,
+        "busiest_native": [
+          {
+            "addr": "0x8013bf88",
+            "hits": 1436
+          },
+          {
+            "addr": "0x8013bfa4",
+            "hits": 1436
+          },
+          {
+            "addr": "0x8013bdc4",
+            "hits": 382
+          },
+          {
+            "addr": "0x80131030",
+            "hits": 382
+          },
+          {
+            "addr": "0x80131074",
+            "hits": 382
+          },
+          {
+            "addr": "0x801320bc",
+            "hits": 382
+          }
+        ],
+        "extra_passes": 1098,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/LR_LEVEL.LVB",
+        "route": "right-08",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 33,
+        "native_hit_lower_bound": 438,
+        "busiest_native": [
+          {
+            "addr": "0x80131a6c",
+            "hits": 258
+          },
+          {
+            "addr": "0x8013b2b0",
+            "hits": 38
+          },
+          {
+            "addr": "0x8013b478",
+            "hits": 36
+          },
+          {
+            "addr": "0x80134d94",
+            "hits": 36
+          },
+          {
+            "addr": "0x8013c7d0",
+            "hits": 32
+          },
+          {
+            "addr": "0x8013d060",
+            "hits": 3
+          }
+        ],
+        "extra_passes": 177,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/SU_LEVEL.LVB",
+        "route": "right-09",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 52,
+        "native_hit_lower_bound": 3738,
+        "busiest_native": [
+          {
+            "addr": "0x8013eef4",
+            "hits": 1039
+          },
+          {
+            "addr": "0x801310b8",
+            "hits": 490
+          },
+          {
+            "addr": "0x801310c0",
+            "hits": 490
+          },
+          {
+            "addr": "0x80131218",
+            "hits": 490
+          },
+          {
+            "addr": "0x8013ed58",
+            "hits": 490
+          },
+          {
+            "addr": "0x8013d1e0",
+            "hits": 124
+          }
+        ],
+        "extra_passes": 595,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/TM_LVL1.LVB",
+        "route": "right-10",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 13,
+        "native_hit_lower_bound": 406,
+        "busiest_native": [
+          {
+            "addr": "0x8013196c",
+            "hits": 359
+          },
+          {
+            "addr": "0x80134d94",
+            "hits": 36
+          },
+          {
+            "addr": "0x80134ddc",
+            "hits": 1
+          },
+          {
+            "addr": "0x80134e38",
+            "hits": 1
+          },
+          {
+            "addr": "0x80134e40",
+            "hits": 1
+          },
+          {
+            "addr": "0x80134554",
+            "hits": 1
+          }
+        ],
+        "extra_passes": 430,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/CS_LVL1.LVB",
+        "route": "right-11",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 129,
+        "native_hit_lower_bound": 22976,
+        "busiest_native": [
+          {
+            "addr": "0x80137854",
+            "hits": 6372
+          },
+          {
+            "addr": "0x80131d64",
+            "hits": 1503
+          },
+          {
+            "addr": "0x80131d98",
+            "hits": 1503
+          },
+          {
+            "addr": "0x801373dc",
+            "hits": 1503
+          },
+          {
+            "addr": "0x80130e3c",
+            "hits": 940
+          },
+          {
+            "addr": "0x80131e0c",
+            "hits": 768
+          }
+        ],
+        "extra_passes": 234,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/CB_LEVEL.LVB",
+        "route": "right-12",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 58,
+        "native_hit_lower_bound": 4186,
+        "busiest_native": [
+          {
+            "addr": "0x80141e30",
+            "hits": 795
+          },
+          {
+            "addr": "0x80141e4c",
+            "hits": 795
+          },
+          {
+            "addr": "0x80139298",
+            "hits": 193
+          },
+          {
+            "addr": "0x80141410",
+            "hits": 193
+          },
+          {
+            "addr": "0x80141438",
+            "hits": 193
+          },
+          {
+            "addr": "0x80141458",
+            "hits": 193
+          }
+        ],
+        "extra_passes": 654,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/VT_LVL2.LVB",
+        "route": "level-1a",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 54,
+        "native_hit_lower_bound": 32044,
+        "busiest_native": [
+          {
+            "addr": "0x80135398",
+            "hits": 3260
+          },
+          {
+            "addr": "0x801353c4",
+            "hits": 3260
+          },
+          {
+            "addr": "0x80135408",
+            "hits": 3260
+          },
+          {
+            "addr": "0x801354d0",
+            "hits": 3260
+          },
+          {
+            "addr": "0x80135554",
+            "hits": 3260
+          },
+          {
+            "addr": "0x801355dc",
+            "hits": 3260
+          }
+        ],
+        "extra_passes": 431,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/GD_LVL2.LVB",
+        "route": "level-1b",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 115,
+        "native_hit_lower_bound": 7376,
+        "busiest_native": [
+          {
+            "addr": "0x8013a724",
+            "hits": 623
+          },
+          {
+            "addr": "0x8013a7a4",
+            "hits": 607
+          },
+          {
+            "addr": "0x8013e1a4",
+            "hits": 603
+          },
+          {
+            "addr": "0x8013e21c",
+            "hits": 603
+          },
+          {
+            "addr": "0x80134fc8",
+            "hits": 303
+          },
+          {
+            "addr": "0x80134fd8",
+            "hits": 303
+          }
+        ],
+        "extra_passes": 370,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/TM_LVL2.LVB",
+        "route": "level-1c",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 15,
+        "native_hit_lower_bound": 261,
+        "busiest_native": [
+          {
+            "addr": "0x80131424",
+            "hits": 213
+          },
+          {
+            "addr": "0x80134d94",
+            "hits": 35
+          },
+          {
+            "addr": "0x80134ddc",
+            "hits": 1
+          },
+          {
+            "addr": "0x80134e38",
+            "hits": 1
+          },
+          {
+            "addr": "0x80134e40",
+            "hits": 1
+          },
+          {
+            "addr": "0x80134554",
+            "hits": 1
+          }
+        ],
+        "extra_passes": 318,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/TM_LVL3.LVB",
+        "route": "level-1d",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 67,
+        "native_hit_lower_bound": 2496,
+        "busiest_native": [
+          {
+            "addr": "0x80131970",
+            "hits": 262
+          },
+          {
+            "addr": "0x80132e14",
+            "hits": 259
+          },
+          {
+            "addr": "0x801330f4",
+            "hits": 259
+          },
+          {
+            "addr": "0x801333b4",
+            "hits": 259
+          },
+          {
+            "addr": "0x801334bc",
+            "hits": 259
+          },
+          {
+            "addr": "0x80132f30",
+            "hits": 258
+          }
+        ],
+        "extra_passes": 739,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      },
+      {
+        "module": "RELOCS/CS_LVL2.LVB",
+        "route": "level-1e",
+        "text_matches_declared_original": true,
+        "sampled_module_fallback_pcs": 0,
+        "sampled_module_fallbacks": [],
+        "native_entries_observed": 101,
+        "native_hit_lower_bound": 16699,
+        "busiest_native": [
+          {
+            "addr": "0x801361a8",
+            "hits": 1362
+          },
+          {
+            "addr": "0x801327a4",
+            "hits": 741
+          },
+          {
+            "addr": "0x80132248",
+            "hits": 681
+          },
+          {
+            "addr": "0x801322c0",
+            "hits": 681
+          },
+          {
+            "addr": "0x80132360",
+            "hits": 681
+          },
+          {
+            "addr": "0x8013ed20",
+            "hits": 681
+          }
+        ],
+        "extra_passes": 477,
+        "replay_errors": {
+          "aborted": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "span_failures": 0
+        }
+      }
+    ],
+    "qualification": "Bounded original-loader arrival and input samples on rebuilt native code; other paths and placements remain unproven."
+  }
+}

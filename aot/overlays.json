@@ -6,10 +6,10 @@
   },
   "static_output": "generated/overlays_static.c",
   "strict_bounds": true,
-  "expected_records": 11,
+  "expected_records": 29,
   "bios_resident": false,
   "evidence": {
-    "validation": "Owned USA disc hashes and original loader relocation verified. Covers seven original/mod engine views plus verified title, Museum, Museum boss and Professor lab heap placements; remaining modules/placements require coverage and declaration."
+    "validation": "Owned USA disc hashes and original relocation verified. Seven original/mod engine views plus loader-observed level module placements; see aot/coverage-projector.json for bounded coverage and remaining limitations."
   },
   "images": [
     {
@@ -353,6 +353,745 @@
         }
       ],
       "evidence": "Stock Complete Level cheat reached this module through the original counted loader. Relocated original at 0x80134150 matches 59123/59240 live bytes; remaining bytes are mutable data. Header/text/script boundaries verified against original disassembly. Export fields +18/+1C/+20 use the verified engine loader callback contract. Other heap placements retain guarded interpreter fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/VT_LVL1.LVB",
+          "sha256": "fbcfeab8ce085a163beee4f170973d5f8b6d5b16bca0edb59d1ecd57307a2b5d",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 69976,
+              "relocation_count": 855,
+              "entry_pointer_offsets": [
+                "0xe9fc",
+                "0xea00",
+                "0xea04"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x801309c0",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x801309c0",
+                      "end": "0x80130c20",
+                      "sha256": "af6d2b2fa72df7e9d2ce06615e803a5b7a17263121ee0e1a632fa34406f075ec",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x260; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x8013dbb8",
+                      "end": "0x80141b18",
+                      "sha256": "ac6edaf37a8097d21f2fa4cdad58d12a773be8356b589e2ebab3afa93f298b37",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0xD1F8; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Kensington reached through the original loader in the private projector coverage sweep. Original relocated image matches 69858/69976 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/FS_LEVEL.LVB",
+          "sha256": "178a155d2b51ab91c4f573971851d4f67befc697af55a4925409ec586950b0a0",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 100024,
+              "relocation_count": 1299,
+              "entry_pointer_offsets": [
+                "0x1531c",
+                "0x15320",
+                "0x15324"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x801309fc",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x801309fc",
+                      "end": "0x80130d58",
+                      "sha256": "6f039f1b9c9a0ea91d083df4f24d57bfac6528c7cc6fce317b07534253c9abb1",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x35C; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x80144528",
+                      "end": "0x801490b4",
+                      "sha256": "2fde9576c402ec5595cc9a11543ab97d9a24b88a33ad820c337e6cdacfa6b1d9",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0x13B2C; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "The Freakshow reached through the original loader in the private projector coverage sweep. Original relocated image matches 99923/100024 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/GD_LVL1.LVB",
+          "sha256": "7c3d513af856883e3846ea60d7d91582e7297a108da1b10128b425c9bea5cdd7",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 61628,
+              "relocation_count": 906,
+              "entry_pointer_offsets": [
+                "0xc710",
+                "0xc714",
+                "0xc718"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x801309e0",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x801309e0",
+                      "end": "0x80130be8",
+                      "sha256": "fa9c112286ba565a09f5548aa668fe984ff6588b71043dd138718a53a99b94d0",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x208; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x8013beec",
+                      "end": "0x8013fa9c",
+                      "sha256": "ed58b34fef518e130e68ccd42b4e9c9aaff2f6b4cfe3b3419da31ac1afaad5fc",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0xB50C; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Greenwich Observatory reached through the original loader in the private projector coverage sweep. Original relocated image matches 61550/61628 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/KG_LEVEL.LVB",
+          "sha256": "9ace58b1c9433baad9111a804416d961ed2ea47b9adbb83ce5e46309ecf3f89f",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 61124,
+              "relocation_count": 843,
+              "entry_pointer_offsets": [
+                "0xcde0",
+                "0xcde4",
+                "0xcde8"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x80130c48",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x80130c48",
+                      "end": "0x80130e44",
+                      "sha256": "b46dbf47ef890e64ebc57ee3597b91892353870176383343bf5d5311d9eb101b",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x1FC; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x8013bdb8",
+                      "end": "0x8013fb0c",
+                      "sha256": "9a1b50b8bf23cc3b6fe801f019a7c1ce44abaaaaf4f409fc46afd50df22bc15c",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0xB170; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Kew Gardens reached through the original loader in the private projector coverage sweep. Original relocated image matches 61012/61124 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/DK_LEVEL.LVB",
+          "sha256": "abd550f049e2943408d5efdc81385731897f15d5e3102c2b62888b8c6ef4fba5",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 74796,
+              "relocation_count": 1281,
+              "entry_pointer_offsets": [
+                "0xebbc",
+                "0xebc0",
+                "0xebc4"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x80130e9c",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x80130e9c",
+                      "end": "0x80131420",
+                      "sha256": "58c3270a0bbda10d22bd4774077796d15935ff840493b412829e02ac76f35f52",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x584; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x8013eff4",
+                      "end": "0x801432c8",
+                      "sha256": "20c8edc7c6d6f6595ee5154945d30684d59b3d03e29a009aba44b84177253d28",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0xE158; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Dankenstein reached through the original loader in the private projector coverage sweep. Original relocated image matches 74686/74796 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/DB_LEVEL.LVB",
+          "sha256": "22f6c668e454c4d3e287d3446670d21f7966c37f611965a1c0c460026e510cd0",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 56040,
+              "relocation_count": 1654,
+              "entry_pointer_offsets": [
+                "0xbc10",
+                "0xbc14",
+                "0xbc18"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x80130e3c",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x80130e3c",
+                      "end": "0x8013105c",
+                      "sha256": "18a6692fafaaf2c5fbd3d1c1dc8b14789003ac13637d97b17a9888dd0c73e701",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x220; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x8013b5f4",
+                      "end": "0x8013e924",
+                      "sha256": "239c6cb0147b0f383b2c44a8b9481779f798eff5db20ec4a409da296c6704549",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0xA7B8; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Iron Slugger reached through the original loader in the private projector coverage sweep. Original relocated image matches 55972/56040 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/VM_LEVEL.LVB",
+          "sha256": "5e81a4749484f37451845b6248762f0cfef7739eaf69cf8647e9c4fa50eb5106",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 88736,
+              "relocation_count": 1179,
+              "entry_pointer_offsets": [
+                "0x124b4",
+                "0x124b8",
+                "0x124bc"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x80130b74",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x80130b74",
+                      "end": "0x80130dc8",
+                      "sha256": "f389e48b5dae09a754e5a1203bd6dc02f4a224ac5bfc54d58e3dddefc8c6a24a",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x254; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x801419a8",
+                      "end": "0x80146614",
+                      "sha256": "5090cf17f58e3f9bd9e00e610766dac9b6ae3c5425285fa870ea693a4b0c9d69",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0x10E34; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Wulfrun Hall reached through the original loader in the private projector coverage sweep. Original relocated image matches 88662/88736 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/VB_LEVEL.LVB",
+          "sha256": "c714785249613be67e70fb32a875ddcf5fd7bf593d916090a24e4c69fe53aba4",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 79524,
+              "relocation_count": 1376,
+              "entry_pointer_offsets": [
+                "0x119f0",
+                "0x119f4",
+                "0x119f8"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x80130948",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x80130948",
+                      "end": "0x80130ebc",
+                      "sha256": "ef3b80d732a1da3bb04c6683560853c3486019f91898420a2e06a38c738b2ae5",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x574; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x80141194",
+                      "end": "0x80143fec",
+                      "sha256": "1b31cbc1afe809aee9ba950a56a5048cb8efc45dcc8eb51337cd898e931715f9",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0x1084C; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "The Count reached through the original loader in the private projector coverage sweep. Original relocated image matches 79345/79524 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/LR_LEVEL.LVB",
+          "sha256": "496c6a8231c828054cc3502f21c4e7bc2a7a9022c8da01f2bceb63772e24848e",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 68944,
+              "relocation_count": 944,
+              "entry_pointer_offsets": [
+                "0xd4e0",
+                "0xd4e4",
+                "0xd4e8"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x80130d00",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x80130d00",
+                      "end": "0x80130f70",
+                      "sha256": "8063dcf468b77937e54202adcdd066249a443703eecb8e7ff708b4f0e39bc8af",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x270; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x8013d124",
+                      "end": "0x80141a50",
+                      "sha256": "e4d81afdff3d8621e8a3fcdf44f73b5be7afd1e2a81f393c91f4cf32320e6288",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0xC424; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Whitechapel reached through the original loader in the private projector coverage sweep. Original relocated image matches 68870/68944 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/SU_LEVEL.LVB",
+          "sha256": "62f44b45dd3a00aa8bf622a261ba3faf392a31a5843a3a83cee31e75d0e4def3",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 90768,
+              "relocation_count": 1447,
+              "entry_pointer_offsets": [
+                "0x12cf4",
+                "0x12cf8",
+                "0x12cfc",
+                "0x10d80"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x80130bc8",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x80130bc8",
+                      "end": "0x801310b8",
+                      "sha256": "cc424562f7ce20715d3d1f216a762a7779f64a242bdf8a416f86c9529b5d9fb1",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x4F0; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x801418b0",
+                      "end": "0x80146e58",
+                      "sha256": "56c9507fcfda7f9b181ef047ef6a1e55fdc452020b8bfa494bb05f2df3c9f6a5",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0x10CE8; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "The Sewers reached through the original loader in the private projector coverage sweep. Original relocated image matches 90663/90768 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback. Original relocated object callback pointer at image +0x10D80 targets +0x4F0, before its stack prologue; preserve that true entry instead of entering at +0x4F8."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/TM_LVL1.LVB",
+          "sha256": "57269f49843a4dd8a0bf06e50378bfc15f7714f8a2658efa88c8c46b3b7a6310",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 45040,
+              "relocation_count": 825,
+              "entry_pointer_offsets": [
+                "0x9280",
+                "0x9284",
+                "0x9288"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x80130e30",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x80130e30",
+                      "end": "0x801310ec",
+                      "sha256": "8721cb4c3ab6b858c7859bd7d7162a2661ad56ec4296ba190281481bb564d7c6",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x2BC; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x80139124",
+                      "end": "0x8013be20",
+                      "sha256": "edd69486d57f4c569fdd32b753428b87ee03ead3a1f2f19a56b1e011c564ca8a",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0x82F4; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "The Time Machine reached through the original loader in the private projector coverage sweep. Original relocated image matches 45006/45040 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/CS_LVL1.LVB",
+          "sha256": "48f787ff1f91bebc2611f9c8a56d6a38be1d78bcd3af77b75829fb0650a902fc",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 39536,
+              "relocation_count": 441,
+              "entry_pointer_offsets": [
+                "0x8384",
+                "0x8388",
+                "0x838c"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x801308e8",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x801308e8",
+                      "end": "0x80130aa0",
+                      "sha256": "8e40e038b3654261c95d72c86cfcb94a195a267e7d6334e183eb35b98d9875a8",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x1B8; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x80137a50",
+                      "end": "0x8013a358",
+                      "sha256": "977f77cc86f927c9ba8f315ed85b2f835ce7a8cd219f18419d7b8a14c7b68398",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0x7168; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Cathedral Spires reached through the original loader in the private projector coverage sweep. Original relocated image matches 39459/39536 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/CB_LEVEL.LVB",
+          "sha256": "c52788a77b3f9ce8e7800121881aceb363d9f0054eee9a1f22909e060430f484",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 95856,
+              "relocation_count": 1335,
+              "entry_pointer_offsets": [
+                "0x155e4",
+                "0x155e8",
+                "0x155ec"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x80138ce0",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x80138ce0",
+                      "end": "0x801391b8",
+                      "sha256": "72b139dcc5b4bb913567644957cd192b02375767e5a34a5ea977921fbcd825b3",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x4D8; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x8014d148",
+                      "end": "0x80150350",
+                      "sha256": "6208700d99fa4850283adcacb6c6b869b9a46c4f80c31cbbfa20c3a9509eb7dd",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0x14468; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "The Demon reached through the original loader in the private projector coverage sweep. Original relocated image matches 95811/95856 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/VT_LVL2.LVB",
+          "sha256": "02e6f148b62bdfa107ba4619d5a05315202daf787cdfa98c6c26eb4b63772452",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 44600,
+              "relocation_count": 745,
+              "entry_pointer_offsets": [
+                "0xa10c",
+                "0xa110",
+                "0xa114"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x801307b0",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x801307b0",
+                      "end": "0x80130b10",
+                      "sha256": "1158c1c4f705c207d94d842b5aed1eb22c922c26967c5f28092cd6c3db8a18e1",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x360; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x80138c70",
+                      "end": "0x8013b5e8",
+                      "sha256": "2779cbfaaf7c03057ffd80b73b89de6ae87edb4a0ade6af3634acf47177bf60a",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0x84C0; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Kensington secondary map reached through the original loader in the private projector coverage sweep. Original relocated image matches 44495/44600 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/GD_LVL2.LVB",
+          "sha256": "8e92c4cdd65376b0193eefb7f80aa1857897dc445ee20e568c9c8857c5265359",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 108448,
+              "relocation_count": 1670,
+              "entry_pointer_offsets": [
+                "0x16b00",
+                "0x16b04",
+                "0x16b08"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x801309a0",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x801309a0",
+                      "end": "0x80130f00",
+                      "sha256": "2af226030dad1481aafe513bf20204356b228935ecbf566695112012e036121f",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x560; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x80145ef4",
+                      "end": "0x8014b140",
+                      "sha256": "02b0335511c82cdf780f9c62f094a2ca00c3deb09b0809062d67c21e0f122d38",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0x15554; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Greenwich secondary map reached through the original loader in the private projector coverage sweep. Original relocated image matches 108336/108448 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/TM_LVL2.LVB",
+          "sha256": "c9faccfbcec8cfdf3bf083ec8457b163c108f206cc4e212643d4cbe398fb94d4",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 43556,
+              "relocation_count": 685,
+              "entry_pointer_offsets": [
+                "0x98b4",
+                "0x98b8",
+                "0x98bc"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x801308d0",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x801308d0",
+                      "end": "0x80130b0c",
+                      "sha256": "0c488060bfe5d56f4f9ad211b1fe68d60e9a11d188d99434600284c6ced603fa",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x23C; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x80138bf8",
+                      "end": "0x8013b2f4",
+                      "sha256": "49ca124c2a45fceca31bd1f471ad243e1ed60dfdde0b30e2a8d227f02436b2cc",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0x8328; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Time Machine secondary map 28 reached through the original loader in the private projector coverage sweep. Original relocated image matches 43501/43556 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/TM_LVL3.LVB",
+          "sha256": "4603ac86a0eb2ccd0da8415d0add3c1df92dd4c8fd531fb70cb348b5eed004c1",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 56188,
+              "relocation_count": 958,
+              "entry_pointer_offsets": [
+                "0xc510",
+                "0xc514",
+                "0xc518"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x801307b0",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x801307b0",
+                      "end": "0x80130b08",
+                      "sha256": "8b48db39627dd85b83ab4a81e71d67c4e0a1546ae16342456843614bfa0dee62",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x358; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x8013bae4",
+                      "end": "0x8013e32c",
+                      "sha256": "d0d0ecd45de34d2498572f750d1c56d59905e3a3ce30693eddf308bfab6f821c",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0xB334; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Time Machine secondary map 29 reached through the original loader in the private projector coverage sweep. Original relocated image matches 56094/56188 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/CS_LVL2.LVB",
+          "sha256": "c1dbf4d7b6991fb53a361b1a00bb393458de2c40c6e724b86e9d21afbf28a41d",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 79916,
+              "relocation_count": 1245,
+              "entry_pointer_offsets": [
+                "0x106d0",
+                "0x106d4",
+                "0x106d8"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x80130808",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x80130808",
+                      "end": "0x80130cc0",
+                      "sha256": "aa65e5ae3b2411e4445e8254ac02989613d1f341a2e28b5b209673157b55e67a",
+                      "reason": "Original module header, object tables and strings end before verified MIPS text at image +0x4B8; leading frameless functions are retained."
+                    },
+                    {
+                      "start": "0x8013f4b4",
+                      "end": "0x80144034",
+                      "sha256": "5944e1e85060bf74a484b7107bcbbc42ffc72207f0ec11df1469bbaf76e3ce32",
+                      "reason": "Original MIPS text ends after final JR RA/delay at image +0xECAC; script words, tables and mutable data follow. Trailing frameless helpers are retained."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Cathedral Spires secondary map reached through the original loader in the private projector coverage sweep. Original relocated image matches 79829/79916 live bytes; complete declared text matches exactly. Loader callback fields and code/data boundaries verified against original disassembly. See aot/coverage-projector.json. Other placements retain guarded fallback."
     }
   ],
   "main_ram_bytes": "0x800000",
