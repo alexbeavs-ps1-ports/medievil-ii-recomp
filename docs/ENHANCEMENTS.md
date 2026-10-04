@@ -1,5 +1,13 @@
 # MediEvil II enhancement workbench
 
+Current framework: canonical upstream `master` at `a916ed52e00f364a8615b97cd597858aa7f385dc`
+(tree `7293a6e386ffdcf81ac74adc6d26a5505f7319d0`). The shared PRs 485, 486 and 498-501
+are merged. The combined framework passed the bounded MMX6, Tomba, Tomba 2
+and Ape Escape regression suite plus focused runtime, codegen and real-GL tests.
+Historical integration pins below describe earlier work; the gitlink and
+`project-manifest.toml` identify the current dependency. This does not expand
+the gameplay coverage claims or qualify a release package.
+
 The 2026-10-02 workbench starts from Alex's
 [MediEvil II repository](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp)
 at `9837687` on `feat/medievil-ii-enhancements`. The intent is the same
@@ -36,7 +44,7 @@ loads at `0x80010000`, enters at `0x800A757C`, and declares a `0xDF000`-byte
 body. Its file SHA-256 is
 `d1005710982394f469dcf4786af682fd9c49896dce387fb76cb1631366ffa1c1`.
 
-The framework gitlink is `084719fc56a606f9aca9222ad30066f525b7b123` (tree `c701ccd201597271965e4cd448a03e72a7ee4a2d`), a published
+The earlier framework integration was `084719fc56a606f9aca9222ad30066f525b7b123` (tree `c701ccd201597271965e4cd448a03e72a7ee4a2d`), a published
 `feat/medievil-native-quality-20261003` integration branch on the canonical repository.
 It combines upstream master `6b9a2d49ac76c2dbe791dfa9863467ceff4e119f` with the
 shared guarded projection and PGXP startup fixes from framework PRs
@@ -388,6 +396,6 @@ The shared framework changes are stacked as
 [499](https://github.com/RetroPortingToolKit/psxrecomp/pull/499),
 [500](https://github.com/RetroPortingToolKit/psxrecomp/pull/500) and
 [501](https://github.com/RetroPortingToolKit/psxrecomp/pull/501).
-The game keeps its already-qualified public framework pin; the upstream
-series preserves newer upstream PGXP session and projection behavior.
+The game now pins the merged canonical master recorded above, including newer
+upstream PGXP session and projection behavior.
 The bounded coverage and remaining qualification limits above still apply.
