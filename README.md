@@ -33,6 +33,13 @@ for the exact source pins, evidence and known limitations.
 | Presentation rate | Display; 60, 120, 144, 240 and 360 also available |
 | Resident loading | On; preloaded archive/level files and predecoded PP20 assets |
 
+The framework pin includes the shared PGXP fixes for in-place arithmetic,
+vertex fields carried through bitwise operations, the GTE vertex FIFO and
+precision restoration after interpolated drawing. Generate regenerates the
+game and AOT code with the corresponding instruction hooks. These repair
+precision transport; the reported Museum doorway wobble still requires
+movement qualification. See [the PGXP uptake notes](docs/ENHANCEMENTS.md#pgxp-propagation-uptake-2026-10-04).
+
 Cutscene bars keep their full adaptive width during interpolated drawing,
 including the Museum intro flashes. Normal frames and render passes retain
 separate mask/subtitle submission metadata; subtitle proportions and authored
