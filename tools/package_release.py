@@ -44,7 +44,7 @@ def validate_build(build):
         raise ValueError('Generated native code does not match the release profile')
     if audit['generation_inputs']['game_toml_sha256'] != sha(ROOT/'game.toml'):
         raise ValueError('Game config changed since native generation')
-    if audit['profile_sha256'] != sha(ROOT/'aot/overlays.json'):
+    if audit['generation_inputs']['profile_sha256'] != sha(ROOT/'aot/overlays.json'):
         raise ValueError('Overlay profile changed since native generation')
     for name, digest in audit['files'].items():
         if sha(ROOT/'generated'/name) != digest:
