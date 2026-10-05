@@ -13,15 +13,19 @@ set(PSXRECOMP_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/psxrecomp" CACHE PATH
 # if(EXISTS "${PSXRECOMP_ROOT}/lib/recomp-net/CMakeLists.txt")
 #     set(PSX_NETPLAY ON CACHE BOOL "…" FORCE)
 # endif()
-set(PSX_SETUP_WIZARD ON CACHE BOOL
-    "Advertise first-run setup wizard + Generate & rebuild in recomp-ui" FORCE)
+option(PSX_SETUP_WIZARD "Enable the developer code-generation wizard" OFF)
 include("${PSXRECOMP_ROOT}/runtime/runtime.cmake")
+
+set(MEDIEVIL2_CODEGEN_SETUP_SOURCES)
+if(PSX_SETUP_WIZARD)
+    list(APPEND MEDIEVIL2_CODEGEN_SETUP_SOURCES
+        "${CMAKE_CURRENT_SOURCE_DIR}/codegen_setup.c")
+endif()
 
 psxrecomp_add_game_runtime(psx-runtime
     PGXP
     # ENABLE_NETPLAY_IF_PRESENT
     # NETPLAY_LOBBY_URL "ws://netplay.retcomm.net:8765"
-    ENABLE_SETUP_WIZARD
     WINDOW_TITLE "MediEvil II  Recompiled"
     DEFAULT_GAME_CONFIG_PATH "game.toml"
     MAX_PLAYERS 1
@@ -36,7 +40,7 @@ psxrecomp_add_game_runtime(psx-runtime
     EXCLUDE_BUILTIN_MODS
         psx.enhancement.cd-speed
         psx.enhancement.fast-loading
-    CODEGEN_SETUP_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/codegen_setup.c"
+    CODEGEN_SETUP_SOURCES ${MEDIEVIL2_CODEGEN_SETUP_SOURCES}
 )
 
 target_include_directories(psx-runtime PRIVATE
