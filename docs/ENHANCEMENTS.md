@@ -1,5 +1,64 @@
 # MediEvil II enhancement workbench
 
+## Terrain redraw performance (2026-10-05)
+
+The extended radial capture submitted thousands of offscreen terrain polygons
+to every native and interpolated draw. Museum slot 1 contained 4,103 unique
+terrain polygons in 184 captured cells; the original funnel projected them
+before rejecting most of them. The additional guest instruction timing also
+reduced the game's native drawing cadence to about 21 frames per second.
+
+At the guarded terrain entry, Adaptive View now reads the actual GTE transform
+and the bounds of every polygon's authored vertices. It filters the capture
+indices before the original polygon renderer, removing duplicates in original
+first-occurrence order. It retains the original cell marks, source index lists,
+polygon flag ownership and cleanup, and uses a separate bounded index arena.
+No geometry, textures, world range or presentation settings are downgraded.
+
+The rejection test covers the previous/current camera transform pair and a
+rounding guard. The supported scaled camera path interpolates its matrices
+elementwise, so a polygon rejected by the same plane at both endpoints remains
+outside throughout the interpolation interval. Near-plane crossings survive;
+there is no new far-plane cutoff or ground-height assumption. Unknown data,
+projection/aspect changes, missing history, arena overflow and unsupported
+rotation interpolation retain the conservative capture. Transform history lives
+in guest RAM so save states and replay rollback restore it together with the
+capture records.
+
+Validation includes the terrain contract fixture, authored quad bounds,
+near-plane intersections, camera movement, deduplication and fallback tests.
+Museum movement and settling captures at 4:3, 16:9, 21:9 and 32:9 retain the
+doorway, tall walls and side views. The separate verification run completed
+213 render passes with zero state mismatches, aborts, watchdogs, VRAM leaks or
+span failures. This is bounded Museum coverage, not every-level qualification.
+
+Performance results are measured with the default visual enhancements enabled
+on a Ryzen 7 9800X3D / RTX 3080 Ti, OpenGL, 5x internal resolution and a 165 Hz
+display. Each sample loads the same Museum checkpoint, warms up, then measures
+12 seconds stationary and 12 seconds of movement. Presentation swaps can repeat
+a rendered image; they are reported separately from actual draw passes.
+
+| 16:9, Display target 165 Hz | Before, stationary / moving | After, stationary / moving |
+| --- | --- | --- |
+| Guest VBlanks per second | 59.93 / 59.99 | 60.00 / 59.86 |
+| Native draws per second | 21.45 / 20.69 | 30.00 / 29.93 |
+| Extra replay draws per second | 20.03 / 19.20 | 55.93 / 61.18 |
+| Presentation swaps per second | 95.59 / 87.72 | 118.84 / 118.64 |
+| 95th-percentile swap gap | 20 / 33 ms | 15 / 16 ms |
+
+The 60 target averaged 60.03 / 59.22 swaps per second; 32:9 with Display averaged
+119.21 / 114.72. Guest timing stayed approximately 59.94 Hz in those samples.
+
+These counters measure replay work, not distinct displayed poses. A subsequent
+image audit found identical base/intermediate images during camera movement;
+the replay framebuffer handoff is being corrected separately. This terrain
+change reduces CPU work but does not itself establish smooth motion.
+
+The selected Display/60/120/144/240/360 rate remains a target. Even after this
+optimization, high-refresh targets are not sustained throughout the measured
+scene. The scheduler retains its game-speed budget instead of forcing extra
+draws past the available host time.
+
 ## Simplified enhancement controls (2026-10-05)
 
 Adaptive View now has one behavior: fit the window with a 4:3 minimum,

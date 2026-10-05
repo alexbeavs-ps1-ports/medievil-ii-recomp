@@ -12,6 +12,7 @@
 enum {
     TERRAIN = 0x800F3B74u, CAPTURES = 0x80300000u,
     MARKED = 0x80310000u, META = 0x80315000u, POLYGONS = 0x80318000u,
+    VISIBLE_INDICES = 0x80328000u,
     PRIMITIVE0 = 0x80400000u, PRIMITIVE1 = 0x80500000u,
     /* The title's conservative 3x capture exceeds 8192 candidate polygons.
      * Dropping whole cells there can omit visible corridor edges. The index
@@ -22,13 +23,167 @@ enum {
 };
 _Static_assert(POLYGONS + POLYGON_CAPACITY * 4u <= PRIMITIVE0,
                "Candidate polygon pointers must not overlap primitive packets");
+_Static_assert(POLYGONS + POLYGON_CAPACITY * 4u <= VISIBLE_INDICES &&
+               VISIBLE_INDICES + POLYGON_CAPACITY * 2u <= PRIMITIVE0,
+               "Filtered indices must not overlap cleanup pointers or packets");
 static const unsigned distance_scale = 3;
+
+/* The radial capture deliberately includes cells behind the camera. Reject
+ * those only after the engine has installed the actual terrain transform.
+ * Use bounds of every authored vertex, never a tile's ground-plane footprint:
+ * walls and ceilings can extend well beyond their map cell. */
+typedef struct TerrainView { double r[9], t[3]; } TerrainView;
+
+static void read_view(TerrainView* view, const uint32_t words[8]) {
+    for (unsigned i = 0; i < 9; ++i)
+        view->r[i] = (int16_t)(words[i / 2] >> (16 * (i % 2))) / 4096.0;
+    for (unsigned i = 0; i < 3; ++i) view->t[i] = (int32_t)words[5 + i];
+}
+
+static int scaled_view(const TerrainView* view) {
+    /* The framework interpolates scaled matrices elementwise. Its rotation
+     * path accepts row lengths within 4% of one; stay outside that tolerance.
+     * Unknown/orthonormal camera paths retain the full radial capture. */
+    for (unsigned i = 0; i < 3; ++i) {
+        double length2 = 0;
+        for (unsigned j = 0; j < 3; ++j)
+            length2 += view->r[3 * i + j] * view->r[3 * i + j];
+        if (length2 > 1.05 * 1.05 || length2 < .95 * .95) return 1;
+    }
+    return 0;
+}
+
+static double bounds_support(const TerrainView* view, const double plane[3],
+                             const int16_t lo[3], const int16_t hi[3]) {
+    double support = 0;
+    for (unsigned i = 0; i < 3; ++i) support += plane[i] * view->t[i];
+    for (unsigned j = 0; j < 3; ++j) {
+        double normal = 0;
+        for (unsigned i = 0; i < 3; ++i) normal += plane[i] * view->r[3 * i + j];
+        support += normal * (normal < 0 ? lo[j] : hi[j]);
+    }
+    return support;
+}
+
+static int outside_views(const TerrainView views[2], const double planes[5][3],
+                         const int16_t lo[3], const int16_t hi[3]) {
+    for (unsigned p = 0; p < 5; ++p) {
+        /* Also cover fixed-point transform rounding and the interpolator's
+         * rounded coefficients (signed 16-bit world vertices). */
+        double tolerance = 64 * sqrt(planes[p][0] * planes[p][0] +
+            planes[p][1] * planes[p][1] + planes[p][2] * planes[p][2]);
+        if (bounds_support(&views[0], planes[p], lo, hi) < -tolerance &&
+            bounds_support(&views[1], planes[p], lo, hi) < -tolerance) return 1;
+    }
+    return 0;
+}
 
 typedef struct Candidate { uint32_t cell; uint64_t distance; } Candidate;
 static Candidate candidates[GRID * GRID];
 
 static int retail_ram(uint32_t p, uint32_t bytes) {
     return p >= 0x80010000u && p < 0x80200000u && bytes <= 0x80200000u - p;
+}
+
+static int cell_bounds(uint32_t indices, unsigned count, uint32_t polygons,
+                       uint32_t vertices, int16_t lo[3], int16_t hi[3]) {
+    if (!count || !retail_ram(indices, 2 * count)) return 0;
+    for (unsigned k = 0; k < 3; ++k) { lo[k] = INT16_MAX; hi[k] = INT16_MIN; }
+    for (unsigned i = 0; i < count; ++i) {
+        uint32_t polygon = polygons + 16u * psx_mod_read_half(indices + 2 * i);
+        if (!retail_ram(polygon, 16)) return 0;
+        unsigned corners = 3 + (psx_mod_read_word(polygon + 12) & 1);
+        for (unsigned j = 0; j < corners; ++j) {
+            uint32_t vertex = vertices + 8u * psx_mod_read_half(polygon + 2 * j);
+            if (!retail_ram(vertex, 8)) return 0;
+            for (unsigned k = 0; k < 3; ++k) {
+                int16_t coordinate = (int16_t)psx_mod_read_half(vertex + 2 * k);
+                if (coordinate < lo[k]) lo[k] = coordinate;
+                if (coordinate > hi[k]) hi[k] = coordinate;
+            }
+        }
+    }
+    return 1;
+}
+
+static void prune_terrain(CPUState* cpu) {
+    const uint32_t history = META + 64, magic = 0x31564354; /* TCV1 */
+    uint32_t geometry = cpu->gpr[4];
+    unsigned count = psx_mod_read_word(TERRAIN + 0x90);
+    if (!retail_ram(geometry, 0x18) || count > CAPACITY ||
+        count != psx_mod_read_word(META) ||
+        psx_mod_read_word(0x8007FA74u) != 0x3C058030u) return;
+    uint32_t polygons = psx_mod_read_word(geometry + 0x10);
+    uint32_t vertices = psx_mod_read_word(geometry + 0x14);
+    if (!retail_ram(polygons, 16) || !retail_ram(vertices, 8)) return;
+    unsigned width = psx_mod_display_width(), height = psx_mod_display_height();
+    int margin = psx_mod_widescreen_x_margin();
+    if (!width || !height || margin < 0) return;
+    uint32_t previous[8];
+    int valid = psx_mod_read_word(history) == magic &&
+        psx_mod_read_word(history + 4) == geometry &&
+        psx_mod_read_word(history + 48) == width &&
+        psx_mod_read_word(history + 52) == height &&
+        psx_mod_read_word(history + 56) == (uint32_t)margin;
+    for (unsigned i = 0; i < 3; ++i) {
+        valid &= psx_mod_read_word(history + 60 + 4 * i) == cpu->gte_ctrl[24 + i];
+        psx_mod_write_word(history + 60 + 4 * i, cpu->gte_ctrl[24 + i]);
+    }
+    for (unsigned i = 0; i < 8; ++i) {
+        previous[i] = psx_mod_read_word(history + 8 + 4 * i);
+        psx_mod_write_word(history + 8 + 4 * i, cpu->gte_ctrl[i]);
+    }
+    /* Guest-owned history is part of save states and the render-pass sandbox.
+     * A replay restores the same previous/current pair as the real draw. */
+    psx_mod_write_word(history, magic);
+    psx_mod_write_word(history + 4, geometry);
+    psx_mod_write_word(history + 48, width);
+    psx_mod_write_word(history + 52, height);
+    psx_mod_write_word(history + 56, (uint32_t)margin);
+    TerrainView views[2];
+    read_view(&views[0], previous); read_view(&views[1], cpu->gte_ctrl);
+    if (!valid || !scaled_view(&views[0]) || !scaled_view(&views[1])) return;
+    double h = cpu->gte_ctrl[26] & 0xFFFF;
+    double ox = (int32_t)cpu->gte_ctrl[24] / 65536.0;
+    double oy = (int32_t)cpu->gte_ctrl[25] / 65536.0;
+    if (!h) return;
+    const double planes[5][3] = {
+        {h, 0, ox + margin + 32}, {-h, 0, width + margin - ox + 32},
+        {0, h, oy + 32}, {0, -h, height - oy + 32}, {0, 0, 1}
+    };
+    unsigned total = 0;
+    for (unsigned i = 0; i < count; ++i) {
+        uint32_t entry = CAPTURES + 12 * i;
+        unsigned n = psx_mod_read_half(entry);
+        if (n > POLYGON_CAPACITY - total ||
+            (n && !retail_ram(psx_mod_read_word(entry + 8), n * 2))) return;
+        total += n;
+    }
+    uint32_t seen[65536 / 32] = {0};
+    unsigned rejected = 0, written = 0;
+    for (unsigned i = 0; i < count; ++i) {
+        uint32_t entry = CAPTURES + 12 * i;
+        uint32_t indices = psx_mod_read_word(entry + 8);
+        unsigned n = psx_mod_read_half(entry), first = written;
+        for (unsigned j = 0; j < n; ++j) {
+            unsigned id = psx_mod_read_half(indices + 2 * j);
+            uint32_t bit = 1u << (id & 31);
+            if (seen[id >> 5] & bit) continue;
+            seen[id >> 5] |= bit;
+            int16_t lo[3], hi[3];
+            if (cell_bounds(indices + 2 * j, 1, polygons, vertices, lo, hi) &&
+                outside_views(views, planes, lo, hi)) continue;
+            psx_mod_write_half(VISIBLE_INDICES + 2 * written++, (uint16_t)id);
+        }
+        /* Preserve the first occurrence and source order, as the stock
+         * polygon visited-bit funnel does. Source lists and flags stay intact;
+         * the renderer still owns polygon marking and cleanup. */
+        psx_mod_write_word(entry, written - first);
+        psx_mod_write_word(entry + 8, VISIBLE_INDICES + 2 * first);
+        rejected += written == first;
+    }
+    psx_mod_counter_add("medievil2.terrain.pruned_cells", rejected);
+    psx_mod_counter_add("medievil2.terrain.pruned_indices", total - written);
 }
 
 static int nearer(const void* a, const void* b) {
@@ -138,8 +293,9 @@ static void extend_distance(uint32_t vp) {
 }
 
 static void render(CPUState* cpu, uint32_t address) {
-    (void)cpu;
-    if (psx_mod_read_word(address) != 0x3C021F80u || !psx_mod_read_word(META + 16)) return;
+    if (psx_mod_read_word(address) != 0x3C021F80u) return;
+    prune_terrain(cpu);
+    if (!psx_mod_read_word(META + 16)) return;
     /* Terrain uses a previously staged viewport shift in scratchpad. Keep it
      * consistent with the unchanged OT capacity and the extended reach. */
     uint32_t vp = psx_mod_read_word(META + 20);

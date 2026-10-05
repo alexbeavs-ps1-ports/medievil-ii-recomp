@@ -24,7 +24,9 @@ void psx_mod_write_byte(uint32_t p, uint8_t value) { memory[offset(p, 1)] = valu
 void psx_mod_write_half(uint32_t p, uint16_t value) { memcpy(memory + offset(p, 2), &value, 2); }
 void psx_mod_write_word(uint32_t p, uint32_t value) { memcpy(memory + offset(p, 4), &value, 4); }
 uint32_t psx_mod_display_width(void) { return 512; }
+uint32_t psx_mod_display_height(void) { return 240; }
 int32_t psx_mod_widescreen_x_margin(void) { return 128; }
+void psx_mod_counter_add(const char* name, uint32_t value) { (void)name; (void)value; }
 int psx_mod_option_value(const char* package, const char* feature,
                          const char* option, char* out, uint32_t capacity) {
     (void)package; (void)feature; (void)option; (void)out; (void)capacity; return 0;
@@ -42,6 +44,100 @@ int psx_mod_register_function_filter_plugin(const char* id, uint32_t p,
     (void)id; (void)p; (void)callback; return 1;
 }
 #include "../src/mods/medievil2_terrain.c"
+
+static void reset_visibility_records(uint32_t indices) {
+    for (unsigned p = 0; p < 2; ++p) {
+        psx_mod_write_word(CAPTURES+12*p, 1);
+        psx_mod_write_word(CAPTURES+12*p+8, indices+2*p);
+    }
+}
+
+static void test_visibility(void) {
+    /* Scaled terrain view: all intermediate matrices use the same linear
+     * interpolation contract as the draw replay. */
+    TerrainView views[2] = {{{1.6,0,0, 0,1,0, 0,0,1}, {0,0,0}},
+                            {{1.6,0,0, 0,1,0, 0,0,1}, {0,0,0}}};
+    const double planes[5][3] = {
+        {300,0,416}, {-300,0,416}, {0,300,152}, {0,-300,152}, {0,0,1}
+    };
+    int16_t lo[3] = {-20,-20,-2000}, hi[3] = {20,20,-1000};
+    assert(scaled_view(&views[0]));
+    assert(outside_views(views, planes, lo, hi)); /* entirely behind */
+    hi[2] = 1000;
+    assert(!outside_views(views, planes, lo, hi)); /* crosses near plane */
+    lo[0] = 3500; hi[0] = 4500; lo[2] = 1000; hi[2] = 2000;
+    assert(outside_views(views, planes, lo, hi));
+    views[0].t[0] = -5000; /* visible earlier in the interpolated camera sweep */
+    assert(!outside_views(views, planes, lo, hi));
+    views[0].t[0] = 0;
+    lo[0] = -50; hi[0] = 50; lo[1] = -6000; hi[1] = -5000;
+    assert(outside_views(views, planes, lo, hi));
+    hi[1] = 500; /* tall wall enters the view although its top is far outside */
+    assert(!outside_views(views, planes, lo, hi));
+    views[0].r[0] = 1;
+    assert(!scaled_view(&views[0])); /* quaternion path must fall back */
+
+    CPUState cpu = {0};
+    const uint32_t geometry = 0x80050000, poly = 0x80051000;
+    const uint32_t vertex = 0x80052000, indices = 0x80053000;
+    psx_mod_write_word(geometry+0x10, poly); psx_mod_write_word(geometry+0x14, vertex);
+    psx_mod_write_half(indices, 0); psx_mod_write_half(indices+2, 1);
+    for (unsigned p = 0; p < 2; ++p) {
+        for (unsigned j = 0; j < 4; ++j) {
+            psx_mod_write_half(poly+16*p+2*j, 4*p+j);
+            psx_mod_write_half(vertex+8*(4*p+j), (j&1) ? 50 : -50);
+            psx_mod_write_half(vertex+8*(4*p+j)+2, (j&2) ? 50 : -50);
+            psx_mod_write_half(vertex+8*(4*p+j)+4, p ? 1000 : -1000);
+        }
+        psx_mod_write_word(poly+16*p+12, 1);
+        psx_mod_write_word(CAPTURES+12*p, 1);
+        psx_mod_write_word(CAPTURES+12*p+4, 0);
+        psx_mod_write_word(CAPTURES+12*p+8, indices+2*p);
+    }
+    /* Quad vertex 4 participates even when its other three corners are offscreen. */
+    psx_mod_write_half(vertex+24+4, 500);
+    assert(cell_bounds(indices, 1, poly, vertex, lo, hi) && hi[2] == 500);
+    psx_mod_write_half(vertex+24+4, -1000);
+    assert(!cell_bounds(0x801FFFFF, 1, poly, vertex, lo, hi));
+    psx_mod_write_word(META, 2); psx_mod_write_word(TERRAIN+0x90, 2);
+    psx_mod_write_word(0x8007FA74, 0x3C058030);
+    cpu.gpr[4] = geometry;
+    cpu.gte_ctrl[0] = 6554; cpu.gte_ctrl[2] = 4096; cpu.gte_ctrl[4] = 4096;
+    cpu.gte_ctrl[24] = 256u<<16; cpu.gte_ctrl[25] = 120u<<16; cpu.gte_ctrl[26] = 300;
+    psx_mod_write_word(META+64, 0);
+    prune_terrain(&cpu);
+    assert(psx_mod_read_word(CAPTURES) == 1); /* first frame has no history */
+    prune_terrain(&cpu);
+    assert(psx_mod_read_word(CAPTURES) == 0 && psx_mod_read_word(CAPTURES+12) == 1);
+    assert(psx_mod_read_word(CAPTURES+8) == VISIBLE_INDICES && psx_mod_read_word(META) == 2);
+    assert(psx_mod_read_half(VISIBLE_INDICES) == 1 && psx_mod_read_half(indices) == 0);
+    assert(psx_mod_read_word(poly+12) == 1); /* only capture counts are changed */
+    reset_visibility_records(indices);
+    cpu.gte_ctrl[26] = 400; /* projection change invalidates the history */
+    prune_terrain(&cpu);
+    assert(psx_mod_read_word(CAPTURES) == 1);
+    /* Translation sweep includes a formerly visible cell behind the new camera. */
+    cpu.gte_ctrl[7] = 3000;
+    reset_visibility_records(indices);
+    prune_terrain(&cpu);
+    assert(psx_mod_read_word(CAPTURES) == 1);
+    cpu.gte_ctrl[7] = 0;
+    reset_visibility_records(indices);
+    prune_terrain(&cpu);
+    assert(psx_mod_read_word(CAPTURES) == 1);
+    /* Repeated indices are emitted once in original first-occurrence order. */
+    reset_visibility_records(indices);
+    psx_mod_write_half(indices, 1);
+    prune_terrain(&cpu);
+    assert(psx_mod_read_word(CAPTURES) == 1 && psx_mod_read_word(CAPTURES+12) == 0);
+    assert(psx_mod_read_half(VISIBLE_INDICES) == 1 && psx_mod_read_half(indices+2) == 1);
+    reset_visibility_records(indices);
+    psx_mod_write_word(CAPTURES, POLYGON_CAPACITY);
+    prune_terrain(&cpu);
+    assert(psx_mod_read_word(CAPTURES) == POLYGON_CAPACITY);
+    assert(psx_mod_read_word(CAPTURES+8) == indices); /* arena overflow falls back */
+    puts("terrain visibility: authored bounds, near-plane crossing, camera sweep and fallback passed");
+}
 
 int main(void) {
     CPUState cpu = {0};
@@ -138,5 +234,6 @@ int main(void) {
     restore_distance();
     assert(psx_mod_read_word(TERRAIN+0x3C) == 1400u<<16);
     puts("terrain contract: conservative height, deduplication, budget, ownership, cleanup and fallback passed");
+    test_visibility();
     return 0;
 }
