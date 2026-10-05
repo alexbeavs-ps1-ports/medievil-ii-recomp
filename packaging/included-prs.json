@@ -1,6 +1,6 @@
 {
   "repository": "alexbeavs-ps1-ports/medievil-ii-recomp",
-  "enhancement_head": "239a77f5e46b3c4030bf63d0badf701c16dd1aaf",
+  "enhancement_head": "579e695babfe59bb01c44043ee09857515287953",
   "prs": [
     {
       "headRefOid": "7ab4107ecfe098212e17c3496c4997288283f15c",
@@ -66,5 +66,12 @@
       "tools/package_appimage.sh",
       "packaging/linux/AppRun"
     ]
-  }
+  },
+  "additional_commits": [
+    {
+      "commit": "579e695babfe59bb01c44043ee09857515287953",
+      "title": "Anchor status-panel HUD groups to the adaptive view edges",
+      "branch": "feat/medievil2-hud-anchoring"
+    }
+  ]
 }

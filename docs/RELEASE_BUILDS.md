@@ -1,9 +1,10 @@
 # Simulated enhancement releases
 
 Branch `release/medievil2-enhancements-20261005` combines all enhancement PRs
-#1–#11. `packaging/included-prs.json` records their exact heads and the Tomba
-packaging reference. The later framework pin supersedes the pin-only updates
-on PRs #1/#2; their feature changes and all subsequent fixes are retained.
+#1–#11 plus the final HUD anchoring update. `packaging/included-prs.json`
+records their exact heads, the HUD commit and the Tomba packaging reference.
+The later framework pin supersedes the pin-only updates on PRs #1/#2;
+their feature changes and all subsequent fixes are retained.
 This branch does not merge the upstream reviews or publish a tagged release.
 
 The player package follows Tomba's precompiled release layout. The executable
@@ -42,7 +43,7 @@ Windows packaging (use the full commit from `git rev-parse HEAD`):
 python tools/package_release.py --build-dir build-release --platform windows-x64 `
   --source-commit <full-commit> --stage dist/windows-stage `
   --objdump C:/msys64/mingw64/bin/objdump.exe `
-  --zip dist/MediEvilIIRecomp-v0.1.2-enhancements.20261005-windows-x64.zip
+  --zip dist/MediEvilIIRecomp-v0.1.2-enhancements.20261005.hud-windows-x64.zip
 ```
 
 The ZIP checks system-only DLL imports, native code/audit correspondence, the

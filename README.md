@@ -14,8 +14,9 @@ Static recompilation of **MediEvil II** built on
 
 MediEvil II recompiled for modern systems using psxrecomp.
 
-This branch consolidates enhancement PRs **#1–#11** into a simulated player
-release, `0.1.2-enhancements.20261005`. Windows ZIP and Linux x86-64 AppImage
+This branch consolidates enhancement PRs **#1–#11** and the final HUD anchoring
+update into a simulated player release, `0.1.2-enhancements.20261005.hud`.
+Windows ZIP and Linux x86-64 AppImage
 packages contain precompiled game/overlay code, OpenBIOS, recomp-ui box art
 and all bundled enhancements. Supply your USA disc and play; there is no
 compiler or Generate step. Resident assets are prepared from your disc on
