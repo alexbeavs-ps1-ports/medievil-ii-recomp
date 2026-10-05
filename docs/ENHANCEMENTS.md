@@ -252,6 +252,83 @@ roots merely because they resemble addresses. Level/cutscene coverage
 harvesting is tracked by `beads-eio.19.7` and will assess which additional
 producers the initial discoverer could have identified automatically.
 
+## Projector coverage sweep (2026-10-03)
+
+The expanded sweep reached all 22 level modules at observed heap placements:
+the previous title, Museum, Museum boss and Professor lab, plus Kensington,
+Freakshow, both Greenwich maps, Kew Gardens, Dankenstein, Iron Slugger, Wulfrun
+Hall, the Count, Whitechapel, Sewers, all three Time Machine maps, both
+Cathedral Spires maps, the Demon, and the second Kensington map. This is
+module-load and bounded arrival/input coverage, not a completed playthrough.
+Puzzle branches, every boss phase, every cutscene, and other allocation
+histories remain outside this receipt. `CREDITS.LVB` and `FLAG.LVB` were not
+reached by the level sweep.
+
+The profile now declares 29 original-disc images (seven engine views plus
+22 level modules). Generation publishes 75,043 guarded variants in 31 files,
+up from 40,284 variants for the initial four-module profile. All generated
+guards match their original inputs. The live copies of each new declared text
+range match the original relocated disc image exactly; mutable data outside
+text is not used as a native input. See [the source-only coverage receipt](../aot/coverage-projector.json).
+
+The rebuilt-native sweep passed all 18 new module samples: declared text
+matched the original, native dispatch was observed, and no module-address
+interpreter fallbacks or extra-pass aborts/watchdogs/VRAM leaks/span failures
+were recorded after the sewer callback correction. The correction changed
+only the sewer translation unit and dispatch table; the other generated
+module units were byte-identical to the swept build. The source receipt
+records per-module results and the targeted callback retest. This verifies
+these arrival/input samples, not a complete playthrough.
+
+A limited follow-up entered Kensington from the hub and used the stock
+Pause > Exit Level flow back to the Professor lab. Both loaded at their
+already declared addresses with exact original text and zero module
+interpreter fallbacks during the post-arrival samples. Death/retry and
+actual memory-card save/reload remain unqualified; further sampling was
+deferred when the owner requested upstream delivery.
+
+For repeatable QA, use a private runtime/save directory, enable the built-in
+Cheats menu, select Invulnerability and Open All Levels, finish the first
+Professor dialogue, and stand on the projector plate. Save a runtime checkpoint
+with Kensington selected. The [USA cheat reference](https://gamehacking.org/game/89269)
+documents the menu-enable byte at `0x800D36BD`; these are diagnostic changes,
+not enabled product defaults. Then, for example:
+
+```powershell
+python tools/harvest_projector_coverage.py --port 46421 --slot 0 --output analysis/native-coverage 0 1 2 level:26
+```
+
+Visible routes `0..12` advance from Kensington to the Demon. The stock
+projector filters out records whose flags contain bit `0x2`, even after Open
+All Levels. Routes `level:26..level:30` replace only the target byte of the
+selected Kensington row (`0x800E175A`, originally 18) with an existing hidden
+map id. The original selection, teardown, loader, and relocation code still
+run. No opcode patch or replacement asset is involved. The helper verifies
+the USA engine signature, selected row, and checkpoint completion, and refuses
+to overwrite a finished sample. Captures contain game data and belong only in
+ignored `analysis/` or a private external directory. Longer loading movies
+may require a larger `--arrival-frames` sample.
+
+Initial discovery can identify all counted containers and relocation streams
+before play; the shared discoverer now does that. Proven loader callback
+fields also expose initialization functions that have no stack prologue.
+The new profiles retain leading and trailing frameless functions, including
+instructions before a later stack decrement. A first/last-prologue heuristic
+would incorrectly exclude real code. The discoverer already supports those
+leaves; the fix here is accurate source boundaries and producer declarations.
+The sewer sweep also exposed a callback whose `LUI`/`LW` prefix appears
+before its stack decrement at the start of the text region. The generic
+prelude scan requires a preceding return, and the dense pointer-table scan
+requires adjacent callbacks; this entry has neither. Its original relocation
+field at image `+0x10D80` points to `+0x4F0`, and engine `0x8004471C` calls it.
+Declaring that callback field supplies the true entry without guessing or
+using captured RAM as a producer. Relocation-backed callback discovery could
+recover this case earlier; that broader inference remains future work.
+
+The remaining structural limitation is that native overlay code is tied to
+verified load addresses. Relocation-independent native overlays would avoid
+declaring unseen heap placements, but are not implemented by this change.
+
 ## Validation and remaining qualification
 
 The latest GCC diagnostic executable cold-restored a newly captured lab state
@@ -306,3 +383,19 @@ and mod choices, sustained target throughput, audio, saves, later levels and
 exact release packages still require qualification. These findings are tracked
 under the central game epic `beads-eio.19`; the intro/masks/HUD task is
 `beads-eio.19.4`. This workbench is not a new release qualification receipt.
+
+## Upstream review series
+
+Review game PRs [1](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/pull/1),
+[2](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/pull/2) and
+[3](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/pull/3) in that order.
+The shared framework changes are stacked as
+[485](https://github.com/RetroPortingToolKit/psxrecomp/pull/485),
+[486](https://github.com/RetroPortingToolKit/psxrecomp/pull/486),
+[498](https://github.com/RetroPortingToolKit/psxrecomp/pull/498),
+[499](https://github.com/RetroPortingToolKit/psxrecomp/pull/499),
+[500](https://github.com/RetroPortingToolKit/psxrecomp/pull/500) and
+[501](https://github.com/RetroPortingToolKit/psxrecomp/pull/501).
+The game now pins the merged canonical master recorded above, including newer
+upstream PGXP session and projection behavior.
+The bounded coverage and remaining qualification limits above still apply.
