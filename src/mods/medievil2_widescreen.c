@@ -1,11 +1,13 @@
 #include "mod_plugins.h"
 #include <stdio.h>
 #include <stdlib.h>
+void medievil2_screen_layout_reset(void);
 
 /* The framework renderer recovers precise horizontal projection from packet
  * provenance. Guest GTE registers, gameplay and FMV proportions stay original.
  * Game-owned terrain and culling adapters are bound separately by byte guards. */
 static void activate(void) {
+    medievil2_screen_layout_reset();
     if (!psx_mod_set_main_ram_8mb(1)) {
         fprintf(stderr, "MediEvil II: expanded render memory unavailable\n");
         abort();

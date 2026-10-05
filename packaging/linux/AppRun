@@ -1,0 +1,43 @@
+#!/bin/sh
+set -eu
+: "${APPDIR:?Launch through the AppImage runtime}"
+data_dir=${MEDIEVIL_II_RECOMP_DATA_DIR:-${XDG_DATA_HOME:-${HOME:?HOME is unset}/.local/share}/MediEvilIIRecomp}
+payload=$APPDIR/usr/share/medievil2recomp
+runtime=$APPDIR/usr/bin/MediEvilIIRecomp
+test -x "$runtime" && test -f "$payload/game.toml"
+mkdir -p "$data_dir" "$data_dir/saves" "$data_dir/cache" "$data_dir/mods/bundled"
+
+# Refresh only release-owned files. User settings, cards, installed packages
+# and generated disc data are deliberately outside these copied trees.
+for tree in assets bios licenses docs; do
+    mkdir -p "$data_dir/$tree"
+    cp -a "$payload/$tree/." "$data_dir/$tree/"
+    chmod -R u+rwX "$data_dir/$tree"
+done
+cp -a "$payload/mods/bundled/." "$data_dir/mods/bundled/"
+chmod -R u+rwX "$data_dir/mods/bundled"
+for file in game.toml game_options.toml VERSION LICENSE THIRD_PARTY_NOTICES.md README.md RELEASE_NOTES.md START_HERE.txt INCLUDED_PRS.json RELEASE_MANIFEST.json; do
+    cp -f "$payload/$file" "$data_dir/$file"
+    chmod u+rw "$data_dir/$file"
+done
+if [ ! -f "$data_dir/input.ini" ]; then
+    cp "$payload/input.ini" "$data_dir/input.ini"
+    chmod u+rw "$data_dir/input.ini"
+fi
+if [ "${MEDIEVIL_II_RECOMP_SEED_ONLY:-0}" = 1 ]; then
+    printf '%s\n' "$data_dir"
+    exit 0
+fi
+
+# The runtime anchors writable paths to argv[0]. Follow Tomba's data-directory
+# symlink approach, keeping the mounted payload read-only.
+launcher=$data_dir/.MediEvilIIRecomp-runtime
+ln -sfn "$runtime" "$launcher"
+export MEDIEVIL_II_RECOMP_APPIMAGE_PATH=${APPIMAGE:-}
+unset APPIMAGE
+export PATH="$APPDIR/usr/bin${PATH:+:$PATH}"
+export XDG_DATA_DIRS="$APPDIR/usr/share${XDG_DATA_DIRS:+:$XDG_DATA_DIRS}"
+# Keep bundled libraries out of host Browse-dialog subprocesses.
+export RECOMP_HOST_LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-}
+cd "$data_dir"
+exec "$launcher" --game "$data_dir/game.toml" "$@"

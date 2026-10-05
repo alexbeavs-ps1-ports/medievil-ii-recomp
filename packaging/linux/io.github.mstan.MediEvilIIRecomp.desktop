@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=MediEvil II Recompiled
+Exec=MediEvilIIRecomp
+Icon=io.github.mstan.MediEvilIIRecomp
+Categories=Game;
+Terminal=false

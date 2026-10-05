@@ -14,6 +14,20 @@ Static recompilation of **MediEvil II** built on
 
 MediEvil II recompiled for modern systems using psxrecomp.
 
+This branch consolidates enhancement PRs **#1–#11** and the final HUD anchoring
+update for the `0.2.0-alpha` player release.
+Windows ZIP and Linux x86-64 AppImage
+packages contain precompiled game/overlay code, OpenBIOS, recomp-ui box art
+and all bundled enhancements. Supply your USA disc and play; there is no
+compiler or Generate step. Resident assets are prepared from your disc on
+first run. No disc, decoded assets or user saves are distributed.
+
+See [release build instructions](docs/RELEASE_BUILDS.md) and the packaged
+`START_HERE.txt`. Each package records its source/pins and file hashes.
+The release scripts produce Windows and Linux player packages from an audited
+checkout. Linux requires glibc 2.39 or newer (for example, Ubuntu 24.04);
+testing so far is under WSL, with native Linux hardware qualification pending.
+
 The enhancement workbench uses OpenBIOS, skips its startup shell, and enables
 higher internal resolution, PGXP precision, adaptive world rendering and
 display-rate presentation by default. It also supplies game-specific terrain
@@ -31,6 +45,7 @@ locally, so opening the launcher does not need an image download.
 | PGXP | Geometry, perspective textures and CPU propagation enabled |
 | World view | Automatically fit the window, with a 4:3 minimum |
 | Cutscene layout | Full-width letterbox bars; centered subtitles retain their original proportions |
+| Gameplay HUD | Weapon/ammo groups anchor left and money/chalice groups anchor right; health and centered messages stay centered |
 | Terrain distance | Extended to 3x as part of Adaptive View |
 | Terrain subdivision | Bypassed as part of Adaptive View |
 | World texture filtering | Stable filtering enabled; text and HUD sprites stay sharp |
@@ -54,6 +69,12 @@ Cutscene bars keep their full adaptive width during interpolated drawing,
 including the Museum intro flashes. Normal frames and render passes retain
 separate mask/subtitle submission metadata; subtitle proportions and authored
 bar heights are preserved. See [the replay validation](docs/ENHANCEMENTS.md#cutscene-mask-replay-fix-2026-10-04).
+
+Adaptive View also anchors the status-panel HUD to the visible edges. Icons
+and their numbers move together without stretching, while the central health
+bar keeps its original alignment. This is enabled with Adaptive View and
+needs no additional switch. The game retains its original HUD fade timing.
+See [HUD ownership and validation](docs/ENHANCEMENTS.md#gameplay-hud-anchoring-2026-10-05).
 
 Presentation interpolates camera/model transforms and replays game drawing
 while retaining the original game timing. Adaptive View and World Texture
