@@ -16,7 +16,7 @@ for tree in assets bios licenses docs; do
 done
 cp -a "$payload/mods/bundled/." "$data_dir/mods/bundled/"
 chmod -R u+rwX "$data_dir/mods/bundled"
-for file in game.toml game_options.toml VERSION LICENSE THIRD_PARTY_NOTICES.md README.md START_HERE.txt INCLUDED_PRS.json RELEASE_MANIFEST.json; do
+for file in game.toml game_options.toml VERSION LICENSE THIRD_PARTY_NOTICES.md README.md RELEASE_NOTES.md START_HERE.txt INCLUDED_PRS.json RELEASE_MANIFEST.json; do
     cp -f "$payload/$file" "$data_dir/$file"
     chmod u+rw "$data_dir/$file"
 done

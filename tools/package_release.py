@@ -87,6 +87,7 @@ def main():
     parser.add_argument('--platform', choices=['windows-x64', 'linux-x64'], required=True)
     parser.add_argument('--stage', type=Path, required=True, help='New empty staging directory')
     parser.add_argument('--source-commit', required=True, help='Commit of this exact source checkout')
+    parser.add_argument('--release', action='store_true', help='Stage public-release metadata (does not upload)')
     parser.add_argument('--zip', type=Path)
     parser.add_argument('--objdump', default='objdump')
     args = parser.parse_args()
@@ -103,7 +104,7 @@ def main():
     for name in ['assets', 'bios']:
         shutil.copytree(build/name, stage/name)
     shutil.copytree(build/'mods/bundled', stage/'mods/bundled')
-    for name in ['game.toml', 'game_options.toml', 'VERSION', 'README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md']:
+    for name in ['game.toml', 'game_options.toml', 'VERSION', 'README.md', 'RELEASE_NOTES.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md']:
         shutil.copy2(ROOT/name, stage/name)
     for name in ['START_HERE.txt', 'input.ini']:
         shutil.copy2(ROOT/'packaging/release'/name, stage/name)
@@ -117,7 +118,7 @@ def main():
     pins = tomllib.loads((ROOT/'project-manifest.toml').read_text(encoding='utf-8'))['framework']
     manifest = dict(version=version, platform=args.platform, source_commit=args.source_commit,
                     framework_commit=pins['commit'], recomp_ui_commit=pins['recomp_ui_commit'],
-                    simulated_release=True, debug_tools=False, setup_wizard=False,
+                    simulated_release=not args.release, debug_tools=False, setup_wizard=False,
                     bios_backends=['OpenBIOS'],
                     native_variants=audit['published_variants'], native_images=audit['recipe_count'],
                     full_static_coverage_proven=audit['full_static_coverage_proven'],

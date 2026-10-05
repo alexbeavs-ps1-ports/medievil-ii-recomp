@@ -1,4 +1,4 @@
-MediEvil II Recompiled - enhancement preview
+MediEvil II Recompiled - 0.2.0-alpha
 
 Windows: extract the whole ZIP, then run MediEvilIIRecomp.exe.
 Linux: make the AppImage executable, then run it. Without FUSE, use
@@ -27,7 +27,7 @@ MEDIEVIL_II_RECOMP_DATA_DIR to override it. Linux AppImage updates preserve
 your settings, memory cards and installed mods. Resident decoded assets
 use the system user cache directory.
 
-This is a simulated release candidate, not an upstream public release.
+This is an alpha player build.
 All 11 preceding enhancement PRs and the final HUD update are consolidated;
 see INCLUDED_PRS.json and
 RELEASE_MANIFEST.json for source revisions and file hashes. Original-disc
@@ -35,5 +35,5 @@ native code is compiled into the executable; unknown heap placements keep
 the runtime fallback. Full-game coverage and sustained high-refresh output
 remain unqualified. See docs/ENHANCEMENTS.md for measured limitations.
 
-Linux qualification is limited to the recorded WSL environment. The build
-manifest records its glibc version; an AppImage does not bundle glibc.
+Linux requires glibc 2.39 or newer (for example Ubuntu 24.04). Qualification
+is limited to WSL so far. The AppImage does not bundle glibc.

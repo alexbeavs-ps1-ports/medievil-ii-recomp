@@ -1,11 +1,14 @@
-# Simulated enhancement releases
+# Player releases
 
 Branch `release/medievil2-enhancements-20261005` combines all enhancement PRs
 #1–#11 plus the final HUD anchoring update. `packaging/included-prs.json`
 records their exact heads, the HUD commit and the Tomba packaging reference.
 The later framework pin supersedes the pin-only updates on PRs #1/#2;
 their feature changes and all subsequent fixes are retained.
-This branch does not merge the upstream reviews or publish a tagged release.
+The local packagers are the release entry points, following Tomba. They build
+precompiled player packages; no disc data or credentials are needed in CI.
+The obsolete setup-host publishing workflow has been retired so pushing a
+version tag cannot publish packages requiring players to generate code.
 
 The player package follows Tomba's precompiled release layout. The executable
 contains the audited original engine, its enhanced variant and known relocated
@@ -41,9 +44,9 @@ Windows packaging (use the full commit from `git rev-parse HEAD`):
 
 ```powershell
 python tools/package_release.py --build-dir build-release --platform windows-x64 `
-  --source-commit <full-commit> --stage dist/windows-stage `
+  --source-commit <full-commit> --release --stage dist/windows-stage `
   --objdump C:/msys64/mingw64/bin/objdump.exe `
-  --zip dist/MediEvilIIRecomp-v0.1.2-enhancements.20261005.hud-windows-x64.zip
+  --zip dist/MediEvilIIRecomp-v0.2.0-alpha-windows-x64.zip
 ```
 
 The ZIP checks system-only DLL imports, native code/audit correspondence, the
@@ -54,7 +57,7 @@ Linux packaging needs ImageMagick, patchelf, curl and the usual ELF inspection
 tools. It downloads checksum-pinned linuxdeploy/appimagetool releases:
 
 ```sh
-SOURCE_COMMIT=$(git rev-parse HEAD) BUILD_DIR="$PWD/build-release" \
+SOURCE_COMMIT=$(git rev-parse HEAD) PUBLIC_RELEASE=1 BUILD_DIR="$PWD/build-release" \
   sh tools/package_appimage.sh
 ```
 
@@ -65,9 +68,19 @@ data under `$XDG_DATA_HOME/MediEvilIIRecomp` (default
 resources while preserving settings, installed mods and saves. Bundled library
 paths are not exported into host Browse-dialog processes.
 
-Build flags disable the developer setup wizard and debug tooling. The older
-`.github/workflows/release.yml` remains a separate, explicitly enabled setup-host
-workflow; it is not used to make these player artifacts. Do not use it to
-publish this simulated release. Native Linux/Steam Deck and whole-game testing
-remain separate qualification work. The manifest records the Linux build's
-glibc version; AppImage packaging does not lower that system requirement.
+Build flags disable the developer setup wizard and debug tooling. Omit
+`--release` / `PUBLIC_RELEASE=1` for a local simulated release; neither mode
+uploads anything. The manifest records source, pins, version and payload hashes.
+Native Linux/Steam Deck and whole-game testing remain separate qualification
+work. Current Linux builds require glibc 2.39 or newer (Ubuntu 24.04, for example);
+AppImage packaging does not lower that requirement.
+
+For publication, merge the reviewed enhancement PRs in order with merge commits,
+then build and package the resulting `main` revision with `VERSION=0.2.0-alpha`.
+Verify all prior PR heads are ancestors, regenerate native code after hook/config
+changes, run the game contract suites, and smoke-test the extracted artifacts.
+Both package manifests must name that same merged revision and bare version.
+Create `v0.2.0-alpha` at that revision, then publish a GitHub prerelease with the
+Windows ZIP, Linux AppImage, their SHA-256 sidecars and `RELEASE_NOTES.md`.
+Keep the existing stable release as the Latest stable release. Publication is
+an explicit maintainer step; the packaging scripts never push tags or upload.

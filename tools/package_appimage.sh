@@ -10,8 +10,10 @@ tools_dir=${APPIMAGE_TOOLS_DIR:-$build_dir/appimage-tools}
 mkdir -p "$build_dir" "$tools_dir" "$(dirname -- "$output")"
 appdir=$(mktemp -d "$build_dir/AppDir.XXXXXX")
 payload=$appdir/usr/share/medievil2recomp
+set --
+if [ "${PUBLIC_RELEASE:-0}" = 1 ]; then set -- --release; fi
 python3 "$root/tools/package_release.py" --build-dir "$build_dir" --platform linux-x64 \
-    --stage "$payload" --source-commit "$SOURCE_COMMIT"
+    --stage "$payload" --source-commit "$SOURCE_COMMIT" "$@"
 mkdir -p "$appdir/usr/bin"
 mv "$payload/MediEvilIIRecomp" "$appdir/usr/bin/MediEvilIIRecomp"
 install -m 0755 "$root/packaging/linux/AppRun" "$appdir/AppRun"

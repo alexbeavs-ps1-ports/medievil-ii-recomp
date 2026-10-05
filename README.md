@@ -15,7 +15,7 @@ Static recompilation of **MediEvil II** built on
 MediEvil II recompiled for modern systems using psxrecomp.
 
 This branch consolidates enhancement PRs **#1–#11** and the final HUD anchoring
-update into a simulated player release, `0.1.2-enhancements.20261005.hud`.
+update for the `0.2.0-alpha` player release.
 Windows ZIP and Linux x86-64 AppImage
 packages contain precompiled game/overlay code, OpenBIOS, recomp-ui box art
 and all bundled enhancements. Supply your USA disc and play; there is no
@@ -24,8 +24,9 @@ first run. No disc, decoded assets or user saves are distributed.
 
 See [release build instructions](docs/RELEASE_BUILDS.md) and the packaged
 `START_HERE.txt`. Each package records its source/pins and file hashes.
-These are local release simulations; the upstream PRs remain unmerged.
-Linux testing is limited to WSL, not native Linux hardware qualification.
+The release scripts produce Windows and Linux player packages from an audited
+checkout. Linux requires glibc 2.39 or newer (for example, Ubuntu 24.04);
+testing so far is under WSL, with native Linux hardware qualification pending.
 
 The enhancement workbench uses OpenBIOS, skips its startup shell, and enables
 higher internal resolution, PGXP precision, adaptive world rendering and
