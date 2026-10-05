@@ -69,6 +69,8 @@ def check_payload(stage):
             raise ValueError(f'User configuration must not be packaged: {rel}')
     if (stage/allowed_bin).stat().st_size != 524288:
         raise ValueError('Missing or invalid bundled OpenBIOS')
+    if sha(stage/'assets/img/boxart.tga') != sha(ROOT/'launcher_assets/img/boxart.tga'):
+        raise ValueError('Launcher cover does not match the release source')
     manifests = list((stage/'mods/bundled').rglob('manifest.toml'))
     ids = sorted(tomllib.loads(p.read_text(encoding='utf-8-sig'))['id'] for p in manifests)
     expected = ['medievil2.enhancement.frame-rate', 'medievil2.enhancement.seamless-loading',
@@ -121,7 +123,7 @@ def main():
     if args.platform == 'windows-x64':
         imports = re.findall(r'DLL Name:\s*(\S+)', subprocess.check_output(
             [args.objdump, '-p', str(binary)], text=True))
-        system = set('kernel32 user32 gdi32 shell32 msvcrt advapi32 ws2_32 comdlg32 dbghelp ole32 oleaut32 winmm imm32 version setupapi dinput8 rpcrt4 hid cfgmgr32 opengl32 d2d1 dwrite ucrtbase bcrypt crypt32 wintrust shlwapi'.split())
+        system = set('kernel32 user32 gdi32 shell32 msvcrt advapi32 ws2_32 comdlg32 dbghelp ole32 oleaut32 winmm imm32 version setupapi dinput8 rpcrt4 hid cfgmgr32 opengl32 d2d1 dwrite ucrtbase bcrypt crypt32 wintrust shlwapi iphlpapi'.split())
         unexpected = [d for d in imports if d.lower().removesuffix('.dll') not in system and not d.lower().startswith('api-ms-win-')]
         if not imports or unexpected:
             raise ValueError(f'Windows binary is not self-contained: {unexpected}')
