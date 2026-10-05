@@ -1,5 +1,42 @@
 # MediEvil II enhancement workbench
 
+## Cutscene mask replay fix (2026-10-04)
+
+The Museum intro could alternate between full-width letterbox bars and bars
+limited to the original 4:3 footprint. The engine allocates its live bars before
+the Swap callback starts interpolated draws, but submits their ordering table
+after those draws. A shared pending list let the first replay consume the live
+packet ownership records while RAM held different replay allocations. The live
+DrawOTag then received no records. Exact packet guards prevented most unrelated
+packets from being tagged, but could not recover the missing live ownership.
+
+The adapter now keeps separate live and render-pass lists for bars, iris masks
+and centered subtitle glyphs. Each replay starts with an empty pass list at
+the existing guarded draw-section instruction. Submission consumes only its
+own list, including on a failed function guard. Native packet coordinates,
+ordering-table links, text sizes and bar animation remain unchanged. The
+public framework pin is unchanged; this fix belongs to the game adapter.
+
+Validation used an isolated Museum intro checkpoint with OpenBIOS, OpenGL,
+5x internal scale, PGXP, stable filtering and Display interpolation enabled.
+The regression fixture fails against the previous adapter when the restored
+live bars receive no tags, and passes after the fix. It also covers a second
+interpolation phase, aborted submission, and a live subtitle address containing
+different bytes inside the pass. All three game contract fixtures pass.
+
+Actual render-pass dumps contain 40 guest/intermediate images across 16:9,
+21:9 and 32:9. All 120 full-band pixel checks pass through the Museum flash:
+the top bar and both bottom reveal margins stay black while the scene remains
+visible in the opening. The canonical 4:3 check preserves the producer's
+26-line top and 52-line bottom bars. The isolated run completed 491 sandbox
+comparisons with zero mismatches, render-pass watchdogs or span failures.
+The diagnostic starvation timeout was extended while writing the large PNGs;
+these captures are correctness evidence, not frame-rate measurements.
+
+Coverage is limited to these intro captures and the producer contracts.
+Broader circular-fade and gameplay HUD qualification remains open, as does
+the newly reported Museum doorway geometry wobble.
+
 Current framework: canonical upstream `master` at `a916ed52e00f364a8615b97cd597858aa7f385dc`
 (tree `7293a6e386ffdcf81ac74adc6d26a5505f7319d0`). The shared PRs 485, 486 and 498-501
 are merged. The combined framework passed the bounded MMX6, Tomba, Tomba 2

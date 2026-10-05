@@ -8,6 +8,7 @@
 #include "cpu_state.h"
 static uint8_t ram[0x800000], scratch[1024];
 static unsigned panels, radial, centred_text;
+int g_psx_render_pass_active;
 static float observed_scale;
 static uint8_t *at(uint32_t a) {
     if (a>=0x1F800000u && a<0x1F800400u) return scratch+a-0x1F800000u;
@@ -30,6 +31,8 @@ void psx_mod_anchor_hud_primitive(uint32_t p,int anchor) {
 }
 int psx_mod_register_function_entry_plugin(const char *id,uint32_t a,
     PSXModFunctionEntryCallback cb) { (void)id; (void)a; (void)cb; return 1; }
+int psx_mod_register_instruction_plugin(const char *id,uint32_t a,uint32_t expected,
+    PSXModFunctionEntryCallback cb) { (void)id; (void)a; (void)expected; (void)cb; return 1; }
 #include "../src/mods/medievil2_screen_layout.c"
 static void guard(uint32_t a,uint32_t x,uint32_t y) { word(a,x); word(a+4,y); }
 static void f4(uint32_t p) { word(p,5u<<24); word(p+4,0x28000000u); }
@@ -48,6 +51,40 @@ int main(void) {
     submit(&cpu,0x800A4C50u);
     assert(panels==2 && !memcmp(&cpu,&before,sizeof cpu));
     submit(&cpu,0x800A4C50u); assert(panels==2);
+    /* Swap replays drawing before the live OT is submitted. The sandbox
+     * reuses RAM but allocates its bars elsewhere; a pass must not consume
+     * or tag the live frame's packets while those bytes contain world data. */
+    prepare_bars(&cpu,0x8001A2E4u);
+    g_psx_render_pass_active=1;
+    begin_draw(&cpu,0x80050044u);
+    word(SCRATCH_CURSOR,p+0x1000);
+    word(p+4,0x3C262626u); word(p+28,0x3C262626u);
+    prepare_bars(&cpu,0x8001A2E4u);
+    f4(p+0x1000); f4(p+0x1018);
+    submit(&cpu,0x800A4C50u); assert(panels==4);
+    /* Another interpolation phase starts with an empty pass list. */
+    begin_draw(&cpu,0x80050044u);
+    prepare_bars(&cpu,0x8001A2E4u);
+    submit(&cpu,0x800A4C50u); assert(panels==6);
+    g_psx_render_pass_active=0;
+    word(SCRATCH_CURSOR,p); f4(p); f4(p+24);
+    submit(&cpu,0x800A4C50u); assert(panels==8);
+    /* An aborted pass and a changed submit function also leave live
+     * allocations pending, and the next pass drops its aborted list. */
+    prepare_bars(&cpu,0x8001A2E4u);
+    g_psx_render_pass_active=1;
+    begin_draw(&cpu,0x80050044u);
+    prepare_bars(&cpu,0x8001A2E4u);
+    word(0x800A4C50u,0);
+    submit(&cpu,0x800A4C50u); assert(panels==8);
+    prepare_bars(&cpu,0x8001A2E4u);
+    begin_draw(&cpu,0x80050044u);
+    guard(0x800A4C50u,0x3C030400u,0x3C02800Fu);
+    submit(&cpu,0x800A4C50u); assert(panels==8);
+    g_psx_render_pass_active=0;
+    begin_draw(&cpu,0x80050044u);
+    submit(&cpu,0x800A4C50u); assert(panels==10);
+    panels=2;
     /* Fully open bars, short arena, and a changed producer are all inert. */
     half(0x80100000u,240); half(0x80100002u,240);
     prepare_bars(&cpu,0x8001A2E4u); submit(&cpu,0x800A4C50u); assert(panels==2);
@@ -90,5 +127,16 @@ int main(void) {
     word(SCRATCH_END,p+24);
     prepare_subtitle_glyph(&cpu,0x8009F7F0u);
     submit(&cpu,0x800A4C50u); assert(centred_text==2);
+    /* A live subtitle has the same ownership rule as a bar. The pass may
+     * overwrite its RAM address; only the restored live glyph is anchored. */
+    word(SCRATCH_END,p+0x100000u);
+    prepare_subtitle_glyph(&cpu,0x8009F7F0u);
+    g_psx_render_pass_active=1;
+    begin_draw(&cpu,0x80050044u);
+    word(p+8,0x28000000u);
+    submit(&cpu,0x800A4C50u); assert(centred_text==2);
+    g_psx_render_pass_active=0;
+    word(p+8,0x64808080u);
+    submit(&cpu,0x800A4C50u); assert(centred_text==3);
     return 0;
 }

@@ -1,17 +1,28 @@
 #include "mod_plugins.h"
 #include "cpu_state.h"
+#include "psx_cycle_freeze.h"
 #include <math.h>
 
 /* SCUS-94564 MED2.EXE owns the bar and iris packet producers. Record their
  * bounded allocations on entry, then tag completed packets immediately before
  * DrawOTag submits them. Nothing is inferred from a world packet's position.
- * Pending host metadata is consumed by submission; renderer tags are word
- * guarded and transient across reset/load. A missing tag leaves native layout. */
+ * Live and replay submissions own separate pending lists: replay runs inside
+ * Swap before the live DrawOTag, with different packet allocations. Consuming
+ * its caller's list there would leave the live bars untagged. Renderer tags
+ * are word guarded and transient across reset/load. A missing tag leaves native layout. */
 enum { SCRATCH_CURSOR=0x1F80006Cu, SCRATCH_END=0x1F800070u,
        PENDING_CAPACITY=512u, PANEL=1, IRIS=2, CENTRED_TEXT=3 };
 typedef struct PendingMask { uint32_t packet; unsigned kind; } PendingMask;
-static PendingMask pending[PENDING_CAPACITY];
-static unsigned pending_count;
+static PendingMask pending[2][PENDING_CAPACITY];
+static unsigned pending_count[2];
+
+static void begin_draw(CPUState *cpu, uint32_t address) {
+    (void)cpu; (void)address;
+    /* Each sandbox starts again from the section-entry RAM. Do not carry
+     * allocations from a previous pass, even if its submission was aborted.
+     * The live list may already contain masks and must remain untouched. */
+    if (g_psx_render_pass_active) pending_count[1]=0;
+}
 
 static int guarded(uint32_t p, uint32_t a, uint32_t b) {
     return psx_mod_read_word(p)==a && psx_mod_read_word(p+4)==b;
@@ -23,8 +34,9 @@ static uint32_t allocation(uint32_t bytes) {
     return p;
 }
 static void remember(uint32_t packet, unsigned kind) {
-    if (pending_count<PENDING_CAPACITY)
-        pending[pending_count++]=(PendingMask){packet,kind};
+    unsigned pass=g_psx_render_pass_active!=0;
+    if (pending_count[pass]<PENDING_CAPACITY)
+        pending[pass][pending_count[pass]++]=(PendingMask){packet,kind};
 }
 static void prepare_bars(CPUState *cpu, uint32_t address) {
     (void)cpu;
@@ -58,7 +70,8 @@ static void prepare_subtitle_glyph(CPUState *cpu, uint32_t address) {
 }
 static void submit(CPUState *cpu, uint32_t address) {
     (void)cpu;
-    if (!guarded(address,0x3C030400u,0x3C02800Fu)) { pending_count=0; return; }
+    unsigned pass=g_psx_render_pass_active!=0;
+    if (!guarded(address,0x3C030400u,0x3C02800Fu)) { pending_count[pass]=0; return; }
     unsigned width=psx_mod_display_width(), height=psx_mod_display_height();
     int margin=psx_mod_widescreen_view_x_margin();
     /* This producer uses X radius R and Y radius R/2. Scale both rings
@@ -66,13 +79,13 @@ static void submit(CPUState *cpu, uint32_t address) {
     double radius=hypot(width*.5,height);
     float scale=width && height && margin>0 && radius>0 ?
         (float)(hypot(width*.5+margin,height)/radius) : 1.f;
-    for (unsigned i=0; i<pending_count; ++i) {
-        uint32_t p=pending[i].packet, tag=psx_mod_read_word(p),
+    for (unsigned i=0; i<pending_count[pass]; ++i) {
+        uint32_t p=pending[pass][i].packet, tag=psx_mod_read_word(p),
                  command=psx_mod_read_word(p+4);
-        if (pending[i].kind==PANEL) {
+        if (pending[pass][i].kind==PANEL) {
             if ((tag>>24)==5 && command==0x28000000u)
                 psx_mod_tag_screen_mask_quad(p);
-        } else if (pending[i].kind==CENTRED_TEXT) {
+        } else if (pending[pass][i].kind==CENTRED_TEXT) {
             if ((command>>24)==0x64u)
                 psx_mod_anchor_hud_primitive(p,0);
         } else if (((tag>>24)==5 && command==0x28000000u) ||
@@ -80,10 +93,11 @@ static void submit(CPUState *cpu, uint32_t address) {
             psx_mod_tag_radial_screen_mask_quad(p,scale);
         }
     }
-    pending_count=0;
+    pending_count[pass]=0;
 }
 PSX_MOD_CONSTRUCTOR(medievil2_register_screen_layout) {
     const char *plugin="medievil2.widescreen";
+    (void)psx_mod_register_instruction_plugin(plugin,0x80050044u,0x0C026E80u,begin_draw);
     (void)psx_mod_register_function_entry_plugin(plugin,0x8001A2E4u,prepare_bars);
     (void)psx_mod_register_function_entry_plugin(plugin,0x800456F8u,prepare_iris);
     (void)psx_mod_register_function_entry_plugin(plugin,0x800A4C50u,submit);
