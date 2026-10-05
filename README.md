@@ -33,6 +33,11 @@ for the exact source pins, evidence and known limitations.
 | Presentation rate | Display; 60, 120, 144, 240 and 360 also available |
 | Resident loading | On; preloaded archive/level files and predecoded PP20 assets |
 
+Cutscene bars keep their full adaptive width during interpolated drawing,
+including the Museum intro flashes. Normal frames and render passes retain
+separate mask/subtitle submission metadata; subtitle proportions and authored
+bar heights are preserved. See [the replay validation](docs/ENHANCEMENTS.md#cutscene-mask-replay-fix-2026-10-04).
+
 Presentation interpolates camera/model transforms and replays game drawing
 while retaining the original game timing. Stable world filtering defaults on,
 with nearest and bilinear alternatives; untracked UI stays nearest. It does not create additional simulation frames or guarantee sustained
@@ -45,7 +50,7 @@ streamed audio and gameplay keep their original timing. Turn it off in Mods to
 use the original loader; changed or unsupported assets also fall back. See
 [the loading mod notes](docs/RESIDENT_LOADING.md) for coverage and validation.
 
-Known qualification work includes intro flicker, circular fade coverage,
+Known qualification work includes other intro effects, circular fade coverage,
 gameplay HUD anchoring, and native dispatch
 for dynamically allocated level modules. Owned disc images, extracted modules
 and generated C are local inputs and are never committed.
