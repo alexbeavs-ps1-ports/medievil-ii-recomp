@@ -1,0 +1,47 @@
+{
+  "release": "v0.2.0-alpha",
+  "source_commit": "75ca079524facba2275c12723e44618fc9ce64ee",
+  "capture_date": "2026-10-05",
+  "platform": "Windows x64",
+  "renderer": "OpenGL",
+  "settings": "Default enhancement mods; 1080p internal preset (5x at 240 lines); Display presentation target. Window resized for aspect-ratio comparisons.",
+  "method": "Actual released application window/client captures, saved as PNG; no image retouching. Separate private Museum checkpoint with weapon/counter HUD groups visible.",
+  "images": {
+    "museum-21x9.png": {
+      "pixels": [
+        1680,
+        720
+      ],
+      "sha256": "04a6ab3ed464b68fb9154a711ed7c8796bc2c43ac4451d8af43d942a96ece4d6"
+    },
+    "museum-4x3.png": {
+      "pixels": [
+        960,
+        720
+      ],
+      "sha256": "2139e89c90810614f3a0b39b3fbf5dbfd76cf74641a3d9db53cd66b1803b2ec0"
+    },
+    "museum-32x9.png": {
+      "pixels": [
+        1920,
+        540
+      ],
+      "sha256": "f0bba83ad70e76f8d5c9922a3aab3808d568e2f2f99ce034e2a6e0bc39dac520"
+    },
+    "museum-cutscene.png": {
+      "pixels": [
+        1280,
+        720
+      ],
+      "sha256": "e792ee757e20579e36dd4cadd55bf24fe0e198411e47f55a32b39a6a529b1a96"
+    },
+    "launcher.png": {
+      "pixels": [
+        1100,
+        880
+      ],
+      "sha256": "8e51f0ffd9fa7143e4d7e0a208b9941eb5cd958933a5a1db874c0f4d4c8ba551"
+    }
+  },
+  "executable_sha256": "18c5172d1bc41ae6f38f1444a9a430d7ef9fc88d025195da60c412e7a296a5df"
+}
