@@ -32,8 +32,9 @@ for the exact source pins, evidence and known limitations.
 | Terrain subdivision | Bypassed; original subdivision remains selectable |
 | Presentation rate | Display; 60, 120, 144, 240 and 360 also available |
 
-Presentation interpolates displayed images while retaining the original game
-timing. It does not create additional simulation frames or guarantee sustained
+Presentation interpolates camera/model transforms and replays game drawing
+while retaining the original game timing. Stable world filtering defaults on,
+with nearest and bilinear alternatives; untracked UI stays nearest. It does not create additional simulation frames or guarantee sustained
 throughput at every target. Movies retain their authored proportions.
 
 Known qualification work includes intro flicker, circular fade coverage,

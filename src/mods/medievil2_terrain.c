@@ -13,9 +13,15 @@ enum {
     TERRAIN = 0x800F3B74u, CAPTURES = 0x80300000u,
     MARKED = 0x80310000u, META = 0x80315000u, POLYGONS = 0x80318000u,
     PRIMITIVE0 = 0x80400000u, PRIMITIVE1 = 0x80500000u,
-    PRIMITIVE_BYTES = 0x100000u, POLYGON_CAPACITY = 8192u,
+    /* The title's conservative 3x capture exceeds 8192 candidate polygons.
+     * Dropping whole cells there can omit visible corridor edges. The index
+     * arena has room for 16384 pointers; emitted packets retain their own
+     * bounded one-megabyte arenas and the engine's allocation checks. */
+    PRIMITIVE_BYTES = 0x100000u, POLYGON_CAPACITY = 16384u,
     CAPACITY = 4096u, GRID = 64u, FOG = 0x800F426Cu
 };
+_Static_assert(POLYGONS + POLYGON_CAPACITY * 4u <= PRIMITIVE0,
+               "Candidate polygon pointers must not overlap primitive packets");
 static unsigned distance_scale = 3;
 
 typedef struct Candidate { uint32_t cell; uint64_t distance; } Candidate;

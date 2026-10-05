@@ -6,10 +6,10 @@
   },
   "static_output": "generated/overlays_static.c",
   "strict_bounds": true,
-  "expected_records": 7,
+  "expected_records": 11,
   "bios_resident": false,
   "evidence": {
-    "validation": "PS-X EXE header and hashes verified against the owned USA disc. This profile covers the main engine only; dynamically allocated LVB modules are not yet declared."
+    "validation": "Owned USA disc hashes and original loader relocation verified. Covers seven original/mod engine views plus verified title, Museum, Museum boss and Professor lab heap placements; remaining modules/placements require coverage and declaration."
   },
   "images": [
     {
@@ -189,6 +189,170 @@
           ]
         }
       ]
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/MU_LEVEL.LVB",
+          "sha256": "3d249c37a230fc99fd32acb8d6a1b55ccf948c35a712ecd13db55c68e9bda57e",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 77524,
+              "relocation_count": 1074,
+              "entry_pointer_offsets": [
+                "0xf140",
+                "0xf144",
+                "0xf148"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x80131190",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x80131190",
+                      "end": "0x8013143c",
+                      "reason": "Museum image header and named strings precede the first MIPS return stub at image +0x2AC.",
+                      "sha256": "9ae1b691205d049f3d8ba23c008a0adf945ad62e444e0d66fc5eb266d8494b74"
+                    },
+                    {
+                      "start": "0x8013f790",
+                      "end": "0x80144064",
+                      "reason": "Museum MIPS text ends before the script table at image +0xE600. Export fields +4/+8/+C/+10 describe script/data; +18/+1C/+20 are engine-invoked native callbacks. This suffix holds script words, tables, object descriptions and mutable data.",
+                      "sha256": "7e55114e0fb62fbfa8cdc0fa741d3db032a3f9a42f36b727127140682619fdbf"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Original loader 0x80070764 allocates the counted container and relocates its image at container+0x10 through 0x80078328. Live Museum placement 0x80131190 matched relocated original MIPS bytes. Loader copies export fields +18/+1C/+20 to callbacks; engine calls them at 0x8003E9D8/0x8003EA28. Heap placements other than this guarded variant remain interpreted."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/TL_LEVEL.LVB",
+          "sha256": "954a8f6859b68282507d1fee7c46b17cba53b5945a633b03b4a30eb965d379e5",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 58956,
+              "relocation_count": 1366,
+              "entry_pointer_offsets": [
+                "0xca04",
+                "0xca08",
+                "0xca0c"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x80109ba4",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x80109ba4",
+                      "end": "0x8010a098",
+                      "reason": "Title image header, strings, object descriptors and tables precede the first MIPS frame at image +0x4F4.",
+                      "sha256": "9086c7a7c5ee12a27c66efb4347b8f700c1fdd463682f489668b4cb0828d1eff"
+                    },
+                    {
+                      "start": "0x80114e4c",
+                      "end": "0x801181f0",
+                      "reason": "Title MIPS text ends with the list-removal return at image +0xB2A0 and NOP delay at +0xB2A4. Following words are mesh data, scripts, tables and mutable object data.",
+                      "sha256": "7b4f56f09caa5276fbedcd21de5df0ddd3351e3e5bfdc0184b2385c8963ae699"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Original counted loader places image at allocation+0x10 and relocates through 0x80078328. Hands-off title/corridor/railway sequence matched relocated TL_LEVEL at 0x80109BA4 (58560/58956 bytes, mutable data differs). Observed MIPS callbacks include image +0xC60, +0x3E64, +0x412C and +0x8EBC; original framed entries and bytes, rather than runtime traces, supply native discovery. This placement does not prove all title heap layouts."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/MB_LEVEL.LVB",
+          "sha256": "b8fc109c0ce87251a7db3c9f53ee0c8d43f745e725ee1a056d3943f824ac8d03",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 72972,
+              "relocation_count": 1380,
+              "entry_pointer_offsets": [
+                "0x1010c",
+                "0x10110",
+                "0x10114"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x8013097c",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x8013097c",
+                      "end": "0x80130ce0",
+                      "reason": "Owned module header, strings and object tables precede first framed MIPS entry at image +0x364.",
+                      "sha256": "b514eae742ff82e6e7c1110ac28d53fcdbe546942e52984dd74949348d08ffe4"
+                    },
+                    {
+                      "start": "0x8013fa10",
+                      "end": "0x80142688",
+                      "reason": "Owned MIPS text ends with verified JR RA/delay before script words at image +0xF094; suffix is scripts, tables, object data and mutable state.",
+                      "sha256": "6d2f065173afc362d903ce91393c5cd1fda4a17baa364fbe9b60dd6bd99ae4c8"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Stock Complete Level cheat reached this module through the original counted loader. Relocated original at 0x8013097c matches 72910/72972 live bytes; remaining bytes are mutable data. Header/text/script boundaries verified against original disassembly. Export fields +18/+1C/+20 use the verified engine loader callback contract. Other heap placements retain guarded interpreter fallback."
+    },
+    {
+      "method": "counted_relocated_members",
+      "containers": [
+        {
+          "file": "RELOCS/PL_LEVEL.LVB",
+          "sha256": "75aea62ec94a260f8430d7522f2a5cfd8a395d18471e22dac45ee354971aeade",
+          "members": [
+            {
+              "index": 0,
+              "image_size": 59240,
+              "relocation_count": 1123,
+              "entry_pointer_offsets": [
+                "0xcc20",
+                "0xcc24",
+                "0xcc28"
+              ],
+              "placements": [
+                {
+                  "load_addr": "0x80134150",
+                  "excluded_ranges": [
+                    {
+                      "start": "0x80134150",
+                      "end": "0x80134504",
+                      "reason": "Owned module header, strings and object tables precede first framed MIPS entry at image +0x3B4.",
+                      "sha256": "68453119cbffededf7f0e1bbb1898008123f852e717558695ac6ecdfbd240001"
+                    },
+                    {
+                      "start": "0x8013ecd8",
+                      "end": "0x801428b8",
+                      "reason": "Owned MIPS text ends with verified JR RA/delay before script words at image +0xAB88; suffix is scripts, tables, object data and mutable state.",
+                      "sha256": "758020a863da4a133fdd64bbb7fae036be60a71e5d103eba1e21c77e1ad93003"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": "Stock Complete Level cheat reached this module through the original counted loader. Relocated original at 0x80134150 matches 59123/59240 live bytes; remaining bytes are mutable data. Header/text/script boundaries verified against original disassembly. Export fields +18/+1C/+20 use the verified engine loader callback contract. Other heap placements retain guarded interpreter fallback."
     }
   ],
   "main_ram_bytes": "0x800000",
