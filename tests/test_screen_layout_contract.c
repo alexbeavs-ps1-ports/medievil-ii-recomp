@@ -8,7 +8,11 @@
 #include "cpu_state.h"
 static uint8_t ram[0x800000], scratch[1024];
 static unsigned panels, radial, centred_text;
+static unsigned hud_tags;
+static uint32_t tagged_packet[256];
+static int tagged_edge[256];
 int g_psx_render_pass_active;
+void psx_mod_counter_add(const char *name,uint32_t delta) { (void)name; (void)delta; }
 static float observed_scale;
 static uint8_t *at(uint32_t a) {
     if (a>=0x1F800000u && a<0x1F800400u) return scratch+a-0x1F800000u;
@@ -27,7 +31,15 @@ void psx_mod_tag_radial_screen_mask_quad(uint32_t p,float scale) {
     assert(p>=0x80400000u); ++radial; observed_scale=scale;
 }
 void psx_mod_anchor_hud_primitive(uint32_t p,int anchor) {
-    assert(p==0x80400004u && anchor==0); ++centred_text;
+    if (p==0x80400004u && anchor==0) ++centred_text;
+    else { assert(hud_tags<256); tagged_packet[hud_tags]=p;
+           tagged_edge[hud_tags++]=anchor; }
+}
+int psx_mod_register_activation_plugin(const char *id,PSXModActivationCallback cb) {
+    (void)id; (void)cb; return 1;
+}
+int psx_mod_register_savestate_plugin(const char *id,PSXModActivationCallback cb) {
+    (void)id; (void)cb; return 1;
 }
 int psx_mod_register_function_entry_plugin(const char *id,uint32_t a,
     PSXModFunctionEntryCallback cb) { (void)id; (void)a; (void)cb; return 1; }
@@ -36,6 +48,89 @@ int psx_mod_register_instruction_plugin(const char *id,uint32_t a,uint32_t expec
 #include "../src/mods/medievil2_screen_layout.c"
 static void guard(uint32_t a,uint32_t x,uint32_t y) { word(a,x); word(a+4,y); }
 static void f4(uint32_t p) { word(p,5u<<24); word(p+4,0x28000000u); }
+static void hud_sprite(uint32_t p) {
+    word(p,0x00800000u); /* type zero, opaque */
+    word(p+4,0x06000000u); word(p+8,0xE1000200u);
+    word(p+12,0); word(p+16,0x64808080u);
+    word(p+20,0x001E0018u); word(p+24,0x12345678u); word(p+28,0x00100020u);
+}
+static void test_hud_records(void) {
+    const uint32_t p=0x80402000u;
+    /* One completed record of each shape: SPRT, FT4, G4, E1/NOP/G4, GT3.
+     * The compound DMA length covers all commands, not just the E1. */
+    const unsigned payload[5]={28,40,36,44,40};
+    const uint32_t opcode[5]={0x64808080u,0x2C808080u,0x38808080u,
+                              0x3A808080u,0x34808080u};
+    for (unsigned type=0;type<5;++type) {
+        memset(at(p),0,48); word(p,0x00800000u|type);
+        word(p+4,(payload[type]/4-1)<<24);
+        unsigned offset=(type==0 || type==3) ? 16 : 8;
+        if (offset==16) word(p+8,0xE1000220u);
+        word(p+offset,opcode[type]);
+        HudRange range={p,p+4+payload[type],-1,0};
+        unsigned before=hud_tags;
+        assert(hud_packets(&range,0)); assert(hud_tags==before);
+        assert(hud_packets(&range,1)); assert(hud_tags==before+1);
+        assert(tagged_packet[before]==p+offset-4 && tagged_edge[before]==-1);
+        word(p+4,12u<<24); assert(!hud_packets(&range,0));
+        word(p+4,(payload[type]/4-1)<<24);
+        word(p+offset,0xA0000000u); assert(!hud_packets(&range,0));
+        word(p+offset,opcode[type]); --range.end;
+        assert(!hud_packets(&range,0));
+    }
+    hud_tags=0;
+}
+static void test_hud(void) {
+    CPUState cpu={0}; cpu.gpr[28]=0x800EEAC8u;
+    const uint32_t panel=0x80500000u, first=panel+4, p=0x80401000u;
+    word(cpu.gpr[28]+0x79Cu,panel); word(panel,first);
+    word(SCRATCH_END,0x80410000u);
+    clear_hud();
+    for (unsigned i=0;i<14;++i) {
+        uint32_t node=first+i*28;
+        word(node+4,hud_callbacks[i]); word(node+8,i);
+        word(cpu.gpr[28]+0x7B0u,node); cpu.gpr[2]=hud_callbacks[i];
+        word(SCRATCH_CURSOR,p+i*64);
+        begin_hud_widget(&cpu,0x80078A14u);
+        hud_sprite(p+i*64); hud_sprite(p+i*64+32); /* original and fade copy */
+        word(SCRATCH_CURSOR,p+(i+1)*64);
+        end_hud_widget(&cpu,0x80078A44u);
+    }
+    assert(hud_count==14);
+    CPUState before=cpu; uint8_t packets[14*64]; memcpy(packets,at(p),sizeof packets);
+    submit_hud(); assert(hud_tags==28);
+    for (unsigned i=0;i<14;++i) {
+        assert(tagged_packet[i*2]==p+i*64+12);
+        assert(tagged_packet[i*2+1]==p+i*64+44);
+        assert(tagged_edge[i*2]==hud_edges[i] && tagged_edge[i*2+1]==hud_edges[i]);
+    }
+    assert(!memcmp(&cpu,&before,sizeof cpu) && !memcmp(packets,at(p),sizeof packets));
+    /* Replay begins after HUD construction. It retains ownership and neither
+     * consumes the live list nor changes the authority's packet coordinates. */
+    g_psx_render_pass_active=1; begin_frame(&cpu,0x8004FFB4u);
+    begin_draw(&cpu,0x80050044u); submit_hud(); assert(hud_tags==56);
+    g_psx_render_pass_active=0; submit_hud(); assert(hud_tags==84);
+    /* Even a valid replacement command must not acquire stale HUD ownership. */
+    word(p+16,0x64404040u); submit_hud(); assert(hud_tags==110);
+    word(p+16,0x64808080u);
+    /* A malformed/recycled command rejects the entire widget, including an
+     * otherwise valid first sprite: there must be no half-anchored group. */
+    word(p+32+16,0x28000000u); submit_hud(); assert(hud_tags==136);
+    begin_frame(&cpu,0x8004FFB4u); assert(hud_count==0); submit_hud(); assert(hud_tags==136);
+    word(cpu.gpr[28]+0x7B0u,first); cpu.gpr[2]=hud_callbacks[0];
+    word(SCRATCH_CURSOR,p); hud_sprite(p);
+    word(first+8,14); begin_hud_widget(&cpu,0x80078A14u); assert(!hud_node);
+    word(first+8,0); word(first+4,0x8003F028u);
+    begin_hud_widget(&cpu,0x80078A14u); assert(!hud_node);
+    word(first+4,hud_callbacks[0]); cpu.gpr[2]=0x8003F028u;
+    begin_hud_widget(&cpu,0x80078A14u); assert(!hud_node);
+    cpu.gpr[2]=hud_callbacks[0];
+    begin_hud_widget(&cpu,0x80078A14u); assert(hud_node);
+    word(SCRATCH_CURSOR,p-4); end_hud_widget(&cpu,0x80078A44u); assert(!hud_count);
+    word(SCRATCH_CURSOR,p); begin_hud_widget(&cpu,0x80078A14u);
+    clear_hud(); word(SCRATCH_CURSOR,p+32); end_hud_widget(&cpu,0x80078A44u);
+    assert(!hud_count); /* reset/restore cannot commit a stale allocation */
+}
 int main(void) {
     const uint32_t p=0x80400000u;
     word(SCRATCH_CURSOR,p); word(SCRATCH_END,p+0x100000u);
@@ -138,5 +233,6 @@ int main(void) {
     g_psx_render_pass_active=0;
     word(p+8,0x64808080u);
     submit(&cpu,0x800A4C50u); assert(centred_text==3);
+    test_hud_records(); test_hud();
     return 0;
 }

@@ -1,4 +1,4 @@
-"""Verify mask producer ownership and bounded submission without disc assets."""
+"""Verify mask/HUD producer ownership and bounded submission without disc assets."""
 import os
 from pathlib import Path
 import shutil

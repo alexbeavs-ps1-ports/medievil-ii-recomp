@@ -1,5 +1,43 @@
 # MediEvil II enhancement workbench
 
+## Gameplay HUD anchoring (2026-10-05)
+
+The status-panel HUD follows the visible view edges: weapon/ammo groups move
+left, money/chalice groups move right, and the central health bar and centered
+messages retain their authored positions. Icon sizes, glyph proportions,
+vertical positions and the game's fade timing stay unchanged. Anchoring is
+part of default-on Adaptive View; 4:3 has no horizontal translation.
+
+The SCUS-94564 engine initializes 14 panel descriptors from `0x800DDBF8` at
+`0x80078470`. The adapter verifies the current descriptor and callback at
+`0x80078A14`, then records its scratch allocation at `0x80078A44`, after the
+original fade-copy routine. The five record sizes are the ones walked by
+`0x8007C37C`. Compound E1/NOP/SPRT records anchor the word before the sprite command;
+complete icons, numbers, bars and fade copies share their widget's anchor.
+No world packet is classified by its screen position.
+
+These allocations precede the interpolation snapshot at `0x80050044`.
+Submission therefore retains their ownership across replay phases, validates
+the complete allocation's words, and applies guarded renderer tags before
+each DrawOTag. The next live frame, mod activation and savestate restore clear
+that ownership. Invalid pointers, changed callbacks, recycled packets and
+malformed records leave the entire affected widget on its native path. The
+adapter writes no guest CPU registers, HUD coordinates or packet bytes.
+
+The extended screen-layout contract test covers all 14 descriptor anchors,
+all five record shapes, compound sprite commands, fade copies, repeated
+replay/live submission, unchanged guest state, malformed/reused records and
+restore invalidation. All four game contract suites pass on Windows and Linux.
+Both platforms compile the regenerated 24-image native profile (74,378 variants).
+
+An isolated Museum save fixture enables weapons, an ammo count, health,
+chalice and gold without changing the player's saves. Live captures at 4:3,
+16:9, 21:9 and 32:9 show whole icon/counter groups at the view edges and
+centered health. Moving base/intermediate captures retain the HUD layout.
+Fifty replay verification checks report zero mismatches, aborts, watchdogs,
+VRAM leaks or span failures. The adapter reports no changed or malformed
+owned allocations on this route. Later-level special HUDs still need playtesting.
+
 ## Interpolation framebuffer handoff (2026-10-05)
 
 Replay counters were increasing while captured intermediate images repeated
@@ -240,7 +278,7 @@ The diagnostic starvation timeout was extended while writing the large PNGs;
 these captures are correctness evidence, not frame-rate measurements.
 
 Coverage is limited to these intro captures and the producer contracts.
-Broader circular-fade and gameplay HUD qualification remains open, as does
+Broader circular-fade and later-level HUD qualification remains open, as does
 the newly reported Museum doorway geometry wobble.
 
 Previous validated framework: canonical upstream `master` at `a916ed52e00f364a8615b97cd597858aa7f385dc`
@@ -627,7 +665,8 @@ fonts or gameplay HUD widgets. Circular fade transitions still need live
 qualification. Both asset-free contract tests pass, including line breaks,
 extended font characters, font ownership and recycled-command rejection.
 The movie-border flicker and reported title-hallway wall folding are fixed as
-described above. Gameplay HUD anchoring remains open. Starting-level movement
+described above. Gameplay HUD anchoring now has the status-panel adapter
+described above; later-level HUD states still need playthrough coverage. Starting-level movement
 and boundary coverage, all view
 and mod choices, sustained target throughput, audio, saves, later levels and
 exact release packages still require qualification. These findings are tracked

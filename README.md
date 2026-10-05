@@ -43,6 +43,7 @@ locally, so opening the launcher does not need an image download.
 | PGXP | Geometry, perspective textures and CPU propagation enabled |
 | World view | Automatically fit the window, with a 4:3 minimum |
 | Cutscene layout | Full-width letterbox bars; centered subtitles retain their original proportions |
+| Gameplay HUD | Weapon/ammo groups anchor left and money/chalice groups anchor right; health and centered messages stay centered |
 | Terrain distance | Extended to 3x as part of Adaptive View |
 | Terrain subdivision | Bypassed as part of Adaptive View |
 | World texture filtering | Stable filtering enabled; text and HUD sprites stay sharp |
@@ -66,6 +67,12 @@ Cutscene bars keep their full adaptive width during interpolated drawing,
 including the Museum intro flashes. Normal frames and render passes retain
 separate mask/subtitle submission metadata; subtitle proportions and authored
 bar heights are preserved. See [the replay validation](docs/ENHANCEMENTS.md#cutscene-mask-replay-fix-2026-10-04).
+
+Adaptive View also anchors the status-panel HUD to the visible edges. Icons
+and their numbers move together without stretching, while the central health
+bar keeps its original alignment. This is enabled with Adaptive View and
+needs no additional switch. The game retains its original HUD fade timing.
+See [HUD ownership and validation](docs/ENHANCEMENTS.md#gameplay-hud-anchoring-2026-10-05).
 
 Presentation interpolates camera/model transforms and replays game drawing
 while retaining the original game timing. Adaptive View and World Texture

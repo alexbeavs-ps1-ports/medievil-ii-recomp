@@ -36,8 +36,8 @@ known_crc32 = [
 seeds = "seeds/ghidra_funcs.txt"
 out_dir = "generated"
 strict = true
-mod_function_entry_funcs = ["0x8007ED4C", "0x8007ED0C", "0x80080850", "0x8007FA20", "0x8001A2E4", "0x800456F8", "0x800A4C50", "0x8009F7F0", "0x800A101C"]
-mod_instruction_sites = ["0x80050044"]
+mod_function_entry_funcs = ["0x8007ED4C", "0x8007ED0C", "0x80080850", "0x8007FA20", "0x8001A2E4", "0x800456F8", "0x800A4C50", "0x8009F7F0", "0x800A101C", "0x8004FFB4"]
+mod_instruction_sites = ["0x80050044", "0x80078A14", "0x80078A44"]
 
 [runtime]
 window_title = "MediEvil II Recompiled"
