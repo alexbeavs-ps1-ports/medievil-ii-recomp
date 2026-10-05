@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-04",
+  "game": "SCUS-94564",
+  "feature": "medievil2.enhancement.seamless-loading/seamless-loading",
+  "branch": "feat/medievil2-seamless-loading",
+  "baseline_game_commit": "9b85af262b400ac86f5fdf640e5dc5647ef53829",
+  "framework_commit": "a916ed52e00f364a8615b97cd597858aa7f385dc",
+  "framework_tree": "7293a6e386ffdcf81ac74adc6d26a5505f7319d0",
+  "tested_player_sha256": "0a9f242b68874cb8021d7513d34b49545c1536be6c239b839d52e7a2bc74ad07",
+  "default_enabled": true,
+  "resident_bytes": 46634340,
+  "original_files": 25,
+  "decoded_containers": 66,
+  "mips_oracle": {
+    "comparisons": 132,
+    "output": true,
+    "return": true,
+    "bit_reader_scratch": true,
+    "callee_saved_registers": true,
+    "stack": true
+  },
+  "host_contracts": [
+    "cold cache",
+    "warm effective-disc verification",
+    "truncated cache",
+    "corrupt payload",
+    "extra tail",
+    "changed mod plan",
+    "changed effective archive",
+    "extent bounds",
+    "one-shot read completion",
+    "snapshot-backed completion record",
+    "original fallback"
+  ],
+  "real_game": {
+    "scope": [
+      "boot",
+      "title module",
+      "New Game",
+      "Museum module",
+      "Museum intro",
+      "Museum input",
+      "save and restore"
+    ],
+    "archive_reads": 33,
+    "completions": 33,
+    "module_reads": 2,
+    "predecoded": 5,
+    "adapter_fallbacks": 0
+  },
+  "transition_comparison": {
+    "scope": "first New Game loading edge through final CD setup edge before Museum intro",
+    "samples_per_mode": 1,
+    "debug_turbo_during_window": false,
+    "concurrent_private_instances": 2,
+    "original": {
+      "start_frame": 35734,
+      "end_frame": 36273,
+      "guest_frames": 539,
+      "host_ms": 8304
+    },
+    "resident": {
+      "start_frame": 33945,
+      "end_frame": 34054,
+      "guest_frames": 109,
+      "host_ms": 1382
+    }
+  },
+  "limits": [
+    "No complete playthrough",
+    "No later-level benchmark",
+    "Authored fades remain",
+    "Movies and streamed audio use original path"
+  ]
+}

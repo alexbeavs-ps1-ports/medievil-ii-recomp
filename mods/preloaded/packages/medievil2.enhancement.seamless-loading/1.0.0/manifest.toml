@@ -1,0 +1,24 @@
+format_version = 5
+id = "medievil2.enhancement.seamless-loading"
+version = "1.0.0"
+name = "MediEvil II Resident Loading"
+author = "MediEvil II Recompiled"
+license = "GPL-3.0-only"
+description = "Keep original assets resident and predecode compressed containers to minimize loading waits."
+resolver = "declarative"
+save_compatibility = "shared"
+
+[[target]]
+game_id = "SCUS-94564"
+disc_sha256 = "dfcb8602274c70f59551e820d0f4026b0213fd68b7d2a385189d37eb767b2d97"
+
+[[feature]]
+id = "seamless-loading"
+name = "Resident Loading"
+description = "Prepare original disc assets once, then complete supported reads and decompression from memory. Gameplay, movie and audio timing remain original."
+group = "Gameplay"
+default_enabled = true
+
+[[plugin]]
+feature = "seamless-loading"
+id = "medievil2.seamless"

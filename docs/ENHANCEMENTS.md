@@ -67,6 +67,12 @@ the pending exact-package qualification.
 
 ## Default enhancements
 
+Resident Loading now defaults on. It prepares the original archive and level
+files, predecodes PP20 containers, and finishes supported reads through guarded
+game-service adapters while retaining native relocation and initialization.
+See [RESIDENT_LOADING.md](RESIDENT_LOADING.md) for the contracts and bounded
+validation; visual enhancements and framework pins are unchanged.
+
 OpenBIOS replaces the default retail BIOS selection and skips the startup
 shell while retaining its LLE kernel. The PGXP package owns geometry,
 perspective-texture and CPU-precision defaults so its off switch still works.

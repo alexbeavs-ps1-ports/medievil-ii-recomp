@@ -43,6 +43,10 @@ target_sources(psx-runtime PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_widescreen.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_terrain.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_screen_layout.c")
+target_sources(psx-runtime PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_seamless.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_seamless_store.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_pp20.cpp")
 
 # Stage runtime configs next to the exe for direct build/ launches. Only copy
 # files that exist — never fail POST_BUILD when game_options.toml is absent.
