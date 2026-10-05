@@ -1,0 +1,70 @@
+{
+  "repository": "alexbeavs-ps1-ports/medievil-ii-recomp",
+  "enhancement_head": "239a77f5e46b3c4030bf63d0badf701c16dd1aaf",
+  "prs": [
+    {
+      "headRefOid": "7ab4107ecfe098212e17c3496c4997288283f15c",
+      "number": 1,
+      "title": "1/3: Add OpenBIOS visual enhancement workbench and widescreen cutscene layout"
+    },
+    {
+      "headRefOid": "521b1c871e4dd2145b847473d387525669dcc6b4",
+      "number": 2,
+      "title": "2/3: Add true draw interpolation and fix movie and hallway rendering"
+    },
+    {
+      "headRefOid": "9b85af262b400ac86f5fdf640e5dc5647ef53829",
+      "number": 3,
+      "title": "3/3: Expand original-disc native level coverage and record bounded routes"
+    },
+    {
+      "headRefOid": "23dc593d44803642c1090018b7879e7a337b776b",
+      "number": 4,
+      "title": "Add default-on resident loading and predecoded PP20 assets"
+    },
+    {
+      "headRefOid": "cb07980584be482ad1649e688e1e111b82eb7237",
+      "number": 5,
+      "title": "Keep widescreen cutscene bars stable through interpolated draws"
+    },
+    {
+      "headRefOid": "987996225fab80017c533b5a5d6db9b38a5fe587",
+      "number": 6,
+      "title": "Uptake shared PGXP vertex propagation and FIFO fixes"
+    },
+    {
+      "headRefOid": "e11d1a5e1834cada859a4bd9f792cf63adba65e1",
+      "number": 7,
+      "title": "Fix Museum doorway texture jitter with shared renderer uptake"
+    },
+    {
+      "headRefOid": "ca62c3bce259fb3e58878fa5f01432ec3f4c5522",
+      "number": 8,
+      "title": "Simplify default visual enhancements and loading controls"
+    },
+    {
+      "headRefOid": "e17d74494e68f5aa563aabb7562fda195054a394",
+      "number": 9,
+      "title": "Add MediEvil II box art to the recomp-ui launcher"
+    },
+    {
+      "headRefOid": "754cdd792b8fcdd8b0209883fb3a4a1eb0eb03ac",
+      "number": 10,
+      "title": "Reduce native and interpolated terrain redraw cost"
+    },
+    {
+      "headRefOid": "239a77f5e46b3c4030bf63d0badf701c16dd1aaf",
+      "number": 11,
+      "title": "Render interpolated frames into the captured framebuffer"
+    }
+  ],
+  "reference": {
+    "repository": "mstan/TombaRecomp",
+    "commit": "3c8d36e793092e9a641cb29bee16bf0df6c7fb5d",
+    "files": [
+      "tools/package_release.ps1",
+      "tools/package_appimage.sh",
+      "packaging/linux/AppRun"
+    ]
+  }
+}

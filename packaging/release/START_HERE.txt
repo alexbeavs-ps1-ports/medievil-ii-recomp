@@ -1,0 +1,38 @@
+MediEvil II Recompiled - enhancement preview
+
+Windows: extract the whole ZIP, then run MediEvilIIRecomp.exe.
+Linux: make the AppImage executable, then run it. Without FUSE, use
+  ./MediEvilIIRecomp-*.AppImage --appimage-extract-and-run
+
+Choose your MediEvil II USA (SCUS-94564) disc in the launcher. Use the CUE
+with its BIN tracks, or a supported CHD. OpenBIOS is included and selected
+automatically; its startup shell is skipped. No compiler, Python, Generate
+step or retail BIOS is needed. The disc remains required while playing.
+
+Adaptive view, extended terrain, subdivision bypass, PGXP, stable world
+texture filtering, resident loading and interpolated presentation are on
+by default. Movies and subtitles keep their original proportions. Display
+is the default presentation target; 60/120/144/240/360 are also available.
+A selected target does not guarantee that many distinct rendered frames.
+
+First run prepares the resident loading cache from your disc. Later runs
+reuse the verified decoded data. No disc image, decoded game assets or
+player saves are included in this package.
+
+Windows settings and saves live beside the executable; keep the extracted
+folder writable. Linux settings/saves/mods live in
+  $XDG_DATA_HOME/MediEvilIIRecomp
+or ~/.local/share/MediEvilIIRecomp when XDG_DATA_HOME is unset. Set
+MEDIEVIL_II_RECOMP_DATA_DIR to override it. Linux AppImage updates preserve
+your settings, memory cards and installed mods. Resident decoded assets
+use the system user cache directory.
+
+This is a simulated release candidate, not an upstream public release.
+All 11 enhancement PRs are consolidated; see INCLUDED_PRS.json and
+RELEASE_MANIFEST.json for source revisions and file hashes. Original-disc
+native code is compiled into the executable; unknown heap placements keep
+the runtime fallback. Full-game coverage and sustained high-refresh output
+remain unqualified. See docs/ENHANCEMENTS.md for measured limitations.
+
+Linux qualification is limited to the recorded WSL environment. The build
+manifest records its glibc version; an AppImage does not bundle glibc.
