@@ -1,0 +1,10 @@
+MediEvil II (USA), PlayStation front cover, SCUS-94564.
+
+Source: libretro-thumbnails / Sony_-_PlayStation / Named_Boxarts
+https://github.com/libretro-thumbnails/Sony_-_PlayStation/blob/master/Named_Boxarts/MediEvil%20II%20(USA).png
+Downloaded 2026-10-05; converted from PNG to uncompressed RGB TGA without
+resizing or changing the artwork, for the shared recomp-ui launcher pipeline.
+
+Original packaging artwork and trademarks belong to their respective owners,
+including Sony Computer Entertainment. The project's source-code license does
+not relicense this artwork.

@@ -22,6 +22,9 @@ bypass. This is an enhancement workbench; full gameplay and release
 qualification are still in progress. See [ENHANCEMENTS.md](docs/ENHANCEMENTS.md)
 for the exact source pins, evidence and known limitations.
 
+The recomp-ui launcher displays the USA front cover. Its artwork is bundled
+locally, so opening the launcher does not need an image download.
+
 | Enhancement | Default / choices |
 | --- | --- |
 | Internal resolution | 1080p preset, rounded to a whole native-resolution multiplier |
