@@ -17,7 +17,7 @@ MediEvil II recompiled for modern systems using psxrecomp.
 The enhancement workbench uses OpenBIOS, skips its startup shell, and enables
 higher internal resolution, PGXP precision, adaptive world rendering and
 display-rate presentation by default. It also supplies game-specific terrain
-capture, expanded render buffers, selectable draw distance and subdivision
+capture, expanded render buffers, extended draw distance and subdivision
 bypass. This is an enhancement workbench; full gameplay and release
 qualification are still in progress. See [ENHANCEMENTS.md](docs/ENHANCEMENTS.md)
 for the exact source pins, evidence and known limitations.
@@ -26,10 +26,11 @@ for the exact source pins, evidence and known limitations.
 | --- | --- |
 | Internal resolution | 1080p preset, rounded to a whole native-resolution multiplier |
 | PGXP | Geometry, perspective textures and CPU propagation enabled |
-| World view | Fit to window; 4:3, 16:9, 21:9 and 32:9 also available |
+| World view | Automatically fit the window, with a 4:3 minimum |
 | Cutscene layout | Full-width letterbox bars; centered subtitles retain their original proportions |
-| Terrain distance | 3x; Original and 2x also available |
-| Terrain subdivision | Bypassed; original subdivision remains selectable |
+| Terrain distance | Extended to 3x as part of Adaptive View |
+| Terrain subdivision | Bypassed as part of Adaptive View |
+| World texture filtering | Stable filtering enabled; text and HUD sprites stay sharp |
 | Presentation rate | Display; 60, 120, 144, 240 and 360 also available |
 | Resident loading | On; preloaded archive/level files and predecoded PP20 assets |
 
@@ -52,8 +53,12 @@ separate mask/subtitle submission metadata; subtitle proportions and authored
 bar heights are preserved. See [the replay validation](docs/ENHANCEMENTS.md#cutscene-mask-replay-fix-2026-10-04).
 
 Presentation interpolates camera/model transforms and replays game drawing
-while retaining the original game timing. Stable world filtering defaults on,
-with nearest and bilinear alternatives; untracked UI stays nearest. It does not create additional simulation frames or guarantee sustained
+while retaining the original game timing. Adaptive View and World Texture
+Filtering each have one default-on behavior and an on/off switch in Mods;
+there are no separate distance, subdivision or filtering-mode controls.
+PGXP remains enabled for precise geometry and perspective-correct textures;
+stable filtering and the doorway sampling fix complement it. Presentation
+does not create additional simulation frames or guarantee sustained
 throughput at every target. Movies retain their authored proportions.
 
 Resident Loading prepares assets from your own disc, keeps about 44.5 MiB in
@@ -62,6 +67,8 @@ The game still allocates, relocates and initializes those assets itself. Movies,
 streamed audio and gameplay keep their original timing. Turn it off in Mods to
 use the original loader; changed or unsupported assets also fall back. See
 [the loading mod notes](docs/RESIDENT_LOADING.md) for coverage and validation.
+The generic CD Speed and Fast Loading packages are excluded from this game's
+catalog; Resident Loading is the single loading enhancement.
 
 Known qualification work includes other intro effects, circular fade coverage,
 gameplay HUD anchoring, and native dispatch

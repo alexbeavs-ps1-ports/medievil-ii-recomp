@@ -6,10 +6,10 @@
   },
   "static_output": "generated/overlays_static.c",
   "strict_bounds": true,
-  "expected_records": 29,
+  "expected_records": 24,
   "bios_resident": false,
   "evidence": {
-    "validation": "Owned USA disc hashes and original relocation verified. Seven original/mod engine views plus loader-observed level module placements; see aot/coverage-projector.json for bounded coverage and remaining limitations."
+    "validation": "Owned USA disc hashes and original relocation verified. Original and enhanced engine views plus loader-observed level module placements; see aot/coverage-projector.json for bounded coverage and remaining limitations."
   },
   "images": [
     {
@@ -25,141 +25,6 @@
           "end": "0x800ef000",
           "reason": "Owned engine disassembly ends the final transform function with JR RA and its stack restore at 0x800BCA24/28; subsequent bytes are named strings, jump/data tables and padding, not executable producers.",
           "sha256": "6565bd15a21e6aaacf586368f8f00e778d578463e8cf6320e0ab1c93e2fce137"
-        }
-      ]
-    },
-    {
-      "method": "fixed_address_extents",
-      "mod_package": "medievil2-wide-1x",
-      "allow_missing": true,
-      "excluded_ranges": [
-        {
-          "start": "0x800BCA2C",
-          "end": "0x800ef000",
-          "reason": "Owned engine disassembly ends the final transform function with JR RA and its stack restore at 0x800BCA24/28; subsequent bytes are named strings, jump/data tables and padding, not executable producers.",
-          "sha256": "6565bd15a21e6aaacf586368f8f00e778d578463e8cf6320e0ab1c93e2fce137"
-        }
-      ],
-      "extents": [
-        {
-          "file": "MED2.EXE",
-          "file_offset": "0x800",
-          "base": "0x80010000",
-          "address": "0x80010000",
-          "load_addr": "0x80010000",
-          "size": "0xDF000",
-          "sha256": "00eddeeb7d1e84680293743fb93f41bbb8101553ddf4bc8d356fad3d1a0f7e92",
-          "entries": [
-            "0x800A757C"
-          ]
-        }
-      ]
-    },
-    {
-      "method": "fixed_address_extents",
-      "mod_package": "medievil2-wide-1x-subdivision-bypass",
-      "allow_missing": true,
-      "excluded_ranges": [
-        {
-          "start": "0x800BCA2C",
-          "end": "0x800ef000",
-          "reason": "Owned engine disassembly ends the final transform function with JR RA and its stack restore at 0x800BCA24/28; subsequent bytes are named strings, jump/data tables and padding, not executable producers.",
-          "sha256": "6565bd15a21e6aaacf586368f8f00e778d578463e8cf6320e0ab1c93e2fce137"
-        }
-      ],
-      "extents": [
-        {
-          "file": "MED2.EXE",
-          "file_offset": "0x800",
-          "base": "0x80010000",
-          "address": "0x80010000",
-          "load_addr": "0x80010000",
-          "size": "0xDF000",
-          "sha256": "875d5b3e5ae4af19d5c40d244d00792ebc52490a92b52518cde402e6b90fa2c2",
-          "entries": [
-            "0x800A757C"
-          ]
-        }
-      ]
-    },
-    {
-      "method": "fixed_address_extents",
-      "mod_package": "medievil2-wide-2x",
-      "allow_missing": true,
-      "excluded_ranges": [
-        {
-          "start": "0x800BCA2C",
-          "end": "0x800ef000",
-          "reason": "Owned engine disassembly ends the final transform function with JR RA and its stack restore at 0x800BCA24/28; subsequent bytes are named strings, jump/data tables and padding, not executable producers.",
-          "sha256": "6565bd15a21e6aaacf586368f8f00e778d578463e8cf6320e0ab1c93e2fce137"
-        }
-      ],
-      "extents": [
-        {
-          "file": "MED2.EXE",
-          "file_offset": "0x800",
-          "base": "0x80010000",
-          "address": "0x80010000",
-          "load_addr": "0x80010000",
-          "size": "0xDF000",
-          "sha256": "f925588bbd423e2788985da8c8524653ef77197cd7f60fd7b453e6e8246c15fd",
-          "entries": [
-            "0x800A757C"
-          ]
-        }
-      ]
-    },
-    {
-      "method": "fixed_address_extents",
-      "mod_package": "medievil2-wide-2x-subdivision-bypass",
-      "allow_missing": true,
-      "excluded_ranges": [
-        {
-          "start": "0x800BCA2C",
-          "end": "0x800ef000",
-          "reason": "Owned engine disassembly ends the final transform function with JR RA and its stack restore at 0x800BCA24/28; subsequent bytes are named strings, jump/data tables and padding, not executable producers.",
-          "sha256": "6565bd15a21e6aaacf586368f8f00e778d578463e8cf6320e0ab1c93e2fce137"
-        }
-      ],
-      "extents": [
-        {
-          "file": "MED2.EXE",
-          "file_offset": "0x800",
-          "base": "0x80010000",
-          "address": "0x80010000",
-          "load_addr": "0x80010000",
-          "size": "0xDF000",
-          "sha256": "4b62d72bc98f85da6ac0961022cfe1457ebfdb2fbf03e307caecde2383ba0d90",
-          "entries": [
-            "0x800A757C"
-          ]
-        }
-      ]
-    },
-    {
-      "method": "fixed_address_extents",
-      "mod_package": "medievil2-wide-3x",
-      "allow_missing": true,
-      "excluded_ranges": [
-        {
-          "start": "0x800BCA2C",
-          "end": "0x800ef000",
-          "reason": "Owned engine disassembly ends the final transform function with JR RA and its stack restore at 0x800BCA24/28; subsequent bytes are named strings, jump/data tables and padding, not executable producers.",
-          "sha256": "6565bd15a21e6aaacf586368f8f00e778d578463e8cf6320e0ab1c93e2fce137"
-        }
-      ],
-      "extents": [
-        {
-          "file": "MED2.EXE",
-          "file_offset": "0x800",
-          "base": "0x80010000",
-          "address": "0x80010000",
-          "load_addr": "0x80010000",
-          "size": "0xDF000",
-          "sha256": "3b75b75008be1b17d3b546d239eace12ffbc357a634dabb5fe1b14abfc41c808",
-          "entries": [
-            "0x800A757C"
-          ]
         }
       ]
     },
@@ -1097,119 +962,15 @@
   "main_ram_bytes": "0x800000",
   "mod_packages": [
     {
-      "name": "medievil2-wide-1x",
-      "id": "medievil2.enhancement.widescreen",
-      "version": "1.0.0",
-      "manifest": "mods/preloaded/packages/medievil2.enhancement.widescreen/1.0.0/manifest.toml",
-      "manifest_sha256": "6fd0514ff6b1e9fbb546cab6dfd94dd555137e73977d06efde6c5d00e1bedcf1",
-      "features": {
-        "widescreen": {
-          "subdivision_bypass": false,
-          "draw_distance": "1x"
-        }
-      },
-      "plugins": [
-        "medievil2.distance",
-        "medievil2.widescreen"
-      ],
-      "requirements": [
-        "psx.enhancement.8mb-ram/8mb-ram"
-      ]
-    },
-    {
-      "name": "medievil2-wide-1x-subdivision-bypass",
-      "id": "medievil2.enhancement.widescreen",
-      "version": "1.0.0",
-      "manifest": "mods/preloaded/packages/medievil2.enhancement.widescreen/1.0.0/manifest.toml",
-      "manifest_sha256": "6fd0514ff6b1e9fbb546cab6dfd94dd555137e73977d06efde6c5d00e1bedcf1",
-      "features": {
-        "widescreen": {
-          "subdivision_bypass": true,
-          "draw_distance": "1x"
-        }
-      },
-      "plugins": [
-        "medievil2.distance",
-        "medievil2.widescreen"
-      ],
-      "requirements": [
-        "psx.enhancement.8mb-ram/8mb-ram"
-      ]
-    },
-    {
-      "name": "medievil2-wide-2x",
-      "id": "medievil2.enhancement.widescreen",
-      "version": "1.0.0",
-      "manifest": "mods/preloaded/packages/medievil2.enhancement.widescreen/1.0.0/manifest.toml",
-      "manifest_sha256": "6fd0514ff6b1e9fbb546cab6dfd94dd555137e73977d06efde6c5d00e1bedcf1",
-      "features": {
-        "widescreen": {
-          "subdivision_bypass": false,
-          "draw_distance": "2x"
-        }
-      },
-      "plugins": [
-        "medievil2.distance",
-        "medievil2.widescreen"
-      ],
-      "requirements": [
-        "psx.enhancement.8mb-ram/8mb-ram"
-      ]
-    },
-    {
-      "name": "medievil2-wide-2x-subdivision-bypass",
-      "id": "medievil2.enhancement.widescreen",
-      "version": "1.0.0",
-      "manifest": "mods/preloaded/packages/medievil2.enhancement.widescreen/1.0.0/manifest.toml",
-      "manifest_sha256": "6fd0514ff6b1e9fbb546cab6dfd94dd555137e73977d06efde6c5d00e1bedcf1",
-      "features": {
-        "widescreen": {
-          "subdivision_bypass": true,
-          "draw_distance": "2x"
-        }
-      },
-      "plugins": [
-        "medievil2.distance",
-        "medievil2.widescreen"
-      ],
-      "requirements": [
-        "psx.enhancement.8mb-ram/8mb-ram"
-      ]
-    },
-    {
-      "name": "medievil2-wide-3x",
-      "id": "medievil2.enhancement.widescreen",
-      "version": "1.0.0",
-      "manifest": "mods/preloaded/packages/medievil2.enhancement.widescreen/1.0.0/manifest.toml",
-      "manifest_sha256": "6fd0514ff6b1e9fbb546cab6dfd94dd555137e73977d06efde6c5d00e1bedcf1",
-      "features": {
-        "widescreen": {
-          "subdivision_bypass": false,
-          "draw_distance": "3x"
-        }
-      },
-      "plugins": [
-        "medievil2.distance",
-        "medievil2.widescreen"
-      ],
-      "requirements": [
-        "psx.enhancement.8mb-ram/8mb-ram"
-      ]
-    },
-    {
       "name": "medievil2-wide-3x-subdivision-bypass",
       "id": "medievil2.enhancement.widescreen",
       "version": "1.0.0",
       "manifest": "mods/preloaded/packages/medievil2.enhancement.widescreen/1.0.0/manifest.toml",
-      "manifest_sha256": "6fd0514ff6b1e9fbb546cab6dfd94dd555137e73977d06efde6c5d00e1bedcf1",
+      "manifest_sha256": "7e665f9b03755571ef40c5dfccf27a41572c81263133fd4d507c3f391e155fef",
       "features": {
-        "widescreen": {
-          "subdivision_bypass": true,
-          "draw_distance": "3x"
-        }
+        "widescreen": {}
       },
       "plugins": [
-        "medievil2.distance",
         "medievil2.widescreen"
       ],
       "requirements": [

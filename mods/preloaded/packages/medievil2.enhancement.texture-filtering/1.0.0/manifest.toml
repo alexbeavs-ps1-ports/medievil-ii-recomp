@@ -14,38 +14,10 @@ game_id = "SCUS-94564"
 [[feature]]
 id = "texture-filtering"
 name = "World Texture Filtering"
-description = "Stable filtering uses a bounded palette-aware footprint on OpenGL with PGXP geometry. UI stays nearest; other backends use bilinear. Disabling restores the Display setting."
+description = "Reduce shimmer on distant and slanted world textures while keeping text and HUD sprites sharp."
 group = "Graphics"
 default_enabled = true
-
-[[option]]
-feature = "texture-filtering"
-id = "filter"
-label = "Texture filter"
-type = "choice"
-default = "stable"
-
-[[option.choice]]
-value = "nearest"
-label = "Nearest"
-[[option.choice]]
-value = "bilinear"
-label = "Bilinear"
-[[option.choice]]
-value = "stable"
-label = "Stable minification"
-
-[[plugin]]
-feature = "texture-filtering"
-id = "medievil2.filter.nearest"
-when = { filter = "nearest" }
-
-[[plugin]]
-feature = "texture-filtering"
-id = "medievil2.filter.bilinear"
-when = { filter = "bilinear" }
 
 [[plugin]]
 feature = "texture-filtering"
 id = "medievil2.filter.stable"
-when = { filter = "stable" }
