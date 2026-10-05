@@ -29,7 +29,8 @@ def validate_build(build):
     values = cache_values(build/'CMakeCache.txt')
     required = {'CMAKE_BUILD_TYPE': 'Release', 'PSX_SETUP_WIZARD': 'OFF',
                 'PSXRECOMP_FORCE_SETUP_HOST': 'OFF', 'PSXRECOMP_REQUIRE_GAME_C': 'ON',
-                'PSX_DEBUG_TOOLS': 'OFF', 'PSX_RECOMP_UI': 'ON'}
+                'PSX_DEBUG_TOOLS': 'OFF', 'PSX_RECOMP_UI': 'ON',
+                'PSXRECOMP_BIOS_STEMS': 'OpenBIOS'}
     for key, expected in required.items():
         if values.get(key) != expected:
             raise ValueError(f'{key} must be {expected}, got {values.get(key)}')
@@ -109,6 +110,7 @@ def main():
     shutil.copy2(ROOT/'packaging/included-prs.json', stage/'INCLUDED_PRS.json')
     (stage/'docs').mkdir()
     shutil.copy2(ROOT/'docs/ENHANCEMENTS.md', stage/'docs/ENHANCEMENTS.md')
+    shutil.copy2(ROOT/'docs/RELEASE_BUILDS.md', stage/'docs/RELEASE_BUILDS.md')
     (stage/'licenses').mkdir()
     shutil.copy2(ROOT/'psxrecomp/runtime/licenses/libchdr-NOTICES.txt', stage/'licenses')
     packages = check_payload(stage)
@@ -116,6 +118,7 @@ def main():
     manifest = dict(version=version, platform=args.platform, source_commit=args.source_commit,
                     framework_commit=pins['commit'], recomp_ui_commit=pins['recomp_ui_commit'],
                     simulated_release=True, debug_tools=False, setup_wizard=False,
+                    bios_backends=['OpenBIOS'],
                     native_variants=audit['published_variants'], native_images=audit['recipe_count'],
                     full_static_coverage_proven=audit['full_static_coverage_proven'],
                     aot_profile_sha256=audit['profile_sha256'],

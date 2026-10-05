@@ -12,7 +12,9 @@ level-module placements. A separate overlay compiler/cache is unnecessary for
 these built-in variants. Unknown placements retain runtime fallback; full-game
 native coverage is not claimed. Resident Loading prepares assets from the
 player's disc. Disc images, retail BIOS files, decoded caches and saves are
-excluded. OpenBIOS and its MIT notice are included.
+excluded. OpenBIOS and its MIT notice are included. Player builds link only the
+OpenBIOS backend, so first-run launcher discovery cannot silently select a
+retail BIOS found elsewhere on the machine.
 
 From a recursive checkout, put the supported USA disc in `disc/` as declared
 by `game.toml`, build the pinned framework's `psxrecomp-game`, then run:

@@ -14,6 +14,12 @@ set(PSXRECOMP_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/psxrecomp" CACHE PATH
 #     set(PSX_NETPLAY ON CACHE BOOL "…" FORCE)
 # endif()
 option(PSX_SETUP_WIZARD "Enable the developer code-generation wizard" OFF)
+if(NOT PSX_SETUP_WIZARD)
+    # Player builds always use the bundled backend. Linking a retail backend
+    # would let first-run discovery silently select a BIOS elsewhere on disk.
+    set(PSXRECOMP_BIOS_STEMS "OpenBIOS" CACHE STRING
+        "BIOS backends included in the player package" FORCE)
+endif()
 include("${PSXRECOMP_ROOT}/runtime/runtime.cmake")
 
 set(MEDIEVIL2_CODEGEN_SETUP_SOURCES)
