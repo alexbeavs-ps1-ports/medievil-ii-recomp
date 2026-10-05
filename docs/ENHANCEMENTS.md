@@ -1,5 +1,53 @@
 # MediEvil II enhancement workbench
 
+## Interpolation framebuffer handoff (2026-10-05)
+
+Replay counters were increasing while captured intermediate images repeated
+the base image. The game's Swap submits the completed ordering tables to the
+other draw buffer, while the interpolation frame names the displayed buffer.
+The redraw and capture therefore addressed different VRAM rectangles.
+
+Before replay submission, the game adapter now translates each viewport's
+draw rectangle and signed offset into the capture buffer and requests SDK
+command regeneration. It copies the matching DRAWENV descriptor for Swap.
+The normal ordering tables, draw commands, mask/subtitle tagging and DrawSync
+still run. All descriptor changes occur inside the framework's replay sandbox;
+the original machine, VRAM and precision state are restored afterward.
+Invalid pointers, dimensions, viewport extents or a corrupt list reject the
+pass through the existing rollback path. No framework or codegen pin changes
+are required for this game-specific framebuffer layout.
+
+Validation covers both banks, multiple viewports, signed offsets, unchanged
+opposite-bank metadata and invalid-input fallback. All four game contract
+suites pass. Museum movement/settling at 4:3, 16:9, 21:9 and 32:9 completed
+60 verification passes with zero mismatches, aborts, watchdogs, VRAM leaks or
+span failures. Four additional moving image generations have distinct
+intermediate camera, terrain and character poses. The camera's RAM transform
+was checked before and during movement; sampling immediately after pressing
+a direction can precede the camera's response.
+
+The Museum intro adds 24 verification passes with zero mismatches. Eight
+base/intermediate captures at 16:9 and 32:9 pass 24 black-mask pixel checks
+across the top bar and bottom corners during the effects sequence.
+
+With the preceding terrain optimization and all visual defaults enabled,
+the same Ryzen 7 9800X3D / RTX 3080 Ti, OpenGL, 5x, 16:9 test measured:
+
+| Target | Guest VBlanks/s, stationary / moving | Presentation swaps/s, stationary / moving |
+| --- | --- | --- |
+| Display (165 Hz monitor) | 59.16 / 60.03 | 117.75 / 124.27 |
+| 60 | 59.98 / 59.85 | 59.98 / 59.52 |
+| 240 | 60.03 / 59.91 | 137.54 / 143.49 |
+
+Each sample has a warmup and separate 12-second stationary and movement
+intervals. Native drawing is approximately 30 Hz; replay throughput is
+53–69 extra draws/s. Presentation swaps can repeat an image and must not be
+reported as distinct rendered frames. The 95th-percentile swap gap was
+14–15 ms for Display/240 and 21–25 ms for 60. This fixes missing intermediate
+images; it does not establish sustained 165/240 Hz or perfect frame pacing.
+Display remains the default target and the original simulation cadence is
+preserved. Existing saved rate choices are retained.
+
 ## Terrain redraw performance (2026-10-05)
 
 The extended radial capture submitted thousands of offscreen terrain polygons
@@ -51,7 +99,7 @@ The 60 target averaged 60.03 / 59.22 swaps per second; 32:9 with Display average
 
 These counters measure replay work, not distinct displayed poses. A subsequent
 image audit found identical base/intermediate images during camera movement;
-the replay framebuffer handoff is being corrected separately. This terrain
+the replay framebuffer handoff is corrected in the section above. This terrain
 change reduces CPU work but does not itself establish smooth motion.
 
 The selected Display/60/120/144/240/360 rate remains a target. Even after this
