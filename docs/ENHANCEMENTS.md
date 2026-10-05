@@ -1,8 +1,37 @@
 # MediEvil II enhancement workbench
 
+## Museum doorway texture stability (2026-10-04)
+
+The framework gitlink and manifest now pin public commit
+`75294473a2abb4ae2151d5841d6268b508619d0f`
+(tree `180527c6d1dfa9c3c71d1089c9e6d91b198eb9a3`), on top of the PGXP uptake
+below. This corrects the Museum doorway trim's diagonal breaks and texture
+jitter as the camera settles, reproduced from the reported UI save slot 1.
+
+The captured wall quad has screen vertices `(216,98), (315,97), (215,159),
+(315,160)` and UVs `(95,151), (49,151), (95,197), (49,197)`. Integer rounding
+makes only its second triangle appear to be a mirrored 2D sprite, adding one
+texel to U on one side of the shared diagonal. Camera movement changes this
+classification. The source textures and depth metadata remain intact.
+
+Perspective-correct world polygons now retain authored UVs and inclusive
+atlas bounds through the shared renderer sampling policy. Affine sprites keep
+the existing PS1 center-sampling compensation. PGXP, perspective textures,
+OpenBIOS, simulation and collision contracts retain their existing settings;
+no GTE arithmetic or generated-code change is required for this uptake.
+
+The captured-packet regression fails 16 assertions under the legacy sampling
+path and passes with the fix, including shared edges during integer camera
+rounding, sprite sampling and page wrapping. Five focused runtime tests pass.
+Windows OpenGL validation includes eight movement segments from the user's
+checkpoint and 61 guest/intermediate/presented captures at 16:9, 21:9 and 32:9.
+The diagonal trim breaks disappear; no replay verification mismatch was
+logged. Live Vulkan rendering and other levels have not been qualified by this
+check. The separate thin trace inside an intro mask band remains outstanding.
+
 ## PGXP propagation uptake (2026-10-04)
 
-The public framework pin is now `e9da6ab8b1fceaa95700ff79e70856b557b9e0ac`
+The preceding PGXP uptake used public framework pin `e9da6ab8b1fceaa95700ff79e70856b557b9e0ac`
 (tree `d28969727d0c2985b689c4889a50093b2fbda03b`). It includes the shared
 PGXP corrections originally validated against Spider-Man's wall renderer:
 source shadows survive in-place arithmetic; bitwise operations retain a
@@ -42,10 +71,10 @@ inside the top band; the entire band is therefore not yet pixel-perfect.
 That static trace is distinct from the alternating wide-margin exposure
 repaired by the game adapter and needs separate cold-boot/VRAM investigation.
 
-These fixes address proven precision-transport defects. The reported Museum
-doorway wobble has not yet been attributed to a particular packet or vertex,
-so this uptake does not claim to eliminate all camera/mesh quantization or
-qualify every level. Guest simulation, collision and frame timing retain
+These fixes address proven precision-transport defects. The subsequent
+doorway investigation above attributes the reported trim jitter to UV
+sampling. Neither change eliminates all camera/mesh quantization or
+qualifies every level. Guest simulation, collision and frame timing retain
 their existing contracts; visual defaults and the PGXP off switch remain.
 
 ## Cutscene mask replay fix (2026-10-04)

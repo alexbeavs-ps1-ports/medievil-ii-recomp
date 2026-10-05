@@ -36,9 +36,15 @@ for the exact source pins, evidence and known limitations.
 The framework pin includes the shared PGXP fixes for in-place arithmetic,
 vertex fields carried through bitwise operations, the GTE vertex FIFO and
 precision restoration after interpolated drawing. Generate regenerates the
-game and AOT code with the corresponding instruction hooks. These repair
-precision transport; the reported Museum doorway wobble still requires
-movement qualification. See [the PGXP uptake notes](docs/ENHANCEMENTS.md#pgxp-propagation-uptake-2026-10-04).
+game and AOT code with the corresponding instruction hooks. See
+[the PGXP uptake notes](docs/ENHANCEMENTS.md#pgxp-propagation-uptake-2026-10-04).
+
+The Museum doorway's diagonal trim breaks and camera-dependent texture jitter
+are fixed in the shared renderer. Perspective world polygons retain their
+authored UVs; mirrored 2D sprites keep their original sampling correction.
+Validated from the reported save with movement and camera settling, including
+interpolated drawing and wide aspect ratios. PGXP and perspective textures
+remain default-on. See [the doorway validation](docs/ENHANCEMENTS.md#museum-doorway-texture-stability-2026-10-04).
 
 Cutscene bars keep their full adaptive width during interpolated drawing,
 including the Museum intro flashes. Normal frames and render passes retain
