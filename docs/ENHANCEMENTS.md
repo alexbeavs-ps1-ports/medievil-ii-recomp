@@ -41,13 +41,18 @@ a rendered image; they are reported separately from actual draw passes.
 | 16:9, Display target 165 Hz | Before, stationary / moving | After, stationary / moving |
 | --- | --- | --- |
 | Guest VBlanks per second | 59.93 / 59.99 | 60.00 / 59.86 |
-| Native draws per second | 21.45 / 20.69 | 29.98 / 29.97 |
-| Extra interpolated draws per second | 20.03 / 19.20 | 55.95 / 61.13 |
+| Native draws per second | 21.45 / 20.69 | 30.00 / 29.93 |
+| Extra replay draws per second | 20.03 / 19.20 | 55.93 / 61.18 |
 | Presentation swaps per second | 95.59 / 87.72 | 118.84 / 118.64 |
 | 95th-percentile swap gap | 20 / 33 ms | 15 / 16 ms |
 
 The 60 target averaged 60.03 / 59.22 swaps per second; 32:9 with Display averaged
 119.21 / 114.72. Guest timing stayed approximately 59.94 Hz in those samples.
+
+These counters measure replay work, not distinct displayed poses. A subsequent
+image audit found identical base/intermediate images during camera movement;
+the replay framebuffer handoff is being corrected separately. This terrain
+change reduces CPU work but does not itself establish smooth motion.
 
 The selected Display/60/120/144/240/360 rate remains a target. Even after this
 optimization, high-refresh targets are not sustained throughout the measured
