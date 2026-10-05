@@ -32,6 +32,10 @@ psxrecomp_add_game_runtime(psx-runtime
     GEN_MARKER "generated/SCUS_945.64_dispatch.c"
     GEN_FULL_GLOB "generated/SCUS_945.64_full_*.c"
     PRELOADED_MODS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mods/preloaded"
+    # Resident Loading owns this title's loading acceleration.
+    EXCLUDE_BUILTIN_MODS
+        psx.enhancement.cd-speed
+        psx.enhancement.fast-loading
     CODEGEN_SETUP_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/codegen_setup.c"
 )
 

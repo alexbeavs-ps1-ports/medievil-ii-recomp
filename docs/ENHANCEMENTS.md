@@ -1,5 +1,27 @@
 # MediEvil II enhancement workbench
 
+## Simplified enhancement controls (2026-10-05)
+
+Adaptive View now has one behavior: fit the window with a 4:3 minimum,
+extend terrain distance to 3x and bypass terrain subdivision. World Texture
+Filtering always selects stable minification. Both features remain default-on
+with an on/off switch; the redundant aspect, distance, subdivision and filter
+options are removed. Old saved values for those options no longer affect the
+activation plugins or guarded patches. The requested presentation-rate choices
+remain available, with Display as the default.
+
+The game excludes the framework's CD Speed and Fast Loading packages using
+`EXCLUDE_BUILTIN_MODS`. Resident Loading remains its loading enhancement.
+PGXP continues to supply precise vertex positions and perspective depth;
+neither texture filtering nor the doorway UV sampling fix replaces it.
+
+The AOT profile retains the original engine and the enhanced 3x/subdivision
+bypass engine, removing five obsolete option combinations. The remaining
+enhanced engine still matches its previously audited byte hash. Original-disc
+extraction verifies 24 images and 24 recipes, including the existing level
+module placements. The incremental Windows build, terrain contract, plugin
+audit and staged catalog checks pass; the catalog contains seven packages.
+
 ## Museum doorway texture stability (2026-10-04)
 
 The framework gitlink and manifest now pin public commit
@@ -207,7 +229,7 @@ marks and two 1 MiB primitive buffers. The original terrain and primitive heap
 allocations remain owned by their guest teardown routines. Near, depth,
 winding and vertical rejection remain in the original polygon funnel.
 
-Draw distance defaults to 3x, with Original and 2x choices. The adapter retains
+Draw distance is fixed at 3x while Adaptive View is enabled. The adapter retains
 the original 128-entry fog tables and their allocations: the renderer copies
 them into fixed stack buffers. Guarded disc variants instead enlarge depth
 steps and the OT reach/shift while keeping its bucket count. Both depth and
@@ -215,10 +237,11 @@ brightness tables are rebuilt. Authored values are restored before the guest
 advances transitions, avoiding repeated multiplication across frames or states.
 This contract is bound to the verified 8192-unit retail terrain viewport.
 
-Subdivision bypass defaults on. A guarded CD instruction replacement disables
-area-selected subdivision; turning it off selects the original instruction.
-All distance/subdivision combinations have independent audited AOT input
-views. Executable RAM is not rewritten on each launch.
+Subdivision bypass is part of Adaptive View. A guarded CD instruction
+replacement disables area-selected subdivision. Turning Adaptive View off
+restores the original draw distance and subdivision instructions. The enabled
+and disabled paths have audited AOT input views. Executable RAM is not
+rewritten on each launch.
 
 The frame-rate package defaults to Display and offers 60, 120, 144, 240 and
 360 targets. It replays the drawing span 0x80050044..0x80050114 with interpolated
@@ -228,7 +251,7 @@ state and precision shadows are restored after each draw. Guest simulation,
 input and audio retain their original cadence; draw cost limits actual throughput.
 
 World Texture Filtering defaults to stable minification on proven OpenGL world
-polygons, with nearest and bilinear choices. It decodes current palette colors
+polygons. It decodes current palette colors
 before averaging and preserves texture windows, primitive bounds, cutouts and
 STP classification. Untracked UI stays nearest. Other backends use bilinear;
 disabling the feature restores the Display filter setting.

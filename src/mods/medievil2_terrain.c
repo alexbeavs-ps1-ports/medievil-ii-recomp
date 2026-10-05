@@ -22,7 +22,7 @@ enum {
 };
 _Static_assert(POLYGONS + POLYGON_CAPACITY * 4u <= PRIMITIVE0,
                "Candidate polygon pointers must not overlap primitive packets");
-static unsigned distance_scale = 3;
+static const unsigned distance_scale = 3;
 
 typedef struct Candidate { uint32_t cell; uint64_t distance; } Candidate;
 static Candidate candidates[GRID * GRID];
@@ -86,13 +86,13 @@ static void restore_distance(void) {
 }
 
 static void extend_distance(uint32_t vp) {
-    unsigned delta = distance_scale == 3 ? 2 : distance_scale == 2 ? 1 : 0;
+    const unsigned delta = 2;
     unsigned reach = psx_mod_read_half(vp + 0x72), shift = psx_mod_read_half(vp + 0x70);
     unsigned count = psx_mod_read_half(FOG + 12);
     uint32_t depth = psx_mod_read_word(FOG + 4), brightness = psx_mod_read_word(FOG + 8);
     /* The retail terrain funnel copies two tables to fixed stack offsets.
      * Keep their original count and allocation; enlarge their depth steps
-     * instead. Each guarded disc view has matching SRL 6/7/8 lookups. */
+     * instead. The guarded disc patches use matching SRL 8 lookups. */
     if (reach != 8192 || count != 128 || shift + delta > 15 ||
         !retail_ram(depth, 2 * (count + 64)) ||
         brightness != depth + 2 * (count + 64) || !retail_ram(brightness, count + 64)) return;
@@ -251,18 +251,4 @@ PSX_MOD_CONSTRUCTOR(medievil2_register_terrain) {
     (void)psx_mod_register_function_entry_plugin(plugin, 0x8007ED0Cu, teardown);
     (void)psx_mod_register_function_filter_plugin(plugin, 0x80080850u, capture);
     (void)psx_mod_register_function_entry_plugin(plugin, 0x8007FA20u, render);
-}
-
-static void activate_distance(void) {
-    char value[16];
-    distance_scale = 3;
-    if (psx_mod_option_value("medievil2.enhancement.widescreen", "widescreen",
-                             "draw_distance", value, sizeof value)) {
-        if (!strcmp(value, "1x")) distance_scale = 1;
-        else if (!strcmp(value, "2x")) distance_scale = 2;
-    }
-}
-
-PSX_MOD_CONSTRUCTOR(medievil2_register_distance) {
-    (void)psx_mod_register_activation_plugin("medievil2.distance", activate_distance);
 }
