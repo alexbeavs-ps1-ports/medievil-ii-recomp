@@ -1,5 +1,53 @@
 # MediEvil II enhancement workbench
 
+## PGXP propagation uptake (2026-10-04)
+
+The public framework pin is now `e9da6ab8b1fceaa95700ff79e70856b557b9e0ac`
+(tree `d28969727d0c2985b689c4889a50093b2fbda03b`). It includes the shared
+PGXP corrections originally validated against Spider-Man's wall renderer:
+source shadows survive in-place arithmetic; bitwise operations retain a
+projected vertex when its signed 11-bit GPU fields survive; writes through
+SXYP shift the precision FIFO together with the architectural GTE registers;
+and interpolation checkpoints restore precision shadows with guest memory.
+The previous pin already supplied checkpoint rollback, but lacked the ALU
+and FIFO corrections and the new bitwise instruction hooks.
+
+This is a framework uptake, with no game-specific texture replacement or
+loader patch. The game executable and all static engine/module placements
+must be regenerated with this pin's emitter. Enabling the PGXP compile flag
+alone cannot add missing hooks to previously generated C. Upstream also
+supplies regenerated OpenBIOS C; the runtime continues to use OpenBIOS.
+
+The latest upstream PGXP regression fixture fails 19 assertions when linked
+against the previous pin's runtime and header, covering clip-flag propagation,
+FIFO corner ordering and in-place arithmetic/depth. The same fixture passes
+with the new pin. Six focused runtime tests pass, covering PGXP activation,
+the GTE register oracle and interpolation motion/projection/sandbox rollback.
+The recompiler's full-function emitter test and all three game contract
+fixtures also pass, including the earlier mask/subtitle replay regression.
+
+The owned boot executable and all 75,043 audited static variants were
+regenerated in 31 files, then the Windows OpenGL runtime was rebuilt. A fresh
+OpenBIOS boot reaches the Museum with default resolution, PGXP, terrain and
+resident-loading mods. From a new checkpoint, movement input and settling
+with interpolation refused/enabled produced respectively 274,509/412,464
+precise vertex lookups, all matched by dataflow. Perspective correction armed
+for about 98% of textured triangles in each sample. The earlier diagnostic
+states are rejected by the new ABI/codegen guard, so these are fresh-run
+checks rather than a deterministic old/new visual comparison.
+
+Eight guest/intermediate Museum intro captures keep the wide mask margins
+black. A persistent one-pixel trace at the original image boundary remains
+inside the top band; the entire band is therefore not yet pixel-perfect.
+That static trace is distinct from the alternating wide-margin exposure
+repaired by the game adapter and needs separate cold-boot/VRAM investigation.
+
+These fixes address proven precision-transport defects. The reported Museum
+doorway wobble has not yet been attributed to a particular packet or vertex,
+so this uptake does not claim to eliminate all camera/mesh quantization or
+qualify every level. Guest simulation, collision and frame timing retain
+their existing contracts; visual defaults and the PGXP off switch remain.
+
 ## Cutscene mask replay fix (2026-10-04)
 
 The Museum intro could alternate between full-width letterbox bars and bars
@@ -37,7 +85,7 @@ Coverage is limited to these intro captures and the producer contracts.
 Broader circular-fade and gameplay HUD qualification remains open, as does
 the newly reported Museum doorway geometry wobble.
 
-Current framework: canonical upstream `master` at `a916ed52e00f364a8615b97cd597858aa7f385dc`
+Previous validated framework: canonical upstream `master` at `a916ed52e00f364a8615b97cd597858aa7f385dc`
 (tree `7293a6e386ffdcf81ac74adc6d26a5505f7319d0`). The shared PRs 485, 486 and 498-501
 are merged. The combined framework passed the bounded MMX6, Tomba, Tomba 2
 and Ape Escape regression suite plus focused runtime, codegen and real-GL tests.
