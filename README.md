@@ -64,6 +64,13 @@ stable filtering and the doorway sampling fix complement it. Presentation
 does not create additional simulation frames or guarantee sustained
 throughput at every target. Movies retain their authored proportions.
 
+Adaptive View also removes terrain that is outside both camera endpoints of
+an interpolated draw, using the actual polygon bounds. This reduces redraw
+cost without reducing the view width, draw distance or visual defaults.
+Display selects the monitor's refresh rate as a target; it is not an achieved
+FPS reading. See [presentation measurements](docs/ENHANCEMENTS.md#terrain-redraw-performance-2026-10-05)
+for the measured improvement and remaining high-refresh limits.
+
 Resident Loading prepares assets from your own disc, keeps about 44.5 MiB in
 host memory, and completes supported file reads and decompression immediately.
 The game still allocates, relocates and initializes those assets itself. Movies,
