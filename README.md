@@ -64,6 +64,11 @@ stable filtering and the doorway sampling fix complement it. Presentation
 does not create additional simulation frames or guarantee sustained
 throughput at every target. Movies retain their authored proportions.
 
+Interpolated drawing now targets the framebuffer that presentation actually
+captures, including each viewport's draw area and offset. Movement captures
+verify distinct intermediate terrain, camera and character poses. See
+[the replay handoff validation](docs/ENHANCEMENTS.md#interpolation-framebuffer-handoff-2026-10-05).
+
 Adaptive View also removes terrain that is outside both camera endpoints of
 an interpolated draw, using the actual polygon bounds. This reduces redraw
 cost without reducing the view width, draw distance or visual defaults.

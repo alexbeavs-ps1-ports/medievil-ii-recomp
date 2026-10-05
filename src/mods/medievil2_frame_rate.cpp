@@ -1,4 +1,5 @@
 #include "render_pass_replay.hpp"
+#include "medievil2_replay_target.h"
 
 namespace {
 // Start after object updates and stop before the drawing epilogue. Camera,
@@ -21,6 +22,7 @@ void begin(CPUState* cpu,uint32_t) {
 }
 int pass(CPUState* cpu,void*,uint32_t alpha) {
     if(!replay.restore(cpu,alpha) || !replay.draw(cpu)) return 0;
+    if(!medievil2_replay_target(cpu,display,bank)) return 0;
     PSXDrawReplay::call(cpu,Swap);
     PSXDrawReplay::call(cpu,DrawSync,0);
     psx_mod_counter_add("medievil2.fr.interpolated",replay.stats.replayed);
