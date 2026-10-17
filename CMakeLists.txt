@@ -81,6 +81,7 @@ endif()
 target_sources(psx-runtime PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_diagnostics.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_diagnostic_paths.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_telemetry.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_diagnostic_writer.h")
 set_property(SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_diagnostics.cpp" APPEND PROPERTY
     COMPILE_DEFINITIONS "MEDIEVIL2_DIAGNOSTIC_BUILD_ID=\"${MEDIEVIL2_VERSION}+${MEDIEVIL2_SOURCE_REV}\"")
@@ -124,6 +125,9 @@ if(MEDIEVIL2_BUILD_TESTS)
         add_test(NAME medievil2_release_build_identity_test
             COMMAND "${Python3_EXECUTABLE}" -I
                 "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_package_release.py")
+        add_test(NAME medievil2_feedback_analysis_test
+            COMMAND "${Python3_EXECUTABLE}" -I
+                "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_analyze_medievil2_feedback.py")
     endif()
 endif()
 

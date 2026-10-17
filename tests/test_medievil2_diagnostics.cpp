@@ -10,6 +10,8 @@
 #include "mod_runtime.h"
 #include "savestate.h"
 #include "sio.h"
+#include "cdrom.h"
+#include "render_pass.h"
 #include <array>
 #include <cstdio>
 #include <cstring>
@@ -61,6 +63,11 @@ void sio_set_pad_sticks(int slot,uint8_t lx,uint8_t ly,uint8_t rx,uint8_t ry) {s
 int memcard_is_present(int slot) {return slot==0;}
 int memcard_export_raw(int,uint8_t *out) {memset(out,0xAB,MEMCARD_SIZE);return 0;}
 void host_osd_set_diagnostics(const char *a,const char *b) {shown[0]=a?a:"";shown[1]=b?b:"";}
+void host_osd_push(const char*,int) {}
+void cdrom_debug_snapshot(CDROMDebugState *out) {*out={};}
+int cdrom_data_read_active(void) {return 0;}
+int cdrom_xa_stream_active(void) {return 0;}
+void render_pass_get_stats(RenderPassStats *out) {*out={};}
 void savestate_status_json(char *buf,size_t cap) {
     snprintf(buf,cap,"\"generation\":%u,\"pending\":%u,\"last_ok\":%d,\"last_op\":\"%s\",\"last_slot\":%d",
              status_generation,status_pending,status_ok,status_op,status_slot);
@@ -97,6 +104,7 @@ static Physical script(unsigned t) {
     Physical p{{0xFFFF,0xFFFF},{{128,128,128,128},{128,128,128,128}},{0,0}};
     if(t>=10 && t<40)p.buttons[0]=0xBFFF;                 // Cross held
     if(t%7==3)p.buttons[0]&=(uint16_t)~0x0010;            // Up taps
+    if(t>=45 && t<50)p.buttons[0]&=(uint16_t)~0x0006;     // one held incident chord
     if(t>=60 && t<90) {p.analog[0]=1;p.sticks[0][0]=uint8_t(t*3);p.sticks[0][1]=uint8_t(255-t);}
     if(t>=100 && t<120)p.buttons[1]=0x7FFF;               // P2 Square
     p.connected[0] = !((t>=70 && t<80) || (t>=130 && t<145)); // analog + digital unplug/replug
@@ -174,6 +182,27 @@ int main(int argc,char **argv) {
     {std::ofstream settings(std::filesystem::path(application_root)/"settings.toml");settings<<"[video]\n";}
     CHECK(activation && vblank && savestate && osd_activation);
 
+    // Passive retail evidence must reject boot/invalid pointers and bound a
+    // corrupt actor list. Spatial proximity does not classify an enemy.
+    auto word=[](uint32_t a,uint32_t value) {memcpy(&memory[a&0x1FFFFF],&value,4);};
+    medievil2_diagnostic::TelemetryRow evidence{};
+    medievil2_diagnostic::sample_retail(evidence);CHECK(evidence[3]==0);
+    word(0x8004FB9C,0x8F840584);word(0x800EEFD8,0x80100000);
+    word(0x800F152C,290);word(0x80100060,300u<<16|110);
+    word(0x80100024,100);word(0x800EFC60,0x80101000);
+    word(0x80101004,0x80102000);word(0x80101062&~3u,70u<<16);
+    word(0x80101024,200);word(0x80102004,0x800EFC5C);
+    word(0x80102060,50u<<16);word(0x80102024,120);
+    auto before_sample=std::make_unique<decltype(memory)>(memory);
+    medievil2_diagnostic::sample_retail(evidence);
+    CHECK(evidence[3]==1 && evidence[10]==290 && evidence[11]==110);
+    CHECK(evidence[17]==0x80102000 && evidence[19]==50 && evidence[24]==400 && !evidence[25]);
+    CHECK(memory==*before_sample);
+    word(0x80102004,0x80101000);evidence={};
+    medievil2_diagnostic::sample_retail(evidence);CHECK(evidence[25]==1);
+    word(0x800EEFD8,0xFFFFFFFC);evidence={};
+    medievil2_diagnostic::sample_retail(evidence);CHECK(!evidence[8]);
+
     // ---- Record 200 frames of scripted two-seat input --------------------------
     env("MEDIEVIL2_DIAGNOSTIC_REPLAY","");env("MEDIEVIL2_DIAGNOSTIC_BASELINE","");
     reset_machine();activation();osd_activation();
@@ -181,14 +210,20 @@ int main(int argc,char **argv) {
     run_frames(0,200);
     CHECK(shown[0].find("REC")!=std::string::npos && shown[0].find("F199")!=std::string::npos);
     recording.flush();
+    telemetry.flush();
     auto final_memory=std::make_unique<decltype(memory)>(memory);
     recording.close();
+    telemetry.close();
     auto session=newest_session();
     CHECK(!session.empty());
     auto text=slurp(session/"inputs.csv");
     CHECK(text.rfind("# medievil2-input-v2\n# execution ",0)==0 && text.find("\n# plan fixture-plan\n# build ")!=std::string::npos);
     size_t rows=0;for(size_t at=0;(at=text.find("\nN ",at))!=std::string::npos;++at)++rows;
     CHECK(rows==200);
+    auto timings=slurp(session/"telemetry.csv");
+    CHECK(timings.rfind("sequence,host_elapsed_us,host_interval_us,",0)==0);
+    CHECK(std::count(timings.begin(),timings.end(),'\n')==201);
+    CHECK(incident==1); // holding the chord across five frames marks once
     // Row 0 is the initial SIO state; row 11 shows Cross, which the model's
     // script first sampled at the boundary after frame 10... recorded one
     // VBlank later, exactly as the game sees it.

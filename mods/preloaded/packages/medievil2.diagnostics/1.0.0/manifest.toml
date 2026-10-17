@@ -4,7 +4,7 @@ version = "1.0.0"
 name = "Playtest Diagnostics"
 author = "MediEvil II Recompiled"
 license = "GPL-3.0-only"
-description = "Records a replayable input and state trace with the starting memory cards, and shows the accepted inputs. Enabled by default for playtests."
+description = "Records inputs, controller presence, timing and gameplay evidence with starting memory cards. Press L3 + R3 to mark a problem. Enabled by default for playtests."
 resolver = "declarative"
 save_compatibility = "shared"
 

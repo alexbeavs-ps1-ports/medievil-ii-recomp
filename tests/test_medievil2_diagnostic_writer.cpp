@@ -65,6 +65,12 @@ int main(int argc,char **argv) {
     CHECK(writer.native(row));
     writer.close();CHECK(writer);
     CHECK(contents(root/"recovered.csv").find("N ")!=std::string::npos);
+    // A sidecar uses the same bounded/draining transport with its own schema;
+    // it must not change the replayable input row width or prefix.
+    Writer<8,std::array<int64_t,3>> sidecar;
+    sidecar.open(root/"telemetry.csv","sequence,time,value\n","");
+    CHECK(sidecar.native({7,1000,-42}));sidecar.close();CHECK(sidecar);
+    CHECK(contents(root/"telemetry.csv")=="sequence,time,value\n7,1000,-42\n");
     if(argc>2 && std::string(argv[2])=="benchmark") {
         constexpr unsigned frames=10000,batch=100;
         std::vector<double> latencies;

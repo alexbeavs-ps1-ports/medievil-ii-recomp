@@ -24,6 +24,7 @@ your saved bindings return when it is disabled. Gamepad buttons remain usable.
 | 6 | Inventory / item selection |
 | Z / C | Native camera left / right |
 | Left Alt + mouse | Native first-person free look while stationary |
+| F4 | Mark a playtest incident (L3 + R3) |
 
 Click once in gameplay to capture the mouse. That first click is consumed;
 subsequent clicks perform their assigned actions. Escape releases the cursor.

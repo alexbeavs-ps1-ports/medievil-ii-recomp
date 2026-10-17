@@ -19,6 +19,9 @@
 #include "sio.h"
 #include "medievil2_diagnostic_paths.h"
 #include "medievil2_diagnostic_writer.h"
+#include "medievil2_telemetry.h"
+#include "cdrom.h"
+#include "render_pass.h"
 #include <array>
 #include <algorithm>
 #include <chrono>
@@ -47,6 +50,10 @@ constexpr unsigned ColButtons = 1, ColPad = 3, ColPadStride = 5, ColDigest = 13;
 constexpr unsigned ColConnected = 14;
 
 medievil2_diagnostic::Writer<> recording;
+medievil2_diagnostic::Writer<4096, medievil2_diagnostic::TelemetryRow> telemetry;
+std::chrono::steady_clock::time_point telemetry_start, telemetry_last;
+unsigned incident;
+bool incident_held, telemetry_failed;
 std::ifstream replay;
 Row pending{};               // replay row the next VBlank verifies
 bool pending_valid;
@@ -93,6 +100,11 @@ void report_stats() {
 
 void close_recording() {
     recording.close();
+    telemetry.close();
+    if (!telemetry && !telemetry_failed) {
+        telemetry_failed = true;
+        fprintf(stderr, "medievil2.diagnostics: telemetry close failed: %s\n", telemetry.error_text());
+    }
     report_stats();
     if (!recording && !recording_failed) {
         recording_failed = true;
@@ -250,6 +262,7 @@ void seed_first_row() {
 std::string session_json(bool netplay) {
     std::ostringstream out;
     out << "{\n  \"format_version\": 1,\n  \"input_format\": \"" MEDIEVIL2_INPUT_FORMAT "\",\n"
+        << "  \"telemetry_format\": \"medievil2-telemetry-v1\",\n"
         << "  \"game_id\": \"SCUS-94564\",\n"
         << "  \"boundary\": \"guest-vblank-sio-pad-state\",\n"
         << "  \"digest\": \"fnv-mix over " << DigestWords << " main-RAM words per VBlank, stride "
@@ -276,6 +289,11 @@ void begin_recording() {
         recording.open(folder / "inputs.csv", std::string("# " MEDIEVIL2_INPUT_FORMAT "\n# execution ") +
             PSX_EXECUTION_ID + "\n# plan " + plan_identity() + "\n# build " MEDIEVIL2_DIAGNOSTIC_BUILD_ID "\n");
         if (!recording) throw std::runtime_error(recording.error_text());
+        telemetry.open(folder / "telemetry.csv", medievil2_diagnostic::TelemetryHeader, "");
+        telemetry_failed = !telemetry;
+        if (telemetry_failed) fprintf(stderr, "medievil2.diagnostics: telemetry unavailable: %s; input capture continues\n", telemetry.error_text());
+        telemetry_start = telemetry_last = std::chrono::steady_clock::now();
+        incident = 0; incident_held = false;
         std::ofstream metadata(folder / "session.json");
         metadata << session_json(false);
         if (!pending_baseline.empty()) {
@@ -319,16 +337,48 @@ void begin_recording() {
         }
         recording_location("Recording: " + std::filesystem::absolute(folder).make_preferred().u8string() +
             "\nAfter reproducing the bug, quit normally and zip this entire session folder."
+            "\nPress both stick buttons together to mark an incident (F4 with Modern Controls)."
             "\nIt includes starting game saves; do not include the game disc or BIOS.");
         fprintf(stderr, "medievil2.diagnostics: recording %s\n", folder.u8string().c_str());
         fflush(stderr);
         pending_baseline.clear(); pending_baseline_unavailable = false;
     } catch (const std::exception& error) {
         recording.close();
+        telemetry.close();
         recording_failed = true;
         recording_location(std::string("Recording FAILED: ") + error.what());
         fprintf(stderr, "medievil2.diagnostics: recording unavailable: %s\n", error.what());
         psx_mod_counter_add("medievil2.diagnostics.recording-failed", 1);
+    }
+}
+
+void capture_telemetry(const Row& input) {
+    if (telemetry_failed || !telemetry.is_open()) return;
+    const auto now = std::chrono::steady_clock::now();
+    medievil2_diagnostic::TelemetryRow row{};
+    row[0] = input[0];
+    row[1] = std::chrono::duration_cast<std::chrono::microseconds>(now - telemetry_start).count();
+    row[2] = sequence ? std::chrono::duration_cast<std::chrono::microseconds>(now - telemetry_last).count() : 0;
+    telemetry_last = now;
+    const bool held = (input[ColButtons] & 6) == 0;
+    if (held && !incident_held) {
+        ++incident;
+        host_osd_push(("Playtest incident " + std::to_string(incident) + " marked").c_str(), 2000);
+    }
+    incident_held = held; row[26] = incident;
+    medievil2_diagnostic::sample_retail(row);
+    CDROMDebugState cd{}; cdrom_debug_snapshot(&cd);
+    row[27] = cd.reading; row[28] = cd.pending_pending;
+    row[29] = (cd.read_min * 60 + cd.read_sec) * 75 + cd.read_sect - 150;
+    row[30] = cdrom_data_read_active(); row[31] = cdrom_xa_stream_active();
+    RenderPassStats render{}; render_pass_get_stats(&render);
+    row[32] = render.passes; row[33] = render.aborted;
+    row[34] = render.verify_checks; row[35] = render.verify_mismatch;
+    telemetry.native(row);
+    if (!telemetry) {
+        telemetry_failed = true;
+        fprintf(stderr, "medievil2.diagnostics: telemetry stopped: %s; input capture continues\n", telemetry.error_text());
+        psx_mod_counter_add("medievil2.diagnostics.telemetry-failed", 1);
     }
 }
 
@@ -455,6 +505,7 @@ void tick() {
         }
     } else if (recording.is_open() && !recording_failed) {
         recording.native(row);
+        capture_telemetry(row);
         if (!recording) {
             psx_mod_counter_add("medievil2.diagnostics.recording-failed", 1);
             recording_failed = true;

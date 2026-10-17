@@ -63,6 +63,7 @@ void keyboard_actions(const uint8_t* keys, bool in_game, PSXModPadOutput* out) {
         {SDL_SCANCODE_6, 0x0001}, // inventory / native item use
         {SDL_SCANCODE_E, 0x8400},
         {SDL_SCANCODE_F, 0x4000}, // interact / confirm without a mouse click
+        {SDL_SCANCODE_F4, 0x0006}, // L3 + R3: mark a diagnostic incident
     };
     for (const auto& action : actions) if (keys[action.key]) out->buttons &= ~action.mask;
     // Hold Alt for the original first-person look mode; mouse supplies both axes.

@@ -39,6 +39,6 @@
 <circle cx="900.0" cy="205.0" r="5" fill="#79b2ff"/>
 <text x="900.0" y="192.0" text-anchor="middle" font-size="17" font-weight="600">5</text>
 <text x="900.0" y="352" text-anchor="middle" font-size="13" fill="#aebdd1">Retail grace</text>
-<text x="36" y="396" font-size="16">5 verified · 5 remaining (includes HD deferred by owner)</text>
+<text x="36" y="396" font-size="16">5 verified · 4 instrumented for human follow-up · 1 HD deferred</text>
 <text x="36" y="420" font-size="13" fill="#aebdd1">Milestones reflect validation, not elapsed time. Source: PLAYTEST_BURNDOWN.md</text>
 </g></svg>

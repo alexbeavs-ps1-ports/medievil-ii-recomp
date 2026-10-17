@@ -46,6 +46,8 @@ int main() {
     keys[SDL_SCANCODE_F]=0;keys[SDL_SCANCODE_LALT]=1;shortcuts.buttons=0xFFFF;
     keyboard_actions(keys,false,&shortcuts);CHECK(shortcuts.buttons==0xFFFF); // no look chord in menus
     keyboard_actions(keys,true,&shortcuts);CHECK(shortcuts.buttons==0xFCFF);
+    keys[SDL_SCANCODE_LALT]=0;keys[SDL_SCANCODE_F4]=1;shortcuts.buttons=0xFFFF;
+    keyboard_actions(keys,true,&shortcuts);CHECK(shortcuts.buttons==0xFFF9);
     CHECK(mouse_callbacks.eligible(0xFFFF));
     scene_state=1;CHECK(!mouse_callbacks.eligible(0xFFFF));scene_state=0;
     scene_flags=0x80;CHECK(!mouse_callbacks.eligible(0xFFFF));scene_flags=0;

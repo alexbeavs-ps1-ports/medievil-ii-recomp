@@ -34,9 +34,9 @@ for (x,y),label,(_,n,_) in zip(coords,labels,points):
     svg += [f'<circle cx="{x}" cy="{y}" r="5" fill="#79b2ff"/>',
             f'<text x="{x}" y="{y-13}" text-anchor="middle" font-size="17" font-weight="600">{n}</text>',
             f'<text x="{x}" y="352" text-anchor="middle" font-size="13" fill="#aebdd1">{escape(label)}</text>']
-svg += [f'<text x="36" y="396" font-size="16">{points[-1][2]} verified · {points[-1][1]} remaining (includes HD deferred by owner)</text>',
+svg += [f'<text x="36" y="396" font-size="16">{points[-1][2]} verified · 4 instrumented for human follow-up · 1 HD deferred</text>',
         '<text x="36" y="420" font-size="13" fill="#aebdd1">Milestones reflect validation, not elapsed time. Source: PLAYTEST_BURNDOWN.md</text>',
         '</g></svg>']
 target = document.with_suffix('.svg')
-target.write_text('\n'.join(svg)+'\n', encoding='utf-8')
+target.write_text('\n'.join(svg)+'\n', encoding='utf-8', newline='\n')
 print(target)

@@ -28,7 +28,10 @@ your settings, memory cards and installed mods. Resident decoded assets
 use the system user cache directory.
 
 Playtest Diagnostics (on by default) records the controller state of every
-frame plus a memory checksum, so a bug can be replayed exactly. To report a
+frame plus a memory checksum for replay verification. Timing and gameplay
+snapshots also help investigate when an older replay diverges. Press both
+stick buttons (L3 + R3), or F4 with Mouse and Keyboard enabled, just after a
+problem to record an incident marker. See docs/PLAYTEST_FEEDBACK.md. To report a
 problem, quit the game normally and zip the NEWEST folder under
   saves/diagnostics/session-<number>
 (beside MediEvilIIRecomp.exe on Windows; under the Linux data directory above).

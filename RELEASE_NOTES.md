@@ -9,6 +9,9 @@
 - Diagnostics v2 records pad presence. Exact replay still requires the original
   build; developer input-only routes are separately labelled and cannot report
   successful RAM verification.
+- Playtests now capture timing, loading and nearby-actor evidence independently
+  of replay. L3 + R3 (F4 with modern controls) marks an incident. The packaged
+  analysis tool produces a timing chart and event report; see `docs/PLAYTEST_FEEDBACK.md`.
 
 # MediEvil II Recompiled v0.2.1-alpha
 

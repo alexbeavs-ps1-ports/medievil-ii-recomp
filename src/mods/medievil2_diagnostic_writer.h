@@ -23,16 +23,17 @@ namespace medievil2_diagnostic {
 constexpr unsigned RowColumns = 16;
 using Row = std::array<int64_t, RowColumns>;
 
-template<size_t Capacity = 4096> class Writer {
+template<size_t Capacity = 4096, class Record = Row> class Writer {
     enum class Kind { Native, Flush };
     enum Error { None, Full, Io, Start };
     struct Event {
-        Row row{};
+        Record row{};
         Kind kind = Kind::Native;
     };
     static_assert(Capacity > 1, "queue must hold at least one event");
     std::unique_ptr<Event[]> queue;
     std::ofstream file;
+    std::string prefix = "N ";
     std::thread thread;
     std::atomic<size_t> read{0}, write{0};
     std::atomic<unsigned> flushes{0};
@@ -65,7 +66,7 @@ template<size_t Capacity = 4096> class Writer {
                 const auto& event = queue[tail];
                 switch (event.kind) {
                 case Kind::Native:
-                    file << "N ";
+                    file << prefix;
                     for (unsigned i = 0; i < event.row.size(); ++i) file << (i ? "," : "") << event.row[i];
                     file << '\n';
                     break;
@@ -100,8 +101,10 @@ public:
 #ifdef MEDIEVIL2_DIAGNOSTIC_WRITER_TEST
     void test_gate(void (*callback)()) { gate = callback; }
 #endif
-    void open(const std::filesystem::path& path, const std::string& header) {
+    void open(const std::filesystem::path& path, const std::string& header,
+              const std::string& row_prefix = "N ") {
         close(); clear();
+        prefix = row_prefix;
         // Session setup is outside steady-state recording. Make the header
         // observable immediately and report path/permissions errors now.
         file.open(path, std::ios::out | std::ios::trunc | std::ios::binary);
@@ -112,7 +115,7 @@ public:
             opened = true; thread = std::thread([this] { run(); });
         } catch (...) { opened = false; fail(Start); file.close(); queue.reset(); }
     }
-    bool native(const Row& row) {
+    bool native(const Record& row) {
         auto *event = reserve(); if (!event) return false;
         event->kind = Kind::Native; event->row = row;
         publish(); return true;
