@@ -76,7 +76,7 @@ def check_payload(stage):
     ids = sorted(tomllib.loads(p.read_text(encoding='utf-8-sig'))['id'] for p in manifests)
     expected = ['medievil2.diagnostics', 'medievil2.enhancement.frame-rate', 'medievil2.enhancement.seamless-loading',
                 'medievil2.enhancement.texture-filtering', 'medievil2.enhancement.widescreen',
-                'psx.enhancement.8mb-ram', 'psx.enhancement.pgxp', 'psx.presentation.bezel']
+                'psx.enhancement.8mb-ram', 'psx.enhancement.hd-textures', 'psx.enhancement.pgxp', 'psx.presentation.bezel']
     if ids != sorted(expected):
         raise ValueError(f'Unexpected mod catalog: {ids}')
     return ids

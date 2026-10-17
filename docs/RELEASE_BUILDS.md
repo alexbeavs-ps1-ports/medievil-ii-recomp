@@ -50,7 +50,7 @@ python tools/package_release.py --build-dir build-release --platform windows-x64
 ```
 
 The ZIP checks system-only DLL imports, native code/audit correspondence, the
-eight-package mod catalog, OpenBIOS, release flags and excluded user data.
+nine-package mod catalog, OpenBIOS, release flags and excluded user data.
 Extract the complete ZIP into a writable directory and run `MediEvilIIRecomp.exe`.
 
 Linux packaging needs ImageMagick, patchelf, curl and the usual ELF inspection
