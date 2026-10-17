@@ -18,8 +18,9 @@
 #include <thread>
 
 namespace medievil2_diagnostic {
-// sequence, buttons P1/P2, then {analog, lx, ly, rx, ry} for P1/P2, digest.
-constexpr unsigned RowColumns = 14;
+// sequence, buttons P1/P2, {analog, lx, ly, rx, ry} for P1/P2, digest,
+// connected P1/P2. Presence is independent of the analog capability.
+constexpr unsigned RowColumns = 16;
 using Row = std::array<int64_t, RowColumns>;
 
 template<size_t Capacity = 4096> class Writer {

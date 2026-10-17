@@ -14,6 +14,12 @@ original AppImage. Direct AppImage execution is rejected because AppRun seeds
 user data. Replay uses a hidden window (the headless frontend ignores
 controller sources) and runs at the game's normal speed unless the host allows
 more.
+
+Developer builds additionally accept --input-only for exploring inputs across
+fixes. That mode still checks accepted pad bytes and presence, but deliberately
+does not verify build/mod identity or RAM. V1 routes require an explicit
+--legacy-connected P1/P2 assumption because their format did not record it.
+An input-only completion is never an exact replay, and player builds reject it.
 """
 import argparse
 import json
@@ -25,7 +31,7 @@ import subprocess
 import time
 import tomllib
 
-FORMAT = b'# medievil2-input-v1'
+FORMATS = (b'# medievil2-input-v1', b'# medievil2-input-v2')
 ENV_PREFIXES = ('PSX_', 'RNET_', 'LNG_', 'MEDIEVIL2_DIAGNOSTIC_', 'MEDIEVIL_II_RECOMP_')
 LOG_PREFIX = 'medievil2.diagnostics: '
 
@@ -79,8 +85,8 @@ def recording_rows(recording):
     """Validate the header; return the byte length of the complete prefix and
     the number of complete rows."""
     with recording.open('rb') as source:
-        if source.readline().rstrip(b'\r\n') != FORMAT:
-            raise ValueError('Expected a medievil2-input-v1 diagnostic recording')
+        if source.readline().rstrip(b'\r\n') not in FORMATS:
+            raise ValueError('Expected a medievil2-input-v1 or medievil2-input-v2 diagnostic recording')
         for prefix in (b'# execution ', b'# plan ', b'# build '):
             if not source.readline().startswith(prefix):
                 raise ValueError('Incomplete diagnostic identity header')
@@ -208,11 +214,17 @@ def main():
     parser.add_argument('--output', type=Path, required=True, help='New isolated directory')
     parser.add_argument('--timeout', type=float, default=900)
     parser.add_argument('--debug-port', type=int, help='Developer build TCP inspection port')
+    parser.add_argument('--input-only', action='store_true', help='Developer build only: apply inputs across fixes without claiming build/mod/RAM equivalence')
+    parser.add_argument('--legacy-connected', choices=('00','10','01','11'), help='Explicit P1/P2 presence assumption for an input-only v1 route')
     args = parser.parse_args()
     disc = args.disc.resolve(strict=True)
     bios = args.bios.resolve(strict=True) if args.bios else None
     output, target, trace = prepare(args)
     env = replay_environment(output, trace, os.environ)
+    if args.input_only:
+        env['MEDIEVIL2_DIAGNOSTIC_INPUT_ONLY'] = '1'
+        if args.legacy_connected:
+            env['MEDIEVIL2_DIAGNOSTIC_LEGACY_CONNECTED'] = args.legacy_connected
     baseline = output / 'diagnostic-baseline.pst'
     if baseline.is_file():
         env['MEDIEVIL2_DIAGNOSTIC_BASELINE'] = str(baseline)
@@ -231,7 +243,8 @@ def main():
         try:
             while time.monotonic() < deadline:
                 text = log_path.read_text(encoding='utf-8', errors='replace')
-                if LOG_PREFIX + 'input replay complete (' in text:
+                complete = 'input-only route complete (' if args.input_only else 'input replay complete ('
+                if LOG_PREFIX + complete in text:
                     if not baseline.is_file() or LOG_PREFIX + 'replay baseline restored' in text:
                         result = 0
                     break
@@ -242,7 +255,8 @@ def main():
             if process.poll() is None:
                 process.terminate()
                 process.wait(timeout=15)
-    print(('Replay verified. ' if result == 0 else 'Replay failed or timed out. ') + f'Log: {log_path}')
+    success = 'Input-only route completed; guest state NOT verified. ' if args.input_only else 'Replay verified. '
+    print((success if result == 0 else 'Replay failed or timed out. ') + f'Log: {log_path}')
     raise SystemExit(result)
 
 

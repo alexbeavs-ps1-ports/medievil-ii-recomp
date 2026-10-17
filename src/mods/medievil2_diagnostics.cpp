@@ -34,7 +34,7 @@
 #ifndef MEDIEVIL2_DIAGNOSTIC_BUILD_ID
 #define MEDIEVIL2_DIAGNOSTIC_BUILD_ID "diagnostic-test-build"
 #endif
-#define MEDIEVIL2_INPUT_FORMAT "medievil2-input-v1"
+#define MEDIEVIL2_INPUT_FORMAT "medievil2-input-v2"
 
 namespace {
 using medievil2_diagnostic::Row;
@@ -44,6 +44,7 @@ constexpr uint32_t RamBase = 0x80000000u, RamWords = 0x200000u / 4u;
 // keeping the per-frame read bounded (16 KiB, never the whole 2 MiB).
 constexpr uint32_t StrideWords = 128, DigestWords = RamWords / StrideWords;
 constexpr unsigned ColButtons = 1, ColPad = 3, ColPadStride = 5, ColDigest = 13;
+constexpr unsigned ColConnected = 14;
 
 medievil2_diagnostic::Writer<> recording;
 std::ifstream replay;
@@ -52,6 +53,8 @@ bool pending_valid;
 uint32_t sequence;
 bool started, replaying, replay_failed, recording_failed, owns_sources, osd_enabled;
 bool baseline_loaded;
+bool input_only, legacy_route;
+unsigned legacy_connected;
 unsigned last_generation;
 std::string replay_path, baseline_path;
 std::vector<uint8_t> expected_baseline, pending_baseline;
@@ -123,6 +126,7 @@ Row sample(uint32_t seq) {
         uint8_t sticks[4] = {0x80, 0x80, 0x80, 0x80};
         sio_get_pad_sticks((int)seat, sticks);
         row[ColButtons + seat] = sio_get_pad_buttons_slot((int)seat);
+        row[ColConnected + seat] = sio_get_pad_connected((int)seat) ? 1 : 0;
         row[ColPad + seat * ColPadStride] = sio_get_pad_analog((int)seat) ? 1 : 0;
         for (unsigned i = 0; i < 4; ++i) row[ColPad + seat * ColPadStride + 1 + i] = sticks[i];
     }
@@ -135,11 +139,18 @@ bool parse_row(const std::string& line, Row& row) {
     std::string fields = line.substr(2);
     for (char& c : fields) if (c == ',') c = ' ';
     std::istringstream in(fields);
-    for (auto& field : row) if (!(in >> field)) return false;
+    const unsigned columns = legacy_route ? ColConnected : RowColumns;
+    row.fill(0);
+    for (unsigned column = 0; column < columns; ++column) if (!(in >> row[column])) return false;
+    if (legacy_route) {
+        row[ColConnected] = legacy_connected & 1u;
+        row[ColConnected + 1] = (legacy_connected >> 1) & 1u;
+    }
     in >> std::ws;
     if (!in.eof() || row[0] < 0 || row[ColDigest] < 0 || row[ColDigest] > UINT32_MAX) return false;
     for (unsigned i = ColButtons; i < ColButtons + 2; ++i) if (row[i] < 0 || row[i] > 65535) return false;
     for (unsigned seat = 0; seat < 2; ++seat) {
+        if (row[ColConnected + seat] < 0 || row[ColConnected + seat] > 1) return false;
         const unsigned base = ColPad + seat * ColPadStride;
         if (row[base] < 0 || row[base] > 1) return false;
         for (unsigned i = 1; i <= 4; ++i) if (row[base + i] < 0 || row[base + i] > 255) return false;
@@ -149,6 +160,7 @@ bool parse_row(const std::string& line, Row& row) {
 
 int source(unsigned seat, PSXModControllerState *state) {
     if (!replaying || !pending_valid) return 0; // declined: neutral until the baseline/first row
+    psx_mod_set_controller_source_connected(seat, (int)pending[ColConnected + seat]);
     const unsigned base = ColPad + seat * ColPadStride;
     state->buttons = (uint32_t)pending[ColButtons + seat];
     state->analog = (uint32_t)pending[base];
@@ -203,7 +215,12 @@ void begin_replay() {
         want_execution = std::string("# execution ") + PSX_EXECUTION_ID,
         want_plan = "# plan " + plan_identity(),
         want_build = "# build " MEDIEVIL2_DIAGNOSTIC_BUILD_ID;
-    if (format != want_format || execution != want_execution || plan != want_plan || build != want_build) {
+    if (input_only) {
+        legacy_route = format == "# medievil2-input-v1";
+        if (format != want_format && !legacy_route) { fail("unsupported input route format"); return; }
+        if (legacy_route && legacy_connected > 3) { fail("v1 input route requires explicit legacy controller presence"); return; }
+        fprintf(stderr,"medievil2.diagnostics: INPUT-ONLY ROUTE: build/mod/RAM verification unavailable; this is not a verified replay\n");
+    } else if (format != want_format || execution != want_execution || plan != want_plan || build != want_build) {
         fprintf(stderr, "medievil2.diagnostics: replay header mismatches: format=%d execution=%d plan=%d build=%d\n",
                 format != want_format, execution != want_execution, plan != want_plan, build != want_build);
         fprintf(stderr, "medievil2.diagnostics: active plan %s\n", plan_identity().c_str());
@@ -226,6 +243,7 @@ void seed_first_row() {
         sio_set_pad_state_slot((int)seat, (uint16_t)pending[ColButtons + seat]);
         sio_set_pad_sticks((int)seat, (uint8_t)pending[base + 1], (uint8_t)pending[base + 2],
                            (uint8_t)pending[base + 3], (uint8_t)pending[base + 4]);
+        sio_set_pad_connected((int)seat, (int)pending[ColConnected + seat]);
     }
 }
 
@@ -374,7 +392,7 @@ std::string input_line(unsigned seat, uint16_t buttons) {
     if (!held) text += " -";
     text += "  F" + std::to_string(sequence);
     if (replay_failed || recording_failed) text += " ERROR";
-    else if (replaying) text += " PLAY";
+    else if (replaying) text += input_only ? " ROUTE" : " PLAY";
     else if (recording.is_open()) text += " REC";
     return text;
 }
@@ -387,13 +405,15 @@ void show(const Row& row) {
 
 const char *column_name(unsigned column) {
     static const char *names[RowColumns] = {"sequence", "P1 buttons", "P2 buttons",
-        "P1 analog", "P1 lx", "P1 ly", "P1 rx", "P1 ry", "P2 analog", "P2 lx", "P2 ly", "P2 rx", "P2 ry", "RAM digest"};
+        "P1 analog", "P1 lx", "P1 ly", "P1 rx", "P1 ry", "P2 analog", "P2 lx", "P2 ly", "P2 rx", "P2 ry", "RAM digest",
+        "P1 connected", "P2 connected"};
     return names[column];
 }
 
 void verify(const Row& live) {
     if (!pending_valid) return;
     for (unsigned column = 0; column < RowColumns; ++column) {
+        if (input_only && column == ColDigest) continue;
         if (pending[column] == live[column]) continue;
         fprintf(stderr, "medievil2.diagnostics: first divergence at sequence %u: %s expected %lld got %lld%s\n",
                 sequence, column_name(column), (long long)pending[column], (long long)live[column],
@@ -421,13 +441,14 @@ void tick() {
     if (replaying) {
         verify(row);
         if (replaying) {
-            psx_mod_counter_add("medievil2.diagnostics.replayed-inputs", 1);
+            psx_mod_counter_add(input_only ? "medievil2.diagnostics.route-inputs" : "medievil2.diagnostics.replayed-inputs", 1);
             show(row);
             const uint32_t verified = sequence + 1;
             if (!next_row()) {
                 replay.close(); replaying = false; pending_valid = false;
-                psx_mod_counter_add("medievil2.diagnostics.replay-complete", 1);
-                fprintf(stderr, "medievil2.diagnostics: input replay complete (%u inputs verified)\n", verified);
+                psx_mod_counter_add(input_only ? "medievil2.diagnostics.route-complete" : "medievil2.diagnostics.replay-complete", 1);
+                if (input_only) fprintf(stderr,"medievil2.diagnostics: input-only route complete (%u inputs applied; RAM was not verified)\n",verified);
+                else fprintf(stderr, "medievil2.diagnostics: input replay complete (%u inputs verified)\n", verified);
                 fflush(stderr);
                 release_sources();
             }
@@ -455,6 +476,22 @@ void activate() {
     close_recording(); replay.close(); recording.clear(); replay.clear();
     started = replaying = replay_failed = recording_failed = pending_valid = false;
     baseline_loaded = pending_baseline_unavailable = false;
+    input_only = legacy_route = false;
+    legacy_connected = 4;
+#ifndef PSX_NO_DEBUG_TOOLS
+    const char* route = getenv("MEDIEVIL2_DIAGNOSTIC_INPUT_ONLY");
+    input_only = route && !strcmp(route,"1");
+    if (const char* presence = getenv("MEDIEVIL2_DIAGNOSTIC_LEGACY_CONNECTED")) {
+        if (strlen(presence)==2 && (presence[0]=='0' || presence[0]=='1') &&
+            (presence[1]=='0' || presence[1]=='1'))
+            legacy_connected = (unsigned)(presence[0]-'0') | ((unsigned)(presence[1]-'0')<<1);
+    }
+#else
+    const char* route = getenv("MEDIEVIL2_DIAGNOSTIC_INPUT_ONLY");
+    if (route && !strcmp(route,"1")) {
+        started = true; fail("input-only routes require a developer build"); return;
+    }
+#endif
     osd_enabled = false;
     sequence = 0; last_generation = 0;
     pending_baseline.clear(); expected_baseline.clear();

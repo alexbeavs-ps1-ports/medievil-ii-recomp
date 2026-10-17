@@ -76,7 +76,7 @@ def check_payload(stage):
     ids = sorted(tomllib.loads(p.read_text(encoding='utf-8-sig'))['id'] for p in manifests)
     expected = ['medievil2.diagnostics', 'medievil2.enhancement.frame-rate', 'medievil2.enhancement.seamless-loading',
                 'medievil2.enhancement.texture-filtering', 'medievil2.enhancement.widescreen',
-                'psx.enhancement.8mb-ram', 'psx.enhancement.hd-textures', 'psx.enhancement.pgxp', 'psx.presentation.bezel']
+                'medievil2.input.modern-controls', 'psx.enhancement.8mb-ram', 'psx.enhancement.hd-textures', 'psx.enhancement.pgxp', 'psx.presentation.bezel']
     if ids != sorted(expected):
         raise ValueError(f'Unexpected mod catalog: {ids}')
     return ids
@@ -112,6 +112,9 @@ def main():
     (stage/'docs').mkdir()
     shutil.copy2(ROOT/'docs/ENHANCEMENTS.md', stage/'docs/ENHANCEMENTS.md')
     shutil.copy2(ROOT/'docs/RELEASE_BUILDS.md', stage/'docs/RELEASE_BUILDS.md')
+    shutil.copy2(ROOT/'docs/MODERN_CONTROLS.md', stage/'docs/MODERN_CONTROLS.md')
+    shutil.copy2(ROOT/'docs/PLAYTEST_BURNDOWN.md', stage/'docs/PLAYTEST_BURNDOWN.md')
+    shutil.copy2(ROOT/'docs/PLAYTEST_BURNDOWN.svg', stage/'docs/PLAYTEST_BURNDOWN.svg')
     (stage/'licenses').mkdir()
     shutil.copy2(ROOT/'psxrecomp/runtime/licenses/libchdr-NOTICES.txt', stage/'licenses')
     packages = check_payload(stage)

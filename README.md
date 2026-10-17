@@ -67,6 +67,7 @@ These are the defaults for a fresh install. Existing saved preferences are retai
 | **OpenBIOS fast boot** | Uses the included OpenBIOS kernel and skips its startup shell. | On |
 | **Precompiled engine and level code** | Runs the audited game and known level-module placements without player-side compilation. | Included |
 | **Bezel Artwork** | Places a user-selected image in unused screen margins, when the view leaves any. | Off; optional decoration |
+| **Mouse and Keyboard** | WASD, mouse camera, Space jump, combat shortcuts and camera direction options. [Controls](docs/MODERN_CONTROLS.md) | Off; optional controls |
 
 ### Adaptive widescreen, terrain and HUD
 
@@ -239,12 +240,18 @@ To verify a recording (developers): `python tools/replay_medievil2_diagnostics.p
 needs the same build as the recording. Turning **Input Recording** off in the
 Mods menu disables recording entirely.
 
+New `medievil2-input-v2` recordings also capture whether each pad is plugged in,
+independently of its analog mode. Old v1 recordings require their original
+build for verification; they do not contain that presence information.
+
 ## Development and evidence
 
 Implementation details, measurements and reproducible checks:
 
 - [Enhancement validation](docs/ENHANCEMENTS.md): renderer, PGXP, terrain, HUD,
   interpolation and performance evidence.
+- [Playtest burndown](docs/PLAYTEST_BURNDOWN.md): reported regressions, status and evidence.
+- [Mouse and keyboard controls](docs/MODERN_CONTROLS.md): bindings and camera options.
 - [Resident Loading validation](docs/RESIDENT_LOADING.md): cache coverage,
   decoder comparisons, loading measurements and fallback behavior.
 - [Release builds](docs/RELEASE_BUILDS.md): native-code preparation, Windows ZIP

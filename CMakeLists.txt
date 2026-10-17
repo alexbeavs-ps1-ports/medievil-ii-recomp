@@ -57,6 +57,7 @@ target_sources(psx-runtime PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_widescreen.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_terrain.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_screen_layout.c")
+target_sources(psx-runtime PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_modern_controls.cpp")
 target_sources(psx-runtime PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_seamless.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_seamless_store.cpp"
@@ -102,6 +103,19 @@ if(MEDIEVIL2_BUILD_TESTS)
     set_tests_properties(medievil2_diagnostic_writer_test PROPERTIES TIMEOUT 15)
     add_test(NAME medievil2_diagnostics_test COMMAND medievil2_diagnostics_test
         "${CMAKE_CURRENT_BINARY_DIR}/diagnostics-qa")
+    if(TARGET SDL3::SDL3 OR TARGET SDL2::SDL2)
+        add_executable(medievil2_modern_controls_test tests/test_modern_controls.cpp)
+        target_compile_features(medievil2_modern_controls_test PRIVATE cxx_std_17)
+        target_include_directories(medievil2_modern_controls_test PRIVATE "${PSXRECOMP_ROOT}/runtime/include")
+        target_compile_definitions(medievil2_modern_controls_test PRIVATE SDL_MAIN_HANDLED)
+        if(PSX_SDL_BACKEND STREQUAL "SDL3")
+            target_compile_definitions(medievil2_modern_controls_test PRIVATE PSX_SDL3=1)
+            target_link_libraries(medievil2_modern_controls_test PRIVATE SDL3::SDL3)
+        else()
+            target_link_libraries(medievil2_modern_controls_test PRIVATE SDL2::SDL2)
+        endif()
+        add_test(NAME medievil2_modern_controls_test COMMAND medievil2_modern_controls_test)
+    endif()
     find_package(Python3 COMPONENTS Interpreter QUIET)
     if(Python3_FOUND)
         add_test(NAME medievil2_diagnostic_replay_prepare_test

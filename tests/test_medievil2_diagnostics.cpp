@@ -24,6 +24,7 @@ static std::array<uint8_t,0x200000> memory;
 static std::array<uint16_t,2> sio_buttons{0xFFFF,0xFFFF};
 static std::array<std::array<uint8_t,4>,2> sio_sticks{};
 static std::array<int,2> sio_analog{};
+static std::array<int,2> sio_connected{1,0}, source_connected{1,1};
 static std::array<PSXModControllerSource,2> sources{};
 static std::map<std::string,unsigned> counters;
 static std::string save_root,shown[2];
@@ -47,10 +48,13 @@ int psx_mod_register_activation_plugin(const char *id,PSXModActivationCallback c
 int psx_mod_register_vblank_plugin(const char*,PSXModVBlankCallback cb) {vblank=cb;return 1;}
 int psx_mod_register_savestate_plugin(const char*,PSXModActivationCallback cb) {savestate=cb;return 1;}
 int psx_mod_netplay_is_active(void) {return online;}
-int psx_mod_set_controller_source(uint32_t seat,PSXModControllerSource source) {sources.at(seat)=source;return 1;}
+int psx_mod_set_controller_source(uint32_t seat,PSXModControllerSource source) {sources.at(seat)=source;source_connected.at(seat)=1;return 1;}
+int psx_mod_set_controller_source_connected(uint32_t seat,int connected) {source_connected.at(seat)=connected;return 1;}
 void psx_mod_counter_add(const char *name,uint32_t n) {counters[name]+=n;}
 uint16_t sio_get_pad_buttons_slot(int slot) {return sio_buttons.at(slot);}
 int sio_get_pad_analog(int slot) {return sio_analog.at(slot);}
+int sio_get_pad_connected(int slot) {return sio_connected.at(slot);}
+void sio_set_pad_connected(int slot,int connected) {sio_connected.at(slot)=connected;}
 void sio_get_pad_sticks(int slot,uint8_t out[4]) {memcpy(out,sio_sticks.at(slot).data(),4);}
 void sio_set_pad_state_slot(int slot,uint16_t buttons) {sio_buttons.at(slot)=buttons;}
 void sio_set_pad_sticks(int slot,uint8_t lx,uint8_t ly,uint8_t rx,uint8_t ry) {sio_sticks.at(slot)={lx,ly,rx,ry};}
@@ -88,13 +92,15 @@ static void env(const char *name,const char *v) {
 }
 
 // ---- Engine model -----------------------------------------------------------
-struct Physical {uint16_t buttons[2];uint8_t sticks[2][4];int analog[2];};
+struct Physical {uint16_t buttons[2];uint8_t sticks[2][4];int analog[2];int connected[2]={1,0};};
 static Physical script(unsigned t) {
     Physical p{{0xFFFF,0xFFFF},{{128,128,128,128},{128,128,128,128}},{0,0}};
     if(t>=10 && t<40)p.buttons[0]=0xBFFF;                 // Cross held
     if(t%7==3)p.buttons[0]&=(uint16_t)~0x0010;            // Up taps
     if(t>=60 && t<90) {p.analog[0]=1;p.sticks[0][0]=uint8_t(t*3);p.sticks[0][1]=uint8_t(255-t);}
     if(t>=100 && t<120)p.buttons[1]=0x7FFF;               // P2 Square
+    p.connected[0] = !((t>=70 && t<80) || (t>=130 && t<145)); // analog + digital unplug/replug
+    p.connected[1] = t>=95 && t<125;                     // P2 plug/unplug
     return p;
 }
 // Boundary sample: exactly the engine's rule. A source ANDs with the physical
@@ -102,22 +108,26 @@ static Physical script(unsigned t) {
 static void boundary_sample(const Physical& phys) {
     for(unsigned seat=0;seat<2;++seat) {
         uint16_t buttons=phys.buttons[seat];int analog=phys.analog[seat];
+        int connected=phys.connected[seat];
         std::array<uint8_t,4> sticks;memcpy(sticks.data(),phys.sticks[seat],4);
         if(sources[seat]) {
             PSXModControllerState state{sizeof state,0xFFFF,128,128,128,128,1};
             if(!sources[seat](&state)) state={sizeof state,0xFFFF,128,128,128,128,1};
             buttons=(uint16_t)(state.buttons&buttons);analog=(int)state.analog;
+            connected=source_connected[seat];
             sticks={uint8_t(state.lx),uint8_t(state.ly),uint8_t(state.rx),uint8_t(state.ry)};
             if(!analog)sticks={128,128,128,128};
         }
         sio_buttons[seat]=buttons;sio_analog[seat]=analog;sio_sticks[seat]=sticks;
+        sio_connected[seat]=connected;
     }
 }
 // The guest frame reads the pad state SIO held at the VBlank and mutates RAM.
 static void guest_frame(unsigned t) {
     uint32_t value;memcpy(&value,&memory[0x4000],4);
     value=value*1664525u+1013904223u+sio_buttons[0]+(uint32_t(sio_buttons[1])<<7)+
-          sio_sticks[0][0]*31u+sio_sticks[0][1]*17u+t;
+          sio_sticks[0][0]*31u+sio_sticks[0][1]*17u+t+
+          sio_connected[0]*71u+sio_connected[1]*97u;
     memcpy(&memory[0x4000],&value,4);
     memcpy(&memory[0x100000+((t*64u)&0xFFFFF)],&value,4); // a spread-out write
 }
@@ -132,6 +142,7 @@ static void run_frames(unsigned from,unsigned to,int tamper=-1) {
 }
 static void reset_machine() {
     memory.fill(0);sio_buttons={0xFFFF,0xFFFF};sio_sticks={};sio_analog={};
+    sio_connected={1,0};source_connected={1,1};
     for(auto& s:sio_sticks)s.fill(128);
 }
 static std::filesystem::path newest_session() {
@@ -175,7 +186,7 @@ int main(int argc,char **argv) {
     auto session=newest_session();
     CHECK(!session.empty());
     auto text=slurp(session/"inputs.csv");
-    CHECK(text.rfind("# medievil2-input-v1\n# execution ",0)==0 && text.find("\n# plan fixture-plan\n# build ")!=std::string::npos);
+    CHECK(text.rfind("# medievil2-input-v2\n# execution ",0)==0 && text.find("\n# plan fixture-plan\n# build ")!=std::string::npos);
     size_t rows=0;for(size_t at=0;(at=text.find("\nN ",at))!=std::string::npos;++at)++rows;
     CHECK(rows==200);
     // Row 0 is the initial SIO state; row 11 shows Cross, which the model's
@@ -236,6 +247,45 @@ int main(int argc,char **argv) {
         CHECK(!replaying && !replay_failed && counters["medievil2.diagnostics.replay-complete"]==2);
     }
     env("MEDIEVIL2_DIAGNOSTIC_REPLAY","");
+
+    // A developer may apply old inputs across a fix, but this must never
+    // increment the verified-replay counter or guess missing v1 presence.
+#ifdef PSX_NO_DEBUG_TOOLS
+    env("MEDIEVIL2_DIAGNOSTIC_INPUT_ONLY","1");
+    reset_machine();activation();CHECK(replay_failed);
+    env("MEDIEVIL2_DIAGNOSTIC_INPUT_ONLY","");
+#else
+    {
+        auto legacy=std::filesystem::path(save_root)/"legacy-route.csv";
+        std::istringstream in(slurp(session/"inputs.csv"));std::ofstream out(legacy);
+        std::string line;unsigned row=0;
+        while(std::getline(in,line)) {
+            if(row++==0)line="# medievil2-input-v1";
+            else if(line.rfind("N ",0)==0) {
+                line.resize(line.rfind(','));line.resize(line.rfind(','));
+            }
+            out<<line<<'\n';
+        }
+        out.close();
+        env("MEDIEVIL2_DIAGNOSTIC_REPLAY",legacy.string().c_str());
+        reset_machine();activation();CHECK(replay_failed); // strict stays strict
+        env("MEDIEVIL2_DIAGNOSTIC_INPUT_ONLY","1");
+        reset_machine();activation();CHECK(replay_failed); // presence required
+        env("MEDIEVIL2_DIAGNOSTIC_LEGACY_CONNECTED","10");
+        const auto verified=counters["medievil2.diagnostics.replay-complete"];
+        reset_machine();activation();CHECK(replaying && input_only && legacy_route);
+        for(unsigned t=0;t<200;++t) {
+            vblank();guest_frame(t);memory[0x4000]^=1; // deliberately different guest state
+            boundary_sample(Physical{{0xFFFF,0xFFFF},{{128,128,128,128},{128,128,128,128}},{0,0}});
+            CHECK(!replay_failed);
+        }
+        CHECK(!replaying && counters["medievil2.diagnostics.route-complete"]==1);
+        CHECK(counters["medievil2.diagnostics.replay-complete"]==verified);
+        env("MEDIEVIL2_DIAGNOSTIC_INPUT_ONLY","");
+        env("MEDIEVIL2_DIAGNOSTIC_LEGACY_CONNECTED","");
+        env("MEDIEVIL2_DIAGNOSTIC_REPLAY","");
+    }
+#endif
 
     // ---- Netplay: no rows, no overlay, no session ------------------------------
     {auto before=std::distance(std::filesystem::directory_iterator(std::filesystem::path(application_root)/"saves/diagnostics"),

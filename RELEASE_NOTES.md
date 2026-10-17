@@ -1,3 +1,15 @@
+# Unreleased playtest fixes
+
+- Resident Loading and Adaptive View accept both supported USA disc layouts,
+  including the canonical split-track Track 1 image.
+- Paused XA dialogue resumes from the drive position instead of restarting
+  from the last seek target. New saves retain unconsumed Setloc state too.
+- Optional Mouse and Keyboard controls add WASD, mouse look, Space jump,
+  combat/item shortcuts and camera direction options. See `docs/MODERN_CONTROLS.md`.
+- Diagnostics v2 records pad presence. Exact replay still requires the original
+  build; developer input-only routes are separately labelled and cannot report
+  successful RAM verification.
+
 # MediEvil II Recompiled v0.2.1-alpha
 
 Precompiled Windows and Linux player builds with the complete enhancement set.
