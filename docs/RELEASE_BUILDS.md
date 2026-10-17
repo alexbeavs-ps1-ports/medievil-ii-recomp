@@ -29,7 +29,7 @@ cmake -S . -B build-release -G Ninja -DCMAKE_BUILD_TYPE=Release \
   -DPSX_SETUP_WIZARD=OFF -DPSXRECOMP_FORCE_SETUP_HOST=OFF \
   -DPSXRECOMP_REQUIRE_GAME_C=ON -DPSX_DEBUG_TOOLS=OFF \
   -DPSX_SDL_BACKEND=SDL3 -DPSX_ENABLE_VULKAN=OFF -DPSX_NETPLAY=ON
-cmake --build build-release --target psx-runtime --parallel 4
+cmake --build build-release --target psx-runtime --parallel 2
 ```
 
 Use native Windows executable paths for GCC/G++, Ninja and CMake on Windows.
@@ -46,7 +46,7 @@ Windows packaging (use the full commit from `git rev-parse HEAD`):
 python tools/package_release.py --build-dir build-release --platform windows-x64 `
   --source-commit <full-commit> --release --stage dist/windows-stage `
   --objdump C:/msys64/mingw64/bin/objdump.exe `
-  --zip dist/MediEvilIIRecomp-v0.2.1-alpha-windows-x64.zip
+  --zip dist/MediEvilIIRecomp-v0.2.2-alpha-windows-x64.zip
 ```
 
 The ZIP checks system-only DLL imports, native code/audit correspondence, the
@@ -76,11 +76,11 @@ work. Current Linux builds require glibc 2.39 or newer (Ubuntu 24.04, for exampl
 AppImage packaging does not lower that requirement.
 
 For publication, merge the reviewed enhancement PRs in order with merge commits,
-then build and package the resulting `main` revision with `VERSION=0.2.1-alpha`.
+then build and package the resulting `main` revision with `VERSION=0.2.2-alpha`.
 Verify all prior PR heads are ancestors, regenerate native code after hook/config
 changes, run the game contract suites, and smoke-test the extracted artifacts.
 Both package manifests must name that same merged revision and bare version.
-Create `v0.2.1-alpha` at that revision, then publish a GitHub prerelease with the
+Create `v0.2.2-alpha` at that revision, then publish a GitHub prerelease with the
 Windows ZIP, Linux AppImage, their SHA-256 sidecars and `RELEASE_NOTES.md`.
 Keep the existing stable release as the Latest stable release. Publication is
 an explicit maintainer step; the packaging scripts never push tags or upload.

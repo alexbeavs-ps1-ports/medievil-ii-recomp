@@ -18,8 +18,8 @@ entry_point = "0x801B5220"
 [framework]
 name = "PSXRecomp"
 repository = "https://github.com/RetroPortingToolKit/psxrecomp.git"
-commit = "6bc150c85c6086cc3bf5cf0c76335e3ac0f22426"
-tree = "f1338b5d7cb838d0df5bc6158d6bc8d345c963b6"
+commit = "bc0c5215756b3e26b1b95317aeb719ef77e0373e"
+tree = "86cbd3297b7376ce40014d871dcf15caf228a400"
 recomp_ui_commit = "0546fbcb0126bb14bf88d2128b4fe8a4229570a3"
 license = "See the pinned dependency license; this binding does not approve commercial use."
 
@@ -51,8 +51,8 @@ traces = "out/traces"
 packages = "dist"
 
 [release]
-version = "0.1.2-enhancements.20261005"
+version = "0.2.2-alpha"
 platform = "multi-platform"
 supported_platforms = ["windows-x64", "linux-x64"]
 graduation_state = "bootstrap_verified"
-public_package_status = "local_simulated_release_not_published"
+public_package_status = "owner_authorized_player_release"

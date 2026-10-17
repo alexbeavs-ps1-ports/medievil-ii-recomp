@@ -191,7 +191,12 @@ the developer serial hotplug injector is `cf9bf1f9fdaf33624822aa09e540fcaa723138
 The latter also makes a forced plain digital pad lose DualShock configuration
 capability, so the hotplug fixture models the intended controller correctly.
 Device-profile restoration after the probe is committed as
-`6bc150c85c6086cc3bf5cf0c76335e3ac0f22426`, the framework revision pinned here.
+`6bc150c85c6086cc3bf5cf0c76335e3ac0f22426`. Framework PRs
+[#681](https://github.com/RetroPortingToolKit/psxrecomp/pull/681),
+[#682](https://github.com/RetroPortingToolKit/psxrecomp/pull/682) and
+[#683](https://github.com/RetroPortingToolKit/psxrecomp/pull/683) integrate the
+fixes and a refreshed BIOS stamp; the release pins merged master
+`bc0c5215756b3e26b1b95317aeb719ef77e0373e`.
 
 Windows writer, diagnostics, controls, replay preparation and package build
 identity checks pass. Packaging rejects an older executable whose embedded
