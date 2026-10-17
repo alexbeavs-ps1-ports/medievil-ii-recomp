@@ -62,6 +62,54 @@ target_sources(psx-runtime PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_seamless_store.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_pp20.cpp")
 
+# Playtest diagnostics (default-on mod package medievil2.diagnostics). The
+# build identity is part of every recording header, so a replay refuses a
+# different build instead of reporting a false divergence.
+file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" MEDIEVIL2_VERSION LIMIT_COUNT 1)
+set(MEDIEVIL2_SOURCE_REV "nogit")
+find_package(Git QUIET)
+if(GIT_FOUND)
+    execute_process(COMMAND "${GIT_EXECUTABLE}" rev-parse --short=12 HEAD
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        OUTPUT_VARIABLE _MEDIEVIL2_REV OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET RESULT_VARIABLE _MEDIEVIL2_REV_RESULT)
+    if(_MEDIEVIL2_REV_RESULT EQUAL 0 AND _MEDIEVIL2_REV)
+        set(MEDIEVIL2_SOURCE_REV "${_MEDIEVIL2_REV}")
+    endif()
+endif()
+target_sources(psx-runtime PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_diagnostics.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_diagnostic_paths.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_diagnostic_writer.h")
+set_property(SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_diagnostics.cpp" APPEND PROPERTY
+    COMPILE_DEFINITIONS "MEDIEVIL2_DIAGNOSTIC_BUILD_ID=\"${MEDIEVIL2_VERSION}+${MEDIEVIL2_SOURCE_REV}\"")
+target_include_directories(psx-runtime PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/mods")
+
+# Host-only diagnostics tests (no disc, BIOS or window). Run with ctest.
+option(MEDIEVIL2_BUILD_TESTS "Build the diagnostics unit tests" ON)
+if(MEDIEVIL2_BUILD_TESTS)
+    enable_testing()
+    find_package(Threads REQUIRED)
+    add_executable(medievil2_diagnostic_writer_test tests/test_medievil2_diagnostic_writer.cpp)
+    add_executable(medievil2_diagnostics_test tests/test_medievil2_diagnostics.cpp)
+    foreach(_T medievil2_diagnostic_writer_test medievil2_diagnostics_test)
+        set_target_properties(${_T} PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
+        target_include_directories(${_T} PRIVATE src/mods "${PSXRECOMP_ROOT}/runtime/include")
+        target_link_libraries(${_T} PRIVATE Threads::Threads)
+    endforeach()
+    add_test(NAME medievil2_diagnostic_writer_test COMMAND medievil2_diagnostic_writer_test
+        "${CMAKE_CURRENT_BINARY_DIR}/diagnostic-writer-qa")
+    set_tests_properties(medievil2_diagnostic_writer_test PROPERTIES TIMEOUT 15)
+    add_test(NAME medievil2_diagnostics_test COMMAND medievil2_diagnostics_test
+        "${CMAKE_CURRENT_BINARY_DIR}/diagnostics-qa")
+    find_package(Python3 COMPONENTS Interpreter QUIET)
+    if(Python3_FOUND)
+        add_test(NAME medievil2_diagnostic_replay_prepare_test
+            COMMAND "${Python3_EXECUTABLE}" -I
+                "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_replay_medievil2_diagnostics.py")
+    endif()
+endif()
+
 # Stage runtime configs next to the exe for direct build/ launches. Only copy
 # files that exist — never fail POST_BUILD when game_options.toml is absent.
 foreach(_PSX_RUNTIME_CONFIG game.toml game_options.toml)
