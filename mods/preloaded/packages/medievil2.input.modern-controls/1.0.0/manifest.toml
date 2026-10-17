@@ -1,0 +1,56 @@
+format_version = 7
+id = "medievil2.input.modern-controls"
+version = "1.0.0"
+name = "MediEvil II Mouse and Keyboard"
+author = "MediEvil II Recompiled"
+license = "GPL-3.0-only"
+description = "WASD movement, mouse camera and action-game keyboard bindings. Uses native control layout A."
+resolver = "declarative"
+save_compatibility = "shared"
+
+[[target]]
+game_id = "SCUS-94564"
+
+[[feature]]
+id = "modern-controls"
+name = "Mouse and Keyboard"
+description = "WASD move, Space jump, left/right click attack/charge, Shift defend/dash, E switch weapons, F interact, Q change target, Ctrl strafe, Tab inventory, Enter pause. 1/2/3/4/5/6: attack/charge/defend/switch weapon/switch Dan-Hand/inventory. Click to capture the mouse, Escape to release; hold Alt for first-person look. Native layout A."
+group = "Controls"
+default_enabled = false
+
+[[plugin]]
+feature = "modern-controls"
+id = "medievil2.modern-controls"
+
+[[option]]
+feature = "modern-controls"
+id = "sensitivity"
+label = "Mouse sensitivity"
+type = "choice"
+default = "normal"
+
+[[option.choice]]
+value = "low"
+label = "Low"
+[[option.choice]]
+value = "normal"
+label = "Normal"
+[[option.choice]]
+value = "high"
+label = "High"
+
+[[option]]
+feature = "modern-controls"
+id = "invert-x"
+label = "Reverse horizontal camera"
+description = "Reverse mouse and right-stick horizontal look and swap L2/R2 rotation."
+type = "boolean"
+default = "false"
+
+[[option]]
+feature = "modern-controls"
+id = "invert-y"
+label = "Reverse vertical camera"
+description = "Reverse mouse and right-stick vertical look."
+type = "boolean"
+default = "false"

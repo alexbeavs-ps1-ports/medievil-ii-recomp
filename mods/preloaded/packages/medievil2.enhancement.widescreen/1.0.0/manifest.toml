@@ -12,6 +12,11 @@ save_compatibility = "shared"
 game_id = "SCUS-94564"
 disc_sha256 = "dfcb8602274c70f59551e820d0f4026b0213fd68b7d2a385189d37eb767b2d97"
 
+# Canonical USA data Track 1 when the two tracks are separate BIN files.
+[[target]]
+game_id = "SCUS-94564"
+disc_sha256 = "709558d421e32aeb5a0880762f899ae79938d2396be654b2c819999813848db8"
+
 [[feature]]
 id = "widescreen"
 name = "Adaptive View"

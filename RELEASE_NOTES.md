@@ -1,3 +1,35 @@
+# MediEvil II Recompiled v0.2.2-alpha
+
+Playtest fixes and feedback tooling for Windows x64 and Linux x86-64.
+Supply your USA disc (SCUS-94564); OpenBIOS is included.
+
+- Resident Loading and Adaptive View accept both supported USA disc layouts,
+  including the canonical split-track Track 1 image.
+- Paused XA dialogue resumes from the drive position instead of restarting
+  from the last seek target. New saves retain unconsumed Setloc state too.
+- Optional Mouse and Keyboard controls add WASD, mouse look, Space jump,
+  combat/item shortcuts and camera direction options. See `docs/MODERN_CONTROLS.md`.
+- Diagnostics v2 records pad presence. Exact replay still requires the original
+  build; developer input-only routes are separately labelled and cannot report
+  successful RAM verification.
+- Playtests now capture timing, loading and nearby-actor evidence independently
+  of replay. L3 + R3 (F4 with modern controls) marks an incident. The packaged
+  analysis tool produces a timing chart and event report; see `docs/PLAYTEST_FEEDBACK.md`.
+
+Validation includes exact split-disc targeting, live dialogue resume, controller
+hotplug replay, and a fresh 777-frame combat replay. The same combat inputs
+produce matching health writes with Smooth Presentation enabled and disabled.
+Windows checks and Linux SDL2/input/diagnostics fixtures pass. Linux package
+qualification is under WSL; native Linux/Steam Deck and full-game playthroughs
+remain unqualified. Linux requires glibc 2.39 or newer.
+
+General slowdown, brief object-interaction stalls, camera feel and specific
+missed attacks remain open for the next human feedback pass. HD texture-pack
+slowdown is deferred until the pack is identified. No guest cycle-scale or
+combat-balance change is included: the Ape Escape scale accelerated this game.
+Mark incidents with L3 + R3, or F4 with Mouse and Keyboard enabled, then quit
+normally and send the newest complete diagnostics session folder.
+
 # MediEvil II Recompiled v0.2.1-alpha
 
 Precompiled Windows and Linux player builds with the complete enhancement set.

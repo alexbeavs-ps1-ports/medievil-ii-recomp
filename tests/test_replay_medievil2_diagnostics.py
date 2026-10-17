@@ -85,6 +85,12 @@ class Preparation(unittest.TestCase):
         self.assertIn('enable1 = true', (output / 'settings.toml').read_text())
         self.assertIn('enable2 = false', (output / 'settings.toml').read_text())
 
+    def test_v2_presence_recordings_keep_their_format(self):
+        text = HEADER.replace('input-v1', 'input-v2') + 'N 0\nN 1\n'
+        (self.session / 'inputs.csv').write_text(text)
+        _, _, trace = replay.prepare(self.args)
+        self.assertEqual(trace.read_text(), text)
+
     def test_network_bundle_does_not_launch_as_offline_replay(self):
         self.metadata({'netplay': True, 'baseline': 'baseline.pst'})
         with self.assertRaisesRegex(ValueError, 'Netplay'):
