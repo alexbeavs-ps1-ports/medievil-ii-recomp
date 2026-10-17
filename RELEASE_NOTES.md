@@ -1,4 +1,4 @@
-# MediEvil II Recompiled v0.2.0-alpha
+# MediEvil II Recompiled v0.2.1-alpha
 
 Precompiled Windows and Linux player builds with the complete enhancement set.
 Supply your MediEvil II USA (SCUS-94564) disc in the launcher and play.
@@ -19,6 +19,12 @@ Default-on improvements:
 - Resident Loading preloads files and prepares verified PP20 decompression
   results from your disc, reducing supported loading waits.
 - Audited native engine/level variants and a recomp-ui launcher with box art.
+- Playtest Diagnostics (default on, new in this build) records each frame's
+  controller state and a memory checksum on a background thread, plus your
+  settings and starting memory cards, so a bug can be replayed exactly. Zip the
+  newest `saves/diagnostics/session-*` folder when reporting a problem; it never
+  contains the disc or BIOS. An on-screen input line can be turned off in Mods.
+- Framework updated to current PSXRecomp and recomp-ui masters.
 
 On Windows, extract the complete ZIP and run `MediEvilIIRecomp.exe`. On Linux,
 make the AppImage executable and run it; `--appimage-extract-and-run` works

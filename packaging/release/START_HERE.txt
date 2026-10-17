@@ -1,4 +1,4 @@
-MediEvil II Recompiled - 0.2.0-alpha
+MediEvil II Recompiled - 0.2.1-alpha
 
 Windows: extract the whole ZIP, then run MediEvilIIRecomp.exe.
 Linux: make the AppImage executable, then run it. Without FUSE, use
@@ -26,6 +26,16 @@ or ~/.local/share/MediEvilIIRecomp when XDG_DATA_HOME is unset. Set
 MEDIEVIL_II_RECOMP_DATA_DIR to override it. Linux AppImage updates preserve
 your settings, memory cards and installed mods. Resident decoded assets
 use the system user cache directory.
+
+Playtest Diagnostics (on by default) records the controller state of every
+frame plus a memory checksum, so a bug can be replayed exactly. To report a
+problem, quit the game normally and zip the NEWEST folder under
+  saves/diagnostics/session-<number>
+(beside MediEvilIIRecomp.exe on Windows; under the Linux data directory above).
+diagnostics-location.txt next to the game names it. The folder contains your
+settings, mod choices and starting memory cards, never the disc or BIOS.
+Turn off Input Display / Input Recording in the Mods menu to hide the on-screen
+input line or stop recording.
 
 This is an alpha player build.
 All 11 preceding enhancement PRs and the final HUD update are consolidated;

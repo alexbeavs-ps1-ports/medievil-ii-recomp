@@ -74,7 +74,7 @@ def check_payload(stage):
         raise ValueError('Launcher cover does not match the release source')
     manifests = list((stage/'mods/bundled').rglob('manifest.toml'))
     ids = sorted(tomllib.loads(p.read_text(encoding='utf-8-sig'))['id'] for p in manifests)
-    expected = ['medievil2.enhancement.frame-rate', 'medievil2.enhancement.seamless-loading',
+    expected = ['medievil2.diagnostics', 'medievil2.enhancement.frame-rate', 'medievil2.enhancement.seamless-loading',
                 'medievil2.enhancement.texture-filtering', 'medievil2.enhancement.widescreen',
                 'psx.enhancement.8mb-ram', 'psx.enhancement.pgxp', 'psx.presentation.bezel']
     if ids != sorted(expected):
