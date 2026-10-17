@@ -13,7 +13,7 @@ A native recompilation of **MediEvil II** for Windows and Linux, built on
 sharper and steadier graphics, smoother motion, and shorter loading waits.
 The gameplay enhancements are **on by default**.
 
-**[Download v0.2.0-alpha](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/tag/v0.2.0-alpha)**
+**[Download v0.2.1-alpha](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/tag/v0.2.1-alpha)**
 contains the merged enhancement series, including HUD anchoring. These are
 precompiled player builds: supply your **USA disc (SCUS-94564)** and play.
 OpenBIOS is included; no retail BIOS, compiler, Python or Generate step is needed.
@@ -29,8 +29,8 @@ and counter HUD groups visible so their placement can be compared.*
 
 | Platform | Package | Start here |
 | --- | --- | --- |
-| Windows x64 | [ZIP](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/download/v0.2.0-alpha/MediEvilIIRecomp-v0.2.0-alpha-windows-x64.zip) | Extract the whole ZIP into a writable folder and run `MediEvilIIRecomp.exe`. |
-| Linux x86-64 | [AppImage](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/download/v0.2.0-alpha/MediEvilIIRecomp-v0.2.0-alpha-linux-x86_64.AppImage) | Make it executable, then run it. Requires **glibc 2.39+**, such as Ubuntu 24.04. |
+| Windows x64 | [ZIP](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/download/v0.2.1-alpha/MediEvilIIRecomp-v0.2.1-alpha-windows-x64.zip) | Extract the whole ZIP into a writable folder and run `MediEvilIIRecomp.exe`. |
+| Linux x86-64 | [AppImage](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/download/v0.2.1-alpha/MediEvilIIRecomp-v0.2.1-alpha-linux-x86_64.AppImage) | Make it executable, then run it. Requires **glibc 2.39+**, such as Ubuntu 24.04. |
 
 1. Select your MediEvil II USA disc in the launcher: a CUE with its BIN tracks,
    or a supported CHD. The disc remains required while playing.
@@ -187,7 +187,7 @@ still required.
 
 ## Alpha status and saves
 
-This is **v0.2.0-alpha**, with Museum/intro testing and sampled level checks,
+This is **v0.2.1-alpha**, with Museum/intro testing and sampled level checks,
 not a completed full-game playthrough. HUD placement and moving scenes have
 been checked at 4:3, 16:9, 21:9 and 32:9. Later-level special HUDs, circular
 fades and other transitions need further coverage. Linux package testing so
@@ -205,6 +205,39 @@ in the system user cache directory.
 For a bug report, include the release version, level/location, aspect ratio,
 renderer and steps to reproduce it. A short video is especially useful for
 motion or flicker issues. Do not attach disc images or extracted game assets.
+
+### Playtest diagnostics
+
+Playtest Diagnostics is on by default. While you play, it records the
+controller state the game reads on every frame, plus a small checksum of game
+memory, so a developer can replay your exact session and reproduce a bug. It
+adds a short input line (P1/P2 buttons, a frame counter and `REC`) in the
+corner of the screen; turn off **Input Display** in the Mods menu to hide it
+without stopping the recording. The recording runs on a background thread and
+never waits for the disk; if it cannot keep up or the disk is unavailable it
+stops recording rather than slowing the game.
+
+After reproducing a problem, quit the game normally and send the **newest
+session folder**:
+
+| Where | Session folders |
+| --- | --- |
+| Windows | `saves\diagnostics\session-<number>` beside `MediEvilIIRecomp.exe` |
+| Linux | `saves/diagnostics/session-<number>` under `~/.local/share/MediEvilIIRecomp` (or `$XDG_DATA_HOME/MediEvilIIRecomp`, or `MEDIEVIL_II_RECOMP_DATA_DIR`) |
+
+`diagnostics-location.txt`, next to the game, names the folder being written.
+Zip that whole folder. It holds `inputs.csv`, your settings and mod choices,
+and a copy of your memory cards as they were when the game started; it never
+contains the disc, BIOS or decoded game assets. Loading a save state starts a
+new session folder. Rewinding does too, but a rewound segment cannot be
+replayed. Diagnostics are not recorded during netplay.
+
+To verify a recording (developers): `python tools/replay_medievil2_diagnostics.py
+<session-folder> --exe MediEvilIIRecomp.exe --disc "MediEvil II (USA).cue"
+--output <new-folder>` replays it in a private hidden copy and stops with
+`first divergence at sequence N` if the game state or inputs differ. The replay
+needs the same build as the recording. Turning **Input Recording** off in the
+Mods menu disables recording entirely.
 
 ## Development and evidence
 

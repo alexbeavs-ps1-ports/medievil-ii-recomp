@@ -688,3 +688,32 @@ The shared framework changes are stacked as
 The game now pins the merged canonical master recorded above, including newer
 upstream PGXP session and projection behavior.
 The bounded coverage and remaining qualification limits above still apply.
+
+## Playtest diagnostics and framework refresh (v0.2.1-alpha)
+
+The framework gitlink is now PSXRecomp master `7cddab8237e1f73b7067b8401af602d90a96b80d`
+(tree `1b8d78b528376257a92af5eeae8793b7c0b30715`) and recomp-ui
+`0546fbcb0126bb14bf88d2128b4fe8a4229570a3`; all game sources built unchanged
+against them.
+
+`medievil2.diagnostics` (default on) records at the engine boundary, since the
+title has no symbol map. A VBlank plugin runs at each guest VBlank. The pad
+state latched in SIO at that moment is what the game reads for that frame, as
+the host samples pads into SIO once per frame boundary, after the VBlank. Each
+`inputs.csv` row stores the sequence, both ports' buttons, analog flag and
+sticks, and a digest of 4096 main-RAM words (every 128th word, with a phase that
+rotates each VBlank, so all of RAM is covered every 128 frames; a corrupted
+word is therefore reported within 128 frames of its divergence, usually much
+sooner). Rows go through a bounded queue to a background writer that flushes
+every 100 ms; a full queue or I/O error stops capture and is shown on the
+input display rather than blocking gameplay. Each session folder under
+`saves/diagnostics` also holds `session.json`, settings, mod choices and the
+starting memory cards. A save-state load starts a new folder with the loaded
+slot as `baseline.pst`; a rewind starts one flagged `baseline_unavailable`.
+
+Replay (`tools/replay_medievil2_diagnostics.py`) installs controller sources
+that return the row the next VBlank will verify, then checks pads and the
+digest on every VBlank, stopping at `first divergence at sequence N`. It runs a
+hidden-window process, because the engine's headless frontend does not consult
+controller sources. Recording requires the same build, mod plan and BIOS as
+the replay. Evidence and limits are recorded in the release report.
