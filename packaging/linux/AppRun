@@ -9,7 +9,7 @@ mkdir -p "$data_dir" "$data_dir/saves" "$data_dir/cache" "$data_dir/mods/bundled
 
 # Refresh only release-owned files. User settings, cards, installed packages
 # and generated disc data are deliberately outside these copied trees.
-for tree in assets bios licenses docs; do
+for tree in assets bios licenses docs tools; do
     mkdir -p "$data_dir/$tree"
     cp -a "$payload/$tree/." "$data_dir/$tree/"
     chmod -R u+rwX "$data_dir/$tree"
