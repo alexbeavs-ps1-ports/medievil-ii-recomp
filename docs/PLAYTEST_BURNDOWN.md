@@ -1,7 +1,8 @@
-# MediEvil II v0.2.1-alpha playtest burndown
+# MediEvil II playtest burndown
 
 Owner reports received 2026-10-17. Central tracker: `beads-jfkv`, under
-`beads-eio.19`. Working branch: `fix/medievil2-playtest-burndown`.
+`beads-eio.19`. Camera follow-up: `beads-qb8m`, shared capture: `beads-o3v7`.
+Working branch: `fix/medievil2-camera-followup`.
 
 ## Burndown chart
 
@@ -17,11 +18,13 @@ or a suspected original-game behavior alone does not close a report.
 | Modern controls verified | 7 | 3 |
 | Live pad hotplug replay verified | 6 | 4 |
 | Retail damage grace verified | 5 | 5 |
+| Human cadence feedback through first boss | 4 | 6 |
 
 ![Reports remaining at each validated milestone](PLAYTEST_BURNDOWN.svg)
 
-Five of ten items are verified: four fixes/features and one original-behavior
-finding. Four have evidence/tooling ready for the next human feedback pass;
+Six of ten original items have passed bounded acceptance: four fixes/features,
+one original-behavior finding and the follow-up's smoother gameplay report.
+Three have evidence/tooling ready for the next human feedback pass;
 the HD item is deferred by the owner. The owner accepts the old recording's
 divergence and requested a practical next iteration, rather than perfect replay
 as a handoff prerequisite. This is a
@@ -30,11 +33,11 @@ milestone chart, not a calendar forecast.
 | ID | Priority | Report | Status | Acceptance gate |
 | --- | --- | --- | --- | --- |
 | M2-01 | P1 | Split-track USA disc rejected by Resident Loading and Adaptive View | Verified | Both exact disc identities accepted; all guarded disc patches match both layouts; exact hash targeting retained. |
-| M2-02 | P2 | HD-enabled title and cutscenes run slowly with skipping audio | Deferred by owner pending pack identity | Reproduce HD on/off with identical settings and inputs; measure guest cadence and host work; fix the measured bottleneck and verify replacement rendering. |
+| M2-02 | P2 | HD-enabled title and cutscenes run slowly with skipping audio | Hidden/disabled in bundled catalog by owner request; pack investigation deferred | Exclude the HD builtin and verify saved enabled selections stay dormant. Re-enabling later requires pack identity and an HD on/off comparison. |
 | M2-03 | P1 | Pausing the opening ghost dialogue restarts voice ahead of captions | Verified | Controller traces resume forward without a new Setloc; ReadN/S and save/load compatibility checks pass. |
-| M2-04 | P1 | General slowdown; evaluate Ape Escape cycle accounting | Bounded timing captured; next-pass instrumentation ready | Separate host intervals and retail update gaps. Scale 2 accelerates 30→40 updates/s and is rejected; any future timing fix must preserve simulation speed. |
+| M2-04 | P1 | General slowdown; evaluate Ape Escape cycle accounting | Bounded human pass accepted; continue collecting timing | Follow-up reports smooth gameplay through the first boss; 90,579 rows contain only one gameplay update gap >2 VBlanks. Scale 2 accelerates 30→40 updates/s and remains rejected. This does not qualify every scene or HD. |
 | M2-05 | P2 | Brief stalls interacting with objects | CD/timing/incident capture ready; exact object still needed | Tester marks the pickup/door/switch; inspect host gap versus CD activity and native update gap. No confirmed stall fix yet. |
-| M2-06 | P2 | Right-stick and L2/R2 camera controls feel clunky; direction limitations | Controls/options implemented; human feel check next | Native actions retained; optional mouse look, immediate reversal and horizontal/vertical direction options added. Mark which mode resists motion; authored camera restrictions still apply. |
+| M2-06 | P2 | Right-stick and L2/R2 camera controls feel clunky; direction limitations | New human feedback received; camera follow-up in progress | Correct mouse default direction, smooth event velocity, remove duplicate WASD movement, retain capture through native transitions, add five mouse-action choices and default right-stick camera. Validate automated behavior, then human feel. |
 | M2-07 | P2 | Some enemy hits appear not to register | Real registered hit captured; missed-hit incident needed | Capture weapon, enemy, attempted attack and nearby health/grace state. An eight-point enemy hit is observed; that does not resolve every reported miss. |
 | M2-08 | P2 | Very rapid damage near enemies; possible missing grace period | Retail grace verified; no balance change | All 29 surviving hits in the live write trace start the original ten-update grace counter. No health loss occurs while it is active. |
 | M2-09 | P2 | Add modern mouse and keyboard controls | Verified | Optional package boots; Windows SDL3/Linux SDL2 tests cover WASD, mouse look, Space jump, shortcuts, guards and restoring saved bindings. |

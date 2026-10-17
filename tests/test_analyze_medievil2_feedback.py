@@ -16,11 +16,16 @@ class FeedbackTest(unittest.TestCase):
             input_rows=[]
             for seq in range(6):
                 values=[seq,65535 if seq!=2 else 49151,65535,1,128,128,128,128,0,128,128,128,128,0,1,0]
+                if seq in (3,4): values[4]=255;values[6]=0
+                if seq==4: values[1]&=~0x20
                 input_rows.append('N '+','.join(map(str,values)))
             (session/'inputs.csv').write_text('# header\n'+'\n'.join(input_rows)+'\nN 6,655')
             result,_=feedback.summarize(session)
             self.assertFalse(result['telemetry_available']);self.assertEqual(result['input_rows'],6)
             self.assertEqual(result['attack_edges'],[dict(sequence=2,action='primary')])
+            self.assertEqual(result['camera_input']['moving_look_rows'],2)
+            self.assertEqual(result['camera_input']['duplicate_movement_rows'],1)
+            self.assertEqual(result['camera_input']['moving_look_windows'],[dict(start=3,end=4,frames=2)])
             columns=['sequence','host_elapsed_us','host_interval_us','retail_layout','game_vblank','game_updates',
                      'player','player_state','game_state','game_flags','health','grace','near_actor','near_health','incident','render_verify_mismatch']
             rows=[]

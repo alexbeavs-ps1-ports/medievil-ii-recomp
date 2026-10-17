@@ -1,7 +1,23 @@
-# MediEvil II Recompiled v0.2.2-alpha
+# MediEvil II Recompiled v0.2.3-alpha
 
 Playtest fixes and feedback tooling for Windows x64 and Linux x86-64.
 Supply your USA disc (SCUS-94564); OpenBIOS is included.
+
+- Mouse look now follows mouse direction by default, smooths event velocity,
+  and uses a single movement path for WASD while turning. Menus retain D-pad
+  navigation. Old mouse-axis inversion settings reset to the corrected defaults.
+- Mouse capture stays through native pause/inventory, cutscenes and room loads;
+  Escape, focus loss and host UI still release it. Transition motion is discarded.
+- All five mouse buttons have native action choices in the mod options. Middle
+  click opens inventory; side buttons switch weapons and targets by default.
+  The mod description and `docs/MODERN_CONTROLS.md` explain all defaults.
+- Right-stick Camera is enabled by default, including with digital launcher
+  configuration; controller and mouse reversal settings are independent.
+- HD Texture Packs is temporarily hidden and disabled, including saved enabled
+  choices and leftover bundled/installed copies. Pack investigation is deferred.
+- Feedback analysis now locates simultaneous movement/look and duplicate
+  movement input. The new human pass reports smoother gameplay through the first
+  boss; remaining camera feel and specific combat incidents still need playtesting.
 
 - Resident Loading and Adaptive View accept both supported USA disc layouts,
   including the canonical split-track Track 1 image.

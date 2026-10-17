@@ -10,7 +10,7 @@ points = [(label.strip(), int(remaining), int(resolved)) for label, remaining, r
           re.findall(r'^\| ([^|]+) \| (\d+) \| (\d+) \|$', table, re.M)]
 if len(points) < 2:
     raise ValueError('Missing milestone table')
-labels = ['Intake', 'Scope added', 'Split disc', 'XA resume', 'Controls', 'Pad presence', 'Retail grace']
+labels = ['Intake', 'Scope added', 'Split disc', 'XA resume', 'Controls', 'Pad presence', 'Retail grace', 'Human cadence']
 if len(labels) != len(points):
     labels = [label for label, _, _ in points]
 width, height = 960, 440
@@ -34,7 +34,7 @@ for (x,y),label,(_,n,_) in zip(coords,labels,points):
     svg += [f'<circle cx="{x}" cy="{y}" r="5" fill="#79b2ff"/>',
             f'<text x="{x}" y="{y-13}" text-anchor="middle" font-size="17" font-weight="600">{n}</text>',
             f'<text x="{x}" y="352" text-anchor="middle" font-size="13" fill="#aebdd1">{escape(label)}</text>']
-svg += [f'<text x="36" y="396" font-size="16">{points[-1][2]} verified · 4 instrumented for human follow-up · 1 HD deferred</text>',
+svg += [f'<text x="36" y="396" font-size="16">{points[-1][2]} verified · 3 instrumented for human follow-up · 1 HD deferred / hidden</text>',
         '<text x="36" y="420" font-size="13" fill="#aebdd1">Milestones reflect validation, not elapsed time. Source: PLAYTEST_BURNDOWN.md</text>',
         '</g></svg>']
 target = document.with_suffix('.svg')

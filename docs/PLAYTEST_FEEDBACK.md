@@ -2,8 +2,9 @@
 
 This candidate fixes split-track USA disc targeting and dialogue audio resume,
 adds optional mouse/WASD controls, and records controller presence. The next
-pass should concentrate on the remaining gameplay reports. HD textures are
-deferred until the pack can be identified.
+pass should concentrate on the camera follow-up and remaining gameplay reports.
+HD Texture Packs is temporarily absent from the bundled mod catalog; saved
+HD selections remain inactive without that package. No pack selection is needed.
 
 1. Leave **Playtest Diagnostics / Input Recording** enabled. Enable **Mouse
    and Keyboard** if testing the new controls; use native button layout A.
@@ -29,7 +30,7 @@ Suggested short checks:
 | --- | --- |
 | Slowdown / interaction | Repeat the same pickup, door or switch; mark the stall. Report whether sound stutters too. If convenient, repeat with Smooth Presentation disabled and the same graphics settings. |
 | Missed attack | Name the weapon and enemy. Mark a miss, then try after stepping back and facing the enemy. Test primary and secondary attacks separately. |
-| Camera | Try right stick, L2/R2, then mouse. Reverse direction while moving; try horizontal inversion in the Mouse and Keyboard mod options. Alt + mouse invokes native stationary first-person look. Report which mode resists movement. |
+| Camera | With the default Right-stick Camera feature, try a controller with the launcher set to digital. With Mouse and Keyboard, walk with W/A/S/D while turning both ways, then reverse direction. Open inventory/pause and cross a doorway/cutscene: capture should stay until Escape or focus loss. Try changing a middle/side-button action. Mark any shake with F4. Alt + mouse invokes native stationary first-person look. |
 | Voice resume | Pause and resume the opening ghost dialogue twice. Voice should continue with captions. |
 
 `telemetry.csv` pairs each row with the input sequence. It records elapsed

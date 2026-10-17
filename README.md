@@ -13,9 +13,11 @@ A native recompilation of **MediEvil II** for Windows and Linux, built on
 sharper and steadier graphics, smoother motion, and shorter loading waits.
 The gameplay enhancements are **on by default**.
 
-**[Download v0.2.2-alpha](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/tag/v0.2.2-alpha)**
-adds split-disc and dialogue fixes, optional mouse/WASD controls and richer
-playtest diagnostics to the enhancement series. These are
+**[Download v0.2.3-alpha](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/tag/v0.2.3-alpha)**
+adds corrected mouse direction, smoother mouse input, capture through native
+transitions, five configurable mouse buttons and default right-stick camera.
+HD Texture Packs is temporarily hidden and disabled. See
+[the controls guide](docs/MODERN_CONTROLS.md) for every default action. These are
 precompiled player builds: supply your **USA disc (SCUS-94564)** and play.
 OpenBIOS is included; no retail BIOS, compiler, Python or Generate step is needed.
 
@@ -30,8 +32,8 @@ and counter HUD groups visible so their placement can be compared.*
 
 | Platform | Package | Start here |
 | --- | --- | --- |
-| Windows x64 | [ZIP](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/download/v0.2.2-alpha/MediEvilIIRecomp-v0.2.2-alpha-windows-x64.zip) | Extract the whole ZIP into a writable folder and run `MediEvilIIRecomp.exe`. |
-| Linux x86-64 | [AppImage](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/download/v0.2.2-alpha/MediEvilIIRecomp-v0.2.2-alpha-linux-x86_64.AppImage) | Make it executable, then run it. Requires **glibc 2.39+**, such as Ubuntu 24.04. |
+| Windows x64 | [ZIP](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/download/v0.2.3-alpha/MediEvilIIRecomp-v0.2.3-alpha-windows-x64.zip) | Extract the whole ZIP into a writable folder and run `MediEvilIIRecomp.exe`. |
+| Linux x86-64 | [AppImage](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/download/v0.2.3-alpha/MediEvilIIRecomp-v0.2.3-alpha-linux-x86_64.AppImage) | Make it executable, then run it. Requires **glibc 2.39+**, such as Ubuntu 24.04. |
 
 1. Select your MediEvil II USA disc in the launcher: a CUE with its BIN tracks,
    or a supported CHD. The disc remains required while playing.
@@ -189,7 +191,7 @@ still required.
 
 ## Alpha status and saves
 
-This is **v0.2.2-alpha**, with Museum/intro testing and sampled level checks,
+This is **v0.2.3-alpha**, with Museum/intro testing and sampled level checks,
 not a completed full-game playthrough. HUD placement and moving scenes have
 been checked at 4:3, 16:9, 21:9 and 32:9. Later-level special HUDs, circular
 fades and other transitions need further coverage. Linux package testing so

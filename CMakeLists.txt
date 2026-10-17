@@ -46,6 +46,8 @@ psxrecomp_add_game_runtime(psx-runtime
     EXCLUDE_BUILTIN_MODS
         psx.enhancement.cd-speed
         psx.enhancement.fast-loading
+        # Temporarily unavailable while the HD pack is being investigated.
+        psx.enhancement.hd-textures
     CODEGEN_SETUP_SOURCES ${MEDIEVIL2_CODEGEN_SETUP_SOURCES}
 )
 
@@ -58,6 +60,9 @@ target_sources(psx-runtime PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_terrain.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_screen_layout.c")
 target_sources(psx-runtime PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_modern_controls.cpp")
+# Also block stale/installed copies when extracting over an older release.
+set_property(SOURCE "${PSXRECOMP_ROOT}/runtime/src/mod_runtime.cpp" APPEND PROPERTY
+    COMPILE_DEFINITIONS "PSX_MOD_DISABLED_PACKAGES=\"psx.enhancement.hd-textures\"")
 target_sources(psx-runtime PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_seamless.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_seamless_store.cpp"
