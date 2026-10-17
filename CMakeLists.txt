@@ -121,6 +121,9 @@ if(MEDIEVIL2_BUILD_TESTS)
         add_test(NAME medievil2_diagnostic_replay_prepare_test
             COMMAND "${Python3_EXECUTABLE}" -I
                 "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_replay_medievil2_diagnostics.py")
+        add_test(NAME medievil2_release_build_identity_test
+            COMMAND "${Python3_EXECUTABLE}" -I
+                "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_package_release.py")
     endif()
 endif()
 

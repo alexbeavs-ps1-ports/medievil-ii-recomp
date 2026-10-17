@@ -25,6 +25,17 @@ def cache_values(path):
     return dict(re.findall(r'^([^#/:\n][^:\n]*):[^=\n]+=(.*)$',
                           path.read_text(encoding='utf-8'), re.M))
 
+def validate_executable_identity(binary, version, source_commit):
+    expected = f'{version}+{source_commit[:12]}'.encode('utf-8')
+    tail = b''
+    with binary.open('rb') as stream:
+        while chunk := stream.read(1024 * 1024):
+            if expected in tail + chunk:
+                return
+            tail = chunk[-len(expected):]
+    raise ValueError(f'Executable is stale: missing build identity {expected.decode()}; '
+                     'reconfigure and finish building this source commit before packaging')
+
 def validate_build(build):
     values = cache_values(build/'CMakeCache.txt')
     required = {'CMAKE_BUILD_TYPE': 'Release', 'PSX_SETUP_WIZARD': 'OFF',
@@ -95,10 +106,11 @@ def main():
         raise ValueError('A full source commit is required')
     build, stage = args.build_dir.resolve(), args.stage.resolve()
     version, audit = validate_build(build)
+    extension = '.exe' if args.platform == 'windows-x64' else ''
+    validate_executable_identity(build/('MediEvil_II__Recompiled'+extension), version, args.source_commit)
     if stage.exists() and any(stage.iterdir()):
         raise ValueError(f'Refusing to reuse nonempty stage: {stage}')
     stage.mkdir(parents=True, exist_ok=True)
-    extension = '.exe' if args.platform == 'windows-x64' else ''
     binary = stage/('MediEvilIIRecomp'+extension)
     shutil.copy2(build/('MediEvil_II__Recompiled'+extension), binary)
     for name in ['assets', 'bios']:

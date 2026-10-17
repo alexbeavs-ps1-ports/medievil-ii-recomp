@@ -160,7 +160,9 @@ capability, so the hotplug fixture models the intended controller correctly.
 Device-profile restoration after the probe is committed as
 `6bc150c85c6086cc3bf5cf0c76335e3ac0f22426`, the framework revision pinned here.
 
-The integrated Windows developer build passes all four CTest suites. Linux
+Windows writer, diagnostics, controls, replay preparation and package build
+identity checks pass. Packaging rejects an older executable whose embedded
+diagnostic build ID differs from the source commit in its manifest. Linux
 controller, controller-source, keyboard, mouse policy, modern controls and
 diagnostic recording/replay checks also pass. These are bounded checks, not a
 full game playthrough. Private ROMs, cards, states and RAM dumps are excluded
