@@ -1,10 +1,10 @@
 format_version = 7
 id = "medievil2.input.modern-controls"
 version = "1.0.0"
-name = "MediEvil II Mouse and Keyboard"
+name = "MediEvil II Modern Controls"
 author = "MediEvil II Recompiled"
 license = "GPL-3.0-only"
-description = "WASD movement, mouse camera and action-game keyboard bindings. Uses native control layout A."
+description = "Right-stick camera by default; optional mouse camera, WASD movement and configurable mouse actions. Native layout A."
 resolver = "declarative"
 save_compatibility = "shared"
 
@@ -12,15 +12,28 @@ save_compatibility = "shared"
 game_id = "SCUS-94564"
 
 [[feature]]
+id = "camera-controls"
+name = "Right-stick Camera"
+description = "Present a DualShock so the right stick controls the native camera, including when the launcher is set to digital. Camera follows stick direction by default. Native camera collision and room restrictions remain."
+group = "Controls"
+default_enabled = true
+
+[[plugin]]
+feature = "camera-controls"
+id = "medievil2.camera-controls"
+order = -10
+
+[[feature]]
 id = "modern-controls"
 name = "Mouse and Keyboard"
-description = "WASD move, Space jump, left/right click attack/charge, Shift defend/dash, E switch weapons, F interact, Q change target, Ctrl strafe, Tab inventory, Enter pause. 1/2/3/4/5/6: attack/charge/defend/switch weapon/switch Dan-Hand/inventory. Click to capture the mouse, Escape to release; hold Alt for first-person look. Native layout A."
+description = "WASD move, Space jump, left/right click attack/charge, middle click inventory, side buttons switch weapon/target, Shift defend/dash, E switch weapons, F interact, Q change target, Ctrl strafe, Tab inventory, Enter pause. 1/2/3/4/5/6: attack/charge/defend/switch weapon/switch Dan-Hand/inventory. Click to capture the mouse, Escape to release. Capture stays through native menus/cutscenes/loading; hold Alt for first-person look. Native layout A."
 group = "Controls"
 default_enabled = false
 
 [[plugin]]
 feature = "modern-controls"
 id = "medievil2.modern-controls"
+order = 10
 
 [[option]]
 feature = "modern-controls"
@@ -40,17 +53,240 @@ value = "high"
 label = "High"
 
 [[option]]
-feature = "modern-controls"
-id = "invert-x"
-label = "Reverse horizontal camera"
-description = "Reverse mouse and right-stick horizontal look and swap L2/R2 rotation."
+feature = "camera-controls"
+id = "controller-reverse-x"
+label = "Reverse controller horizontal look"
+type = "boolean"
+default = "false"
+
+[[option]]
+feature = "camera-controls"
+id = "controller-reverse-y"
+label = "Reverse controller vertical look"
 type = "boolean"
 default = "false"
 
 [[option]]
 feature = "modern-controls"
-id = "invert-y"
-label = "Reverse vertical camera"
-description = "Reverse mouse and right-stick vertical look."
+id = "mouse-reverse-x"
+label = "Reverse mouse horizontal look"
 type = "boolean"
 default = "false"
+
+[[option]]
+feature = "modern-controls"
+id = "mouse-reverse-y"
+label = "Reverse mouse vertical look"
+type = "boolean"
+default = "false"
+
+[[option]]
+feature = "modern-controls"
+id = "mouse-left"
+label = "Left button action"
+description = "Native layout A action. The first left click captures the mouse; Escape releases."
+type = "choice"
+default = "attack"
+
+[[option.choice]]
+value = "attack"
+label = "Attack / interact / confirm"
+[[option.choice]]
+value = "secondary"
+label = "Secondary attack / charge"
+[[option.choice]]
+value = "jump"
+label = "Jump"
+[[option.choice]]
+value = "defend"
+label = "Defend / dash"
+[[option.choice]]
+value = "weapon"
+label = "Switch equipped weapon"
+[[option.choice]]
+value = "hand"
+label = "Switch Dan / Dan-Hand"
+[[option.choice]]
+value = "target"
+label = "Change target"
+[[option.choice]]
+value = "strafe"
+label = "Strafe"
+[[option.choice]]
+value = "inventory"
+label = "Inventory / items"
+[[option.choice]]
+value = "pause"
+label = "Pause"
+[[option.choice]]
+value = "none"
+label = "Unbound"
+
+[[option]]
+feature = "modern-controls"
+id = "mouse-right"
+label = "Right button action"
+description = "Native layout A action. The first left click captures the mouse; Escape releases."
+type = "choice"
+default = "secondary"
+
+[[option.choice]]
+value = "attack"
+label = "Attack / interact / confirm"
+[[option.choice]]
+value = "secondary"
+label = "Secondary attack / charge"
+[[option.choice]]
+value = "jump"
+label = "Jump"
+[[option.choice]]
+value = "defend"
+label = "Defend / dash"
+[[option.choice]]
+value = "weapon"
+label = "Switch equipped weapon"
+[[option.choice]]
+value = "hand"
+label = "Switch Dan / Dan-Hand"
+[[option.choice]]
+value = "target"
+label = "Change target"
+[[option.choice]]
+value = "strafe"
+label = "Strafe"
+[[option.choice]]
+value = "inventory"
+label = "Inventory / items"
+[[option.choice]]
+value = "pause"
+label = "Pause"
+[[option.choice]]
+value = "none"
+label = "Unbound"
+
+[[option]]
+feature = "modern-controls"
+id = "mouse-middle"
+label = "Middle button action"
+description = "Native layout A action. The first left click captures the mouse; Escape releases."
+type = "choice"
+default = "inventory"
+
+[[option.choice]]
+value = "attack"
+label = "Attack / interact / confirm"
+[[option.choice]]
+value = "secondary"
+label = "Secondary attack / charge"
+[[option.choice]]
+value = "jump"
+label = "Jump"
+[[option.choice]]
+value = "defend"
+label = "Defend / dash"
+[[option.choice]]
+value = "weapon"
+label = "Switch equipped weapon"
+[[option.choice]]
+value = "hand"
+label = "Switch Dan / Dan-Hand"
+[[option.choice]]
+value = "target"
+label = "Change target"
+[[option.choice]]
+value = "strafe"
+label = "Strafe"
+[[option.choice]]
+value = "inventory"
+label = "Inventory / items"
+[[option.choice]]
+value = "pause"
+label = "Pause"
+[[option.choice]]
+value = "none"
+label = "Unbound"
+
+[[option]]
+feature = "modern-controls"
+id = "mouse-x1"
+label = "Side button 1 action"
+description = "Native layout A action. The first left click captures the mouse; Escape releases."
+type = "choice"
+default = "weapon"
+
+[[option.choice]]
+value = "attack"
+label = "Attack / interact / confirm"
+[[option.choice]]
+value = "secondary"
+label = "Secondary attack / charge"
+[[option.choice]]
+value = "jump"
+label = "Jump"
+[[option.choice]]
+value = "defend"
+label = "Defend / dash"
+[[option.choice]]
+value = "weapon"
+label = "Switch equipped weapon"
+[[option.choice]]
+value = "hand"
+label = "Switch Dan / Dan-Hand"
+[[option.choice]]
+value = "target"
+label = "Change target"
+[[option.choice]]
+value = "strafe"
+label = "Strafe"
+[[option.choice]]
+value = "inventory"
+label = "Inventory / items"
+[[option.choice]]
+value = "pause"
+label = "Pause"
+[[option.choice]]
+value = "none"
+label = "Unbound"
+
+[[option]]
+feature = "modern-controls"
+id = "mouse-x2"
+label = "Side button 2 action"
+description = "Native layout A action. The first left click captures the mouse; Escape releases."
+type = "choice"
+default = "target"
+
+[[option.choice]]
+value = "attack"
+label = "Attack / interact / confirm"
+[[option.choice]]
+value = "secondary"
+label = "Secondary attack / charge"
+[[option.choice]]
+value = "jump"
+label = "Jump"
+[[option.choice]]
+value = "defend"
+label = "Defend / dash"
+[[option.choice]]
+value = "weapon"
+label = "Switch equipped weapon"
+[[option.choice]]
+value = "hand"
+label = "Switch Dan / Dan-Hand"
+[[option.choice]]
+value = "target"
+label = "Change target"
+[[option.choice]]
+value = "strafe"
+label = "Strafe"
+[[option.choice]]
+value = "inventory"
+label = "Inventory / items"
+[[option.choice]]
+value = "pause"
+label = "Pause"
+[[option.choice]]
+value = "none"
+label = "Unbound"
+

@@ -24,6 +24,8 @@ def summarize(session):
     session = Path(session)
     metadata = json.loads((session / 'session.json').read_text(encoding='utf-8'))
     inputs, attacks, presence, previous = {}, [], [], None
+    camera = dict(look_rows=0, moving_look_rows=0, duplicate_movement_rows=0, moving_look_windows=[])
+    window = None
     with (session / 'inputs.csv').open(encoding='utf-8') as source:
         for line in source:
             if not line.startswith('N ') or not line.endswith('\n'):
@@ -33,6 +35,20 @@ def summarize(session):
                 raise ValueError('Unsupported input row width')
             sequence, buttons = fields[:2]
             inputs[sequence] = buttons
+            analog_move = fields[3] and max(abs(fields[4]-128), abs(fields[5]-128)) > 36
+            digital_move = (buttons & 0xF0) != 0xF0
+            looking = fields[3] and max(abs(fields[6]-128), abs(fields[7]-128)) > 36
+            camera['look_rows'] += bool(looking)
+            camera['duplicate_movement_rows'] += bool(analog_move and digital_move)
+            if looking and (analog_move or digital_move):
+                camera['moving_look_rows'] += 1
+                if window is None:
+                    window = dict(start=sequence, end=sequence, frames=0)
+                    camera['moving_look_windows'].append(window)
+                window['end'] = sequence
+                window['frames'] += 1
+            else:
+                window = None
             if previous is not None:
                 for name, mask in [('primary', 0x4000), ('secondary', 0x8000)]:
                     if previous[1] & mask and not buttons & mask:
@@ -41,7 +57,7 @@ def summarize(session):
                     presence.append(dict(sequence=sequence, connected=fields[14:16]))
             previous = fields
     result = dict(build=metadata.get('build'), execution=metadata.get('execution'),
-                  input_rows=len(inputs), attack_edges=attacks, presence_changes=presence,
+                  input_rows=len(inputs), attack_edges=attacks, presence_changes=presence, camera_input=camera,
                   telemetry_available=False, incidents=[], damage=[], actor_health_changes=[],
                   host_gaps=[], update_gaps=[], notes=[
                       'Observational evidence; no successful replay or retail collision equivalence is implied.',
@@ -133,7 +149,11 @@ def write_report(session, output):
         for incident in result['incidents']:
             seq=incident['sequence']
             lines.append(f"| {incident['incident']} | {seq} | {max(0,seq-120)}–{seq+120} |")
-    lines += ['', f"Primary/secondary attack edges: {len(result['attack_edges'])}; controller presence changes: {len(result['presence_changes'])}.", '', *result['notes'], '',
+    camera = result['camera_input']
+    lines += ['', f"Camera input: {camera['look_rows']} look rows; {camera['moving_look_rows']} simultaneous movement/look rows; "
+              f"{camera['duplicate_movement_rows']} rows asserting both D-pad and left-stick movement.",
+              'Moving/look windows are listed in summary.json. These are accepted pad states; they cannot establish visual camera shake or identify the physical input device.', '',
+              f"Primary/secondary attack edges: {len(result['attack_edges'])}; controller presence changes: {len(result['presence_changes'])}.", '', *result['notes'], '',
               'See summary.json for event sequences and telemetry.csv in the original session for the surrounding rows.']
     (output / 'REPORT.md').write_text('\n'.join(lines)+'\n', encoding='utf-8')
     if rows:

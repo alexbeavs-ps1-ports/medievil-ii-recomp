@@ -1,4 +1,4 @@
-MediEvil II Recompiled - 0.2.2-alpha
+MediEvil II Recompiled - 0.2.3-alpha
 
 Windows: extract the whole ZIP, then run MediEvilIIRecomp.exe.
 Linux: make the AppImage executable, then run it. Without FUSE, use
@@ -41,6 +41,10 @@ Turn off Input Display / Input Recording in the Mods menu to hide the on-screen
 input line or stop recording.
 
 This is an alpha player build.
+Right-stick Camera is enabled by default. Mouse and Keyboard is optional under
+Mods / Controls, with configurable actions for all five mouse buttons. See
+docs/MODERN_CONTROLS.md for the default actions, including Tab for inventory.
+HD Texture Packs is temporarily hidden and disabled, including old selections.
 All 11 preceding enhancement PRs and the final HUD update are consolidated;
 see INCLUDED_PRS.json and
 RELEASE_MANIFEST.json for source revisions and file hashes. Original-disc

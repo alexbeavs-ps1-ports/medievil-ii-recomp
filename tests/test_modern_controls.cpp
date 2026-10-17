@@ -3,14 +3,17 @@
 #include <cstdio>
 #include <cstring>
 #define CHECK(expr) do { if (!(expr)) { std::fprintf(stderr,"FAIL line %d: %s\n",__LINE__,#expr); std::exit(1); } } while (0)
-static PSXModActivationCallback start;
+static PSXModActivationCallback start, camera_start;
+static PSXModPadTransform pad_callbacks;
 static PsxPlayerBinds bindings;
 static PSXModMousePolicy mouse_callbacks;
 static uint32_t scene_state, scene_flags, player_pointer = 0x80100000;
 static uint8_t player_paused;
-static int persistent, analog;
+static int persistent, transitions, analog, suppressed_button;
 extern "C" {
-int psx_mod_register_activation_plugin(const char*, PSXModActivationCallback cb) { start=cb;return 1; }
+int psx_mod_register_activation_plugin(const char* id, PSXModActivationCallback cb) {
+    if(!std::strcmp(id,"medievil2.camera-controls"))camera_start=cb;else start=cb;return 1;
+}
 uint32_t psx_mod_read_word(uint32_t a) {
     if(a==0x8004FB9C)return 0x8F840584;
     if(a==0x800F0604)return scene_state;
@@ -20,19 +23,31 @@ uint32_t psx_mod_read_word(uint32_t a) {
 }
 uint8_t psx_mod_read_byte(uint32_t) {return player_paused;}
 int psx_mod_current_option_value(const char* name,char* out,uint32_t cap) {
-    std::snprintf(out,cap,"%s",!std::strcmp(name,"invert-y")?"false":"normal");return 1;
+    if(!std::strcmp(name,"sensitivity")){std::snprintf(out,cap,"normal");return 1;}
+    return 0;
 }
+int psx_mod_option_value(const char*,const char*,const char*,char*,uint32_t) {return 0;}
 int psx_keybinds_set_session_player(int player,const PsxPlayerBinds* p) {CHECK(player==1);bindings=*p;return 1;}
 int psx_mod_set_controller_mode_override(uint32_t player,uint32_t mode) {CHECK(player==0);analog=mode;return 1;}
-int psx_mod_set_pad_transform(uint32_t,const PSXModPadTransform*) {return 1;}
+int psx_mod_set_pad_transform(uint32_t,const PSXModPadTransform* p) {pad_callbacks=*p;return 1;}
 int psx_mod_set_local_mouse_policy(const PSXModMousePolicy* p) {mouse_callbacks=*p;return 1;}
 int psx_mod_set_local_mouse_persistent_capture(int on) {persistent=on;return 1;}
+int psx_mod_set_local_mouse_capture_across_transitions(int on) {transitions=on;return 1;}
+int psx_keybinds_control_suppressed(int player,SDL_Scancode sc) {CHECK(player==1);return sc==PSXKB_MOUSE_SC(suppressed_button);}
 }
 int main() {
-    CHECK(start);start();
-    CHECK(persistent && analog==PSX_MOD_CONTROLLER_ANALOG);
-    CHECK(bindings.circle==SDL_SCANCODE_SPACE && bindings.cross==PSXKB_MOUSE_SC(SDL_BUTTON_LEFT));
-    CHECK(bindings.ls_up==SDL_SCANCODE_W && bindings.r1==SDL_SCANCODE_LCTRL);
+    CHECK(camera_start && start);camera_start();
+    PSXModPadFrame frame{sizeof frame,0,0xFFFF,128,128,230,40,PSX_MOD_PAD_DIGITAL,PSX_MOD_PAD_HOST_GAMEPAD,0,0};
+    PSXModPadOutput pad{};pad.struct_size=sizeof pad;
+    CHECK(pad_callbacks.transform(&frame,&pad));
+    CHECK(pad.type==PSX_MOD_PAD_DUALSHOCK && pad.rx==26 && pad.ry==216);
+    scene_state=1;CHECK(pad_callbacks.transform(&frame,&pad));CHECK(pad.rx==230 && pad.ry==40);scene_state=0;
+    frame.host_flags|=PSX_MOD_PAD_HOST_SOURCE;pad.rx=77;
+    CHECK(!pad_callbacks.transform(&frame,&pad) && pad.rx==77); // no replay double inversion
+    start();
+    CHECK(persistent && transitions && analog==PSX_MOD_CONTROLLER_ANALOG);
+    CHECK(bindings.circle==SDL_SCANCODE_SPACE && bindings.cross==SDL_SCANCODE_UNKNOWN);
+    CHECK(bindings.ls_up==SDL_SCANCODE_UNKNOWN && bindings.up==SDL_SCANCODE_UNKNOWN && bindings.r1==SDL_SCANCODE_LCTRL);
     uint8_t keys[512]{};
     PSXModPadOutput shortcuts{}; shortcuts.buttons=0xFFFF;
     keys[SDL_SCANCODE_E]=1;keyboard_actions(keys,true,&shortcuts);
@@ -57,18 +72,33 @@ int main() {
     PSXModMouseEvent e{sizeof e,PSX_MOD_MOUSE_MOTION,t,10,-8};
     mouse_callbacks.event(&e);
     PSXModMouseOutput out{sizeof out,0,128,128};
-    mouse_callbacks.sample(t,&out);CHECK(out.rx>128 && out.ry<128);
+    mouse_callbacks.sample(t,&out);CHECK(out.rx<128 && out.ry>128);
     auto first=out;mouse_callbacks.sample(t,&out);CHECK(first.rx==out.rx && first.ry==out.ry);
     e.time_ns=t+1000000;e.dx=-1;e.dy=1;mouse_callbacks.event(&e);
-    mouse_callbacks.sample(e.time_ns,&out);CHECK(out.rx<128 && out.ry>128); // reverse immediately
-    mouse_callbacks.sample(e.time_ns+50000000,&out);CHECK(out.rx==128 && out.ry==128);
+    mouse_callbacks.sample(e.time_ns,&out);CHECK(out.rx>128 && out.ry<128); // reverse immediately
+    mouse_callbacks.sample(e.time_ns+100000000,&out);CHECK(out.rx==128 && out.ry==128);
     e.type=PSX_MOD_MOUSE_RESET;mouse_callbacks.event(&e);
     mouse_callbacks.sample(t,&out);CHECK(out.rx==128 && out.ry==128);
-    invert_x=invert_y=true;
-    PSXModPadOutput pad{};pad.buttons=0xFEFF;pad.rx=230;pad.ry=40;
-    camera_direction(&pad);
-    CHECK(pad.rx<128 && pad.ry>128 && pad.buttons==0xFDFF);
-    pad.buttons=0xFCFF;pad.rx=pad.ry=128;camera_direction(&pad);
-    CHECK(pad.rx==128 && pad.ry==128 && pad.buttons==0xFCFF); // keep first-person chord
-    puts("Modern controls: native bindings, game-state gates, reversal, decay and non-consuming samples passed");
+    std::memset(keys,0,sizeof keys);keys[SDL_SCANCODE_W]=keys[SDL_SCANCODE_D]=1;
+    pad.buttons=0xFFFF;pad.lx=pad.ly=128;pad.rx=26;
+    keyboard_actions(keys,true,&pad);
+    CHECK(pad.buttons==0xFFFF && pad.lx==218 && pad.ly==38 && pad.rx==26); // walking and camera coexist
+    pad.buttons=0xFFFF;pad.lx=pad.ly=128;keyboard_actions(keys,false,&pad);
+    CHECK(pad.buttons==0xFFCF && pad.lx==128 && pad.ly==128);
+    keys[SDL_SCANCODE_A]=keys[SDL_SCANCODE_S]=1;
+    pad.buttons=0xFFFF;keyboard_actions(keys,true,&pad);CHECK(pad.buttons==0xFFFF);
+    const uint32_t defaults[]={0x4000,1,0x8000,0x8400,0x400};
+    for(unsigned i=0;i<5;++i) {
+        pad.buttons=0xFFFF;mouse_buttons(1u<<i,&pad);CHECK(pad.buttons==(0xFFFFu&~defaults[i]));
+        suppressed_button=i+1;pad.buttons=0xFFFF;mouse_buttons(1u<<i,&pad);CHECK(pad.buttons==0xFFFF);suppressed_button=0;
+    }
+    mouse_actions[0]=action_mask("jump");pad.buttons=0xFFFF;mouse_buttons(1,&pad);CHECK(pad.buttons==0xDFFF);
+    CHECK(action_mask("none")==0 && action_mask("invalid")==0);
+    // A steady 125Hz stream converges without the old 16ms accumulator resets.
+    e.type=PSX_MOD_MOUSE_RESET;event(&e);e.type=PSX_MOD_MOUSE_MOTION;e.dx=2;e.dy=0;
+    uint32_t previous=128;
+    for(unsigned i=0;i<30;++i) {e.time_ns=t+i*8000000;event(&e);sample(e.time_ns,&out);CHECK(out.rx<=previous);previous=out.rx;}
+    CHECK(previous>37 && previous<91);
+    camera_start();CHECK(pad_callbacks.transform==transform_camera); // KB/M disabled next session
+    puts("Modern controls: simultaneous movement/look, controller defaults, mouse actions, capture policy and replay preservation passed");
 }
