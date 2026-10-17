@@ -13,7 +13,7 @@ A native recompilation of **MediEvil II** for Windows and Linux, built on
 sharper and steadier graphics, smoother motion, and shorter loading waits.
 The gameplay enhancements are **on by default**.
 
-**[Download v0.2.0-alpha](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/tag/v0.2.0-alpha)**
+**[Download v0.2.1-alpha](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/tag/v0.2.1-alpha)**
 contains the merged enhancement series, including HUD anchoring. These are
 precompiled player builds: supply your **USA disc (SCUS-94564)** and play.
 OpenBIOS is included; no retail BIOS, compiler, Python or Generate step is needed.
@@ -29,8 +29,8 @@ and counter HUD groups visible so their placement can be compared.*
 
 | Platform | Package | Start here |
 | --- | --- | --- |
-| Windows x64 | [ZIP](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/download/v0.2.0-alpha/MediEvilIIRecomp-v0.2.0-alpha-windows-x64.zip) | Extract the whole ZIP into a writable folder and run `MediEvilIIRecomp.exe`. |
-| Linux x86-64 | [AppImage](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/download/v0.2.0-alpha/MediEvilIIRecomp-v0.2.0-alpha-linux-x86_64.AppImage) | Make it executable, then run it. Requires **glibc 2.39+**, such as Ubuntu 24.04. |
+| Windows x64 | [ZIP](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/download/v0.2.1-alpha/MediEvilIIRecomp-v0.2.1-alpha-windows-x64.zip) | Extract the whole ZIP into a writable folder and run `MediEvilIIRecomp.exe`. |
+| Linux x86-64 | [AppImage](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases/download/v0.2.1-alpha/MediEvilIIRecomp-v0.2.1-alpha-linux-x86_64.AppImage) | Make it executable, then run it. Requires **glibc 2.39+**, such as Ubuntu 24.04. |
 
 1. Select your MediEvil II USA disc in the launcher: a CUE with its BIN tracks,
    or a supported CHD. The disc remains required while playing.
