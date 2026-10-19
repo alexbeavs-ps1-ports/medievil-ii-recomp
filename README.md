@@ -212,7 +212,8 @@ motion or flicker issues. Do not attach disc images or extracted game assets.
 
 ### Playtest diagnostics
 
-Playtest Diagnostics is on by default. While you play, it records the
+Playtest Diagnostics is off by default; enable it in the Mods menu before
+reproducing a problem you want to report. While it is on, it records the
 controller state the game reads on every frame, plus a small checksum of game
 memory for replay verification. Timing and gameplay evidence remain useful
 even when a recording diverges. It

@@ -68,7 +68,7 @@ target_sources(psx-runtime PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_seamless_store.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_pp20.cpp")
 
-# Playtest diagnostics (default-on mod package medievil2.diagnostics). The
+# Playtest diagnostics (off-by-default mod package medievil2.diagnostics). The
 # build identity is part of every recording header, so a replay refuses a
 # different build instead of reporting a false divergence.
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" MEDIEVIL2_VERSION LIMIT_COUNT 1)
