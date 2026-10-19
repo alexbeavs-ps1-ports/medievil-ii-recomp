@@ -27,7 +27,7 @@ MEDIEVIL_II_RECOMP_DATA_DIR to override it. Linux AppImage updates preserve
 your settings, memory cards and installed mods. Resident decoded assets
 use the system user cache directory.
 
-Playtest Diagnostics (on by default) records the controller state of every
+Playtest Diagnostics (off by default; enable it in Mods) records the controller state of every
 frame plus a memory checksum for replay verification. Timing and gameplay
 snapshots also help investigate when an older replay diverges. Press both
 stick buttons (L3 + R3), or F4 with Mouse and Keyboard enabled, just after a

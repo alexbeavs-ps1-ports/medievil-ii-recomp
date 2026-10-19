@@ -2,6 +2,8 @@
 
 # MediEvil II Recompiled
 
+**[Read more about it](https://1379.tech/getting-into-the-halloween-spirit-with-recompilations/)** on the blog.
+
 <!-- retcomm-readme-metrics -->
 [![GitHub downloads](https://img.shields.io/github/downloads/alexbeavs-ps1-ports/medievil-ii-recomp/total)](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases)
 [![GitHub release including prereleases](https://img.shields.io/github/v/release/alexbeavs-ps1-ports/medievil-ii-recomp?include_prereleases)](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases)
@@ -212,7 +214,8 @@ motion or flicker issues. Do not attach disc images or extracted game assets.
 
 ### Playtest diagnostics
 
-Playtest Diagnostics is on by default. While you play, it records the
+Playtest Diagnostics is off by default; enable it in the Mods menu before
+reproducing a problem you want to report. While it is on, it records the
 controller state the game reads on every frame, plus a small checksum of game
 memory for replay verification. Timing and gameplay evidence remain useful
 even when a recording diverges. It
