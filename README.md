@@ -2,6 +2,8 @@
 
 # MediEvil II Recompiled
 
+**[Read more about it](https://1379.tech/getting-into-the-halloween-spirit-with-recompilations/)** on the blog.
+
 <!-- retcomm-readme-metrics -->
 [![GitHub downloads](https://img.shields.io/github/downloads/alexbeavs-ps1-ports/medievil-ii-recomp/total)](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases)
 [![GitHub release including prereleases](https://img.shields.io/github/v/release/alexbeavs-ps1-ports/medievil-ii-recomp?include_prereleases)](https://github.com/alexbeavs-ps1-ports/medievil-ii-recomp/releases)
