@@ -68,6 +68,29 @@ def validate_build(build):
             raise ValueError(f'Native unit absent from runtime: {name}')
     return version, audit
 
+def build_is_public(build):
+    """PSX_PUBLIC_RELEASE from the build tree's CMake cache."""
+    for line in (build/'CMakeCache.txt').read_text(encoding='utf-8').splitlines():
+        if line.startswith('PSX_PUBLIC_RELEASE:'):
+            return line.split('=', 1)[1].strip().upper() in {'ON', '1', 'TRUE', 'YES'}
+    raise ValueError('Build tree predates PSX_PUBLIC_RELEASE; reconfigure it')
+
+def check_diagnostics_defaults(stage, public):
+    """Owner policy 2026-10-19: diagnostics default off only in public releases."""
+    paths = list((stage/'mods/bundled/medievil2.diagnostics').glob('*/manifest.toml'))
+    if not paths:
+        raise ValueError('Staged catalog is missing medievil2.diagnostics')
+    for path in paths:
+        manifest = tomllib.loads(path.read_text(encoding='utf-8-sig'))
+        features = {f.get('id'): f for f in manifest.get('feature', [])}
+        for feature_id in ('recording', 'osd'):
+            feature = features.get(feature_id, {})
+            if manifest.get('channel') == 'developer' or feature.get('channel') == 'developer':
+                raise ValueError(f'Playtest Diagnostics {feature_id} must stay player-selectable')
+            if feature.get('default_enabled') is not (not public):
+                raise ValueError(f'Playtest Diagnostics {feature_id} must default '
+                                 f'{"off" if public else "on"} in a {"public" if public else "playtest"} package')
+
 def check_payload(stage):
     allowed_bin = Path('bios/openbios.bin')
     forbidden = {'.cue', '.iso', '.chd', '.img', '.pst', '.mcd', '.mcr', '.pack'}
@@ -106,6 +129,11 @@ def main():
         raise ValueError('A full source commit is required')
     build, stage = args.build_dir.resolve(), args.stage.resolve()
     version, audit = validate_build(build)
+    # --release is a public release and needs a -DPSX_PUBLIC_RELEASE=ON build;
+    # without it the package is a playtest build and needs OFF.
+    if build_is_public(build) != args.release:
+        raise ValueError('--release requires a build configured with -DPSX_PUBLIC_RELEASE=ON; '
+                         'a playtest package requires PSX_PUBLIC_RELEASE=OFF')
     extension = '.exe' if args.platform == 'windows-x64' else ''
     validate_executable_identity(build/('MediEvil_II__Recompiled'+extension), version, args.source_commit)
     if stage.exists() and any(stage.iterdir()):
@@ -133,10 +161,12 @@ def main():
     (stage/'licenses').mkdir()
     shutil.copy2(ROOT/'psxrecomp/runtime/licenses/libchdr-NOTICES.txt', stage/'licenses')
     packages = check_payload(stage)
+    check_diagnostics_defaults(stage, args.release)
     pins = tomllib.loads((ROOT/'project-manifest.toml').read_text(encoding='utf-8'))['framework']
     manifest = dict(version=version, platform=args.platform, source_commit=args.source_commit,
                     framework_commit=pins['commit'], recomp_ui_commit=pins['recomp_ui_commit'],
-                    simulated_release=not args.release, debug_tools=False, setup_wizard=False,
+                    simulated_release=not args.release, debug_tools=False,
+                    playtest_diagnostics_default_enabled=not args.release, setup_wizard=False,
                     bios_backends=['OpenBIOS'],
                     native_variants=audit['published_variants'], native_images=audit['recipe_count'],
                     full_static_coverage_proven=audit['full_static_coverage_proven'],

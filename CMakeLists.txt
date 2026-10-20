@@ -68,7 +68,8 @@ target_sources(psx-runtime PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_seamless_store.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_pp20.cpp")
 
-# Playtest diagnostics (off-by-default mod package medievil2.diagnostics). The
+# Playtest diagnostics (mod package medievil2.diagnostics; default off only in
+# public releases, see below). The
 # build identity is part of every recording header, so a replay refuses a
 # different build instead of reporting a false divergence.
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" MEDIEVIL2_VERSION LIMIT_COUNT 1)
@@ -91,6 +92,10 @@ target_sources(psx-runtime PRIVATE
 set_property(SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_diagnostics.cpp" APPEND PROPERTY
     COMPILE_DEFINITIONS "MEDIEVIL2_DIAGNOSTIC_BUILD_ID=\"${MEDIEVIL2_VERSION}+${MEDIEVIL2_SOURCE_REV}\"")
 target_include_directories(psx-runtime PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/mods")
+# The source manifest says default off. Only public releases keep that
+# (-DPSX_PUBLIC_RELEASE=ON); dev and playtest builds stage it default-on.
+include("${PSXRECOMP_ROOT}/runtime/playtest_diagnostics.cmake")
+psxrecomp_playtest_diagnostics_defaults(psx-runtime MOD_ID "medievil2.diagnostics")
 
 # Host-only diagnostics tests (no disc, BIOS or window). Run with ctest.
 option(MEDIEVIL2_BUILD_TESTS "Build the diagnostics unit tests" ON)
