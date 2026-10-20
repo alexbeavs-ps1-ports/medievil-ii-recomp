@@ -20,46 +20,44 @@ excluded. OpenBIOS and its MIT notice are included. Player builds link only the
 OpenBIOS backend, so first-run launcher discovery cannot silently select a
 retail BIOS found elsewhere on the machine.
 
-From a recursive checkout, put the supported USA disc in `disc/` as declared
-by `game.toml`, build the pinned framework's `psxrecomp-game`, then run:
-
-```sh
-python tools/prepare_release.py --recompiler /path/to/psxrecomp-game --workers 2
-cmake -S . -B build-release -G Ninja -DCMAKE_BUILD_TYPE=Release \
-  -DPSX_SETUP_WIZARD=OFF -DPSXRECOMP_FORCE_SETUP_HOST=OFF \
-  -DPSXRECOMP_REQUIRE_GAME_C=ON -DPSX_DEBUG_TOOLS=OFF \
-  -DPSX_SDL_BACKEND=SDL3 -DPSX_ENABLE_VULKAN=OFF -DPSX_NETPLAY=ON   -DPSX_PUBLIC_RELEASE=ON
-cmake --build build-release --target psx-runtime --parallel 2
-```
-
-Use native Windows executable paths for GCC/G++, Ninja and CMake on Windows.
-`prepare_release.py` also accepts `--gcc` and `--cmake` paths. Source generation
-audits all 24 profile images and publishes `generated/AOT_STATIC_AUDIT.json`.
-Both platforms compile the same audited sources; no generated C is committed.
-The framework provides recompiled OpenBIOS. Build dependencies include SDL3,
-OpenGL, a C/C++ toolchain and Python 3.11+. If the host SDL3 development package
-is unsuitable, `-DCMAKE_DISABLE_FIND_PACKAGE_SDL3=TRUE` builds its pinned source.
-
-Windows packaging (use the full commit from `git rev-parse HEAD`):
+Releases are cut with the framework's one release command. This repository
+keeps only `packaging/release.toml` (see psxrecomp
+`docs/RELEASING_A_TITLE.md`). From a recursive checkout, put the supported USA
+disc in `disc/` as declared by `game.toml`, then run from the repository root:
 
 ```powershell
-python tools/package_release.py --build-dir build-release --platform windows-x64 `
-  --source-commit <full-commit> --release --stage dist/windows-stage `
-  --objdump C:/msys64/mingw64/bin/objdump.exe `
-  --zip dist/MediEvilIIRecomp-v0.2.4-alpha-windows-x64.zip
+psxrecomp/tools/package_title_release.ps1 --channel public   --platform all
+psxrecomp/tools/package_title_release.ps1 --channel playtest --platform all
 ```
 
-The ZIP checks system-only DLL imports, native code/audit correspondence, the
-nine-package mod catalog, OpenBIOS, release flags and excluded user data.
-Extract the complete ZIP into a writable directory and run `MediEvilIIRecomp.exe`.
+On native Linux, run `psxrecomp/tools/package_title_release.sh --channel ...`.
+`--channel` is required and has no default. `public` builds with
+`PSX_RELEASE_CHANNEL=public`, so Playtest Diagnostics ship default off.
+`playtest` ships them default on and adds `-playtest` to every artifact name.
+On Windows, `--platform all` writes the Windows ZIP and then, through WSL, the
+Linux AppImage.
 
-Linux packaging needs ImageMagick, patchelf, curl and the usual ELF inspection
-tools. It downloads checksum-pinned linuxdeploy/appimagetool releases:
+The command builds the emitters and regenerates the game C. It then
+regenerates and audits all 24 static AOT profile images and publishes
+`generated/AOT_STATIC_AUDIT.json`. Both platforms compile those same audited
+sources; no generated C is committed. The build uses Release mode, no debug
+tools, no setup wizard and the OpenBIOS backend only. The command checks that
+the executable carries the `<version>+<commit>` build identity and that every
+audited unit is linked. It then stages and checks the package:
 
-```sh
-SOURCE_COMMIT=$(git rev-parse HEAD) PUBLIC_RELEASE=1 BUILD_DIR="$PWD/build-release" \
-  sh tools/package_appimage.sh
-```
+- Windows executable imports only system DLLs
+- mod catalog, checked against the build's own catalog list
+- OpenBIOS included
+- Playtest Diagnostics defaults match the channel
+- no user data
+
+Finally it writes the ZIP or AppImage and its SHA-256 file, then extracts the
+artifact and verifies it. The ZIP holds one `MediEvilIIRecomp/` folder. Extract
+the whole ZIP into a writable directory and run `MediEvilIIRecomp.exe`.
+
+Linux packaging needs ImageMagick, curl and the usual ELF tools. It downloads
+checksum-pinned linuxdeploy and appimagetool releases. Unreferenced bundled
+libraries are pruned.
 
 Output is under `dist/`, with a SHA-256 sidecar. The AppImage keeps persistent
 data under `$XDG_DATA_HOME/MediEvilIIRecomp` (default
@@ -68,12 +66,8 @@ data under `$XDG_DATA_HOME/MediEvilIIRecomp` (default
 resources while preserving settings, installed mods and saves. Bundled library
 paths are not exported into host Browse-dialog processes.
 
-Build flags disable the developer setup wizard and debug tooling.
-`-DPSX_PUBLIC_RELEASE=ON` marks a public release: Playtest Diagnostics ship
-default off. Without it (dev and playtest builds) they are staged default on.
-`--release` / `PUBLIC_RELEASE=1` requires a `PSX_PUBLIC_RELEASE=ON` build; omit
-both (and configure `PSX_PUBLIC_RELEASE=OFF`) for a playtest package with
-diagnostics on. Neither mode uploads anything. The manifest records source, pins, version and payload hashes.
+Neither channel uploads anything. `RELEASE_MANIFEST.json` records the channel,
+source, framework and recomp-ui commits, version, mod list and payload hashes.
 Native Linux/Steam Deck and whole-game testing remain separate qualification
 work. Current Linux builds require glibc 2.39 or newer (Ubuntu 24.04, for example);
 AppImage packaging does not lower that requirement.
