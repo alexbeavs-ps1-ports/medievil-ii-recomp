@@ -75,7 +75,12 @@ target_sources(psx-runtime PRIVATE
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" MEDIEVIL2_VERSION LIMIT_COUNT 1)
 set(MEDIEVIL2_SOURCE_REV "nogit")
 find_package(Git QUIET)
-if(GIT_FOUND)
+if(PSX_SOURCE_COMMIT)
+    # Set by psxrecomp/tools/package_title_release.py, which also refuses a
+    # binary lacking this identity. A WSL configure of a Windows worktree
+    # cannot ask git itself.
+    string(SUBSTRING "${PSX_SOURCE_COMMIT}" 0 12 MEDIEVIL2_SOURCE_REV)
+elseif(GIT_FOUND)
     execute_process(COMMAND "${GIT_EXECUTABLE}" rev-parse --short=12 HEAD
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         OUTPUT_VARIABLE _MEDIEVIL2_REV OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -93,7 +98,8 @@ set_property(SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/medievil2_diagnostics.
     COMPILE_DEFINITIONS "MEDIEVIL2_DIAGNOSTIC_BUILD_ID=\"${MEDIEVIL2_VERSION}+${MEDIEVIL2_SOURCE_REV}\"")
 target_include_directories(psx-runtime PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/mods")
 # The source manifest says default off. Only public releases keep that
-# (-DPSX_PUBLIC_RELEASE=ON); dev and playtest builds stage it default-on.
+# (psxrecomp/tools/package_title_release.py --channel public); dev builds and
+# playtest packages stage it default-on.
 include("${PSXRECOMP_ROOT}/runtime/playtest_diagnostics.cmake")
 psxrecomp_playtest_diagnostics_defaults(psx-runtime MOD_ID "medievil2.diagnostics")
 
@@ -132,9 +138,6 @@ if(MEDIEVIL2_BUILD_TESTS)
         add_test(NAME medievil2_diagnostic_replay_prepare_test
             COMMAND "${Python3_EXECUTABLE}" -I
                 "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_replay_medievil2_diagnostics.py")
-        add_test(NAME medievil2_release_build_identity_test
-            COMMAND "${Python3_EXECUTABLE}" -I
-                "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_package_release.py")
         add_test(NAME medievil2_feedback_analysis_test
             COMMAND "${Python3_EXECUTABLE}" -I
                 "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_analyze_medievil2_feedback.py")

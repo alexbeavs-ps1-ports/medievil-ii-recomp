@@ -1,0 +1,67 @@
+# Release config for psxrecomp/tools/package_title_release.py -- the one
+# release command (psxrecomp docs/RELEASING_A_TITLE.md). Everything else about
+# cutting a release is the framework's.
+schema = 1
+
+[product]
+name = "MediEvilIIRecomp"
+display_name = "MediEvil II Recompiled"
+exe_name = "MediEvilIIRecomp"
+version_file = "VERSION"
+zip_folder = "MediEvilIIRecomp"
+launcher_boxart = "launcher_assets/img/boxart.tga"
+
+[build]
+cmake_args = [
+    "-DPSX_SETUP_WIZARD=OFF",
+    "-DPSXRECOMP_FORCE_SETUP_HOST=OFF",
+    "-DPSXRECOMP_REQUIRE_GAME_C=ON",
+    "-DPSX_SDL_BACKEND=SDL3",
+    "-DPSX_ENABLE_VULKAN=OFF",
+    "-DPSX_NETPLAY=ON",
+]
+# Recording headers carry this identity; a stale binary cannot be packaged.
+binary_identity = "{version}+{commit12}"
+
+# The original and enhanced engines plus known level-module placements are
+# compiled into the executable from the player's disc (aot/overlays.json);
+# no overlay cache or overlay compiler ships.
+[aot]
+mode = "static"
+profile = "aot/overlays.json"
+cps = true
+
+[overlay_toolchain]
+ship = false
+
+[diagnostics]
+game_id = "SCUS-94564"
+package_id = "medievil2.diagnostics"
+replay_helper = false
+
+[payload]
+start_here = "packaging/release/START_HERE.txt"
+files = [
+    "VERSION",
+    "README.md",
+    "RELEASE_NOTES.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+    { from = "packaging/release/input.ini", to = "input.ini" },
+    { from = "packaging/included-prs.json", to = "INCLUDED_PRS.json" },
+    "docs/ENHANCEMENTS.md",
+    "docs/RELEASE_BUILDS.md",
+    "docs/MODERN_CONTROLS.md",
+    "docs/PLAYTEST_BURNDOWN.md",
+    "docs/PLAYTEST_BURNDOWN.svg",
+    "docs/PLAYTEST_FEEDBACK.md",
+    "tools/analyze_medievil2_feedback.py",
+]
+
+[linux]
+app_run = "packaging/linux/AppRun"
+desktop_file = "packaging/linux/io.github.mstan.MediEvilIIRecomp.desktop"
+icon = "launcher_assets/img/boxart.tga"
+payload_dir = "medievil2recomp"
+# Keep host file pickers free of bundled libraries (AppRun sets no LD_LIBRARY_PATH).
+prune_unreferenced_libs = true

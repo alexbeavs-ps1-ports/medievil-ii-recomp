@@ -966,7 +966,7 @@
       "id": "medievil2.enhancement.widescreen",
       "version": "1.0.0",
       "manifest": "mods/preloaded/packages/medievil2.enhancement.widescreen/1.0.0/manifest.toml",
-      "manifest_sha256": "7e665f9b03755571ef40c5dfccf27a41572c81263133fd4d507c3f391e155fef",
+      "manifest_sha256": "1a4a167fb6cad51357dcbccc1002bfe9be5d2c63a80c73a58b2eb92a4bc15e63",
       "features": {
         "widescreen": {}
       },

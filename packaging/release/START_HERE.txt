@@ -1,4 +1,4 @@
-MediEvil II Recompiled - 0.2.4-alpha
+MediEvil II Recompiled - @VERSION@
 
 Windows: extract the whole ZIP, then run MediEvilIIRecomp.exe.
 Linux: make the AppImage executable, then run it. Without FUSE, use

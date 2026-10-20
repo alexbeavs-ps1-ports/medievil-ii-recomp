@@ -18,9 +18,9 @@ entry_point = "0x801B5220"
 [framework]
 name = "PSXRecomp"
 repository = "https://github.com/RetroPortingToolKit/psxrecomp.git"
-commit = "449c31e5029f3a3281fa15060105928d2b3b13f7"
-tree = "854be7ecb43abec5823ddccda681d7cc09706e8c"
-recomp_ui_commit = "ef13e3f1a00e2e03f91e4b74343fd77213f8a234"
+commit = "fe8d937d69697df28cc814d58e9365570c35e854"
+tree = "2bc62729046d7cfcb64f8a73ae5a8e8a42594151"
+recomp_ui_commit = "555ba3378650bb6b0355c7a31fe3008ce4dfc18a"
 license = "See the pinned dependency license; this binding does not approve commercial use."
 
 [release_binding]

@@ -265,8 +265,9 @@ Implementation details, measurements and reproducible checks:
 - [Mouse and keyboard controls](docs/MODERN_CONTROLS.md): bindings and camera options.
 - [Resident Loading validation](docs/RESIDENT_LOADING.md): cache coverage,
   decoder comparisons, loading measurements and fallback behavior.
-- [Release builds](docs/RELEASE_BUILDS.md): native-code preparation, Windows ZIP
-  and Linux AppImage packaging, following the Tomba release layout.
+- [Release builds](docs/RELEASE_BUILDS.md): the framework release command
+  (`psxrecomp/tools/package_title_release.ps1 --channel public|playtest`) and
+  what it checks; this repo keeps only `packaging/release.toml`.
 - [Release notes](RELEASE_NOTES.md) and [included PRs](packaging/included-prs.json).
 
 A development build requires the supported disc, recursive submodules, Python
