@@ -1,3 +1,14 @@
+# MediEvil II Recompiled v0.2.4-alpha
+
+Release refresh for Windows x64 and Linux x86-64.
+Supply your USA disc (SCUS-94564); OpenBIOS is included.
+
+- Playtest Diagnostics is now off by default. It remains available in Mods;
+  enable it before reproducing a problem you want to report.
+- The README links the Halloween blog post.
+
+Gameplay, enhancements and the framework are unchanged from v0.2.3-alpha.
+
 # MediEvil II Recompiled v0.2.3-alpha
 
 Playtest fixes and feedback tooling for Windows x64 and Linux x86-64.
