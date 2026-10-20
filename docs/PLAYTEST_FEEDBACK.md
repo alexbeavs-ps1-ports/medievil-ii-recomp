@@ -6,7 +6,7 @@ pass should concentrate on the camera follow-up and remaining gameplay reports.
 HD Texture Packs is temporarily absent from the bundled mod catalog; saved
 HD selections remain inactive without that package. No pack selection is needed.
 
-1. Enable **Playtest Diagnostics / Input Recording** in Mods (off by default). Enable **Mouse
+1. Enable **Playtest Diagnostics / Input Recording** in Mods (off by default in public releases). Enable **Mouse
    and Keyboard** if testing the new controls; use native button layout A.
 2. When a stall, missed attack or camera problem happens, press both stick
    buttons together (**L3 + R3**), or **F4** with Mouse and Keyboard enabled.

@@ -696,7 +696,7 @@ The framework gitlink is now PSXRecomp master `7cddab8237e1f73b7067b8401af602d90
 `0546fbcb0126bb14bf88d2128b4fe8a4229570a3`; all game sources built unchanged
 against them.
 
-`medievil2.diagnostics` (off by default) records at the engine boundary, since the
+`medievil2.diagnostics` (off by default in public releases, on in playtest builds) records at the engine boundary, since the
 title has no symbol map. A VBlank plugin runs at each guest VBlank. The pad
 state latched in SIO at that moment is what the game reads for that frame, as
 the host samples pads into SIO once per frame boundary, after the VBlank. Each

@@ -28,7 +28,7 @@ python tools/prepare_release.py --recompiler /path/to/psxrecomp-game --workers 2
 cmake -S . -B build-release -G Ninja -DCMAKE_BUILD_TYPE=Release \
   -DPSX_SETUP_WIZARD=OFF -DPSXRECOMP_FORCE_SETUP_HOST=OFF \
   -DPSXRECOMP_REQUIRE_GAME_C=ON -DPSX_DEBUG_TOOLS=OFF \
-  -DPSX_SDL_BACKEND=SDL3 -DPSX_ENABLE_VULKAN=OFF -DPSX_NETPLAY=ON
+  -DPSX_SDL_BACKEND=SDL3 -DPSX_ENABLE_VULKAN=OFF -DPSX_NETPLAY=ON   -DPSX_PUBLIC_RELEASE=ON
 cmake --build build-release --target psx-runtime --parallel 2
 ```
 
@@ -68,9 +68,12 @@ data under `$XDG_DATA_HOME/MediEvilIIRecomp` (default
 resources while preserving settings, installed mods and saves. Bundled library
 paths are not exported into host Browse-dialog processes.
 
-Build flags disable the developer setup wizard and debug tooling. Omit
-`--release` / `PUBLIC_RELEASE=1` for a local simulated release; neither mode
-uploads anything. The manifest records source, pins, version and payload hashes.
+Build flags disable the developer setup wizard and debug tooling.
+`-DPSX_PUBLIC_RELEASE=ON` marks a public release: Playtest Diagnostics ship
+default off. Without it (dev and playtest builds) they are staged default on.
+`--release` / `PUBLIC_RELEASE=1` requires a `PSX_PUBLIC_RELEASE=ON` build; omit
+both (and configure `PSX_PUBLIC_RELEASE=OFF`) for a playtest package with
+diagnostics on. Neither mode uploads anything. The manifest records source, pins, version and payload hashes.
 Native Linux/Steam Deck and whole-game testing remain separate qualification
 work. Current Linux builds require glibc 2.39 or newer (Ubuntu 24.04, for example);
 AppImage packaging does not lower that requirement.
