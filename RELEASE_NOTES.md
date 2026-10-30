@@ -8,6 +8,8 @@ This build includes the combined qualified engine optimizations and uses the sha
 
 Automated gameplay validation for this release batch is limited to Ape Escape and Tomba 2. The other titles use build and package checks followed by owner visual approval; no per-title performance gain is claimed.
 
+# MediEvil II Recompiled v0.2.4-alpha
+
 Release refresh for Windows x64 and Linux x86-64.
 Supply your USA disc (SCUS-94564); OpenBIOS is included.
 
