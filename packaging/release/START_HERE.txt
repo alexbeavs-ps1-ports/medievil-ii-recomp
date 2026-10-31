@@ -54,3 +54,5 @@ remain unqualified. See docs/ENHANCEMENTS.md for measured limitations.
 
 Linux requires glibc 2.39 or newer (for example Ubuntu 24.04). Qualification
 is limited to WSL so far. The AppImage does not bundle glibc.
+
+Internal Resolution is enabled at 4x for fresh settings. Choose 1x–32x in Mods; hardware and GPU-memory limits may clamp larger choices. Your saved choices are retained.

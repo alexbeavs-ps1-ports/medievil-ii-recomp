@@ -1,3 +1,13 @@
+# MediEvil II Recompiled release notes
+
+## 0.2.5-alpha — shared optimization release
+
+Fresh settings enable Internal Resolution at 4x. The Mods selector offers 1x through 32x; saved choices are preserved, and GPU texture and memory limits still apply. Disabling the mod selects native resolution.
+
+This build includes the combined qualified engine optimizations and uses the shared release pipeline with selective runtime PGO. CD Speed and Fast Loading packages are excluded. Existing memory cards remain supported.
+
+Automated gameplay validation for this release batch is limited to Ape Escape and Tomba 2. The other titles use build and package checks followed by owner visual approval; no per-title performance gain is claimed.
+
 # MediEvil II Recompiled v0.2.4-alpha
 
 Release refresh for Windows x64 and Linux x86-64.

@@ -64,7 +64,7 @@ These are the defaults for a fresh install. Existing saved preferences are retai
 | **Extended terrain** | Draws terrain at 3x the original distance and expands visibility for the wider view. | Included in Adaptive View |
 | **Terrain subdivision bypass** | Keeps the original terrain faces instead of the game's distance-dependent triangle splitting. | Included in Adaptive View |
 | **Cutscene layout** | Extends black bars across the view while keeping subtitles centered and unstretched. | Included in Adaptive View |
-| **Higher internal resolution** | Renders sharper geometry at a whole multiple of the original resolution. | 1080p preset |
+| **Higher internal resolution** | Renders sharper geometry at a whole multiple of the original resolution. | On at 4x; choose 1x through 32x in Mods |
 | **PGXP Precision** | Retains subpixel geometry and perspective-correct textures to reduce wobble and warping. | On, including CPU precision propagation |
 | **World Texture Filtering** | Stabilizes fine world texture detail during movement while keeping text and HUD sprites sharp. | On |
 | **Smooth Presentation** | Draws intermediate camera and model poses without speeding up gameplay. | On; Display target |
@@ -108,10 +108,7 @@ can differ between captures.*
 
 ### Sharper geometry and stable textures
 
-The **1080p internal-resolution preset** rounds up to a whole native-resolution
-multiplier. For 240-line content, that is **5x, or 1200 rendered lines**, scaled
-to the window. This makes geometry sharper while retaining the game's original
-texture artwork. Internal resolution can be changed in the display settings.
+The **Internal Resolution** mod defaults to **4x** with fresh settings. Choose **1x through 32x** in **Mods**. These are fixed native-resolution multipliers; saved choices are retained, and GPU texture and memory limits may clamp larger selections. Geometry becomes sharper while retaining the game's original texture artwork.
 
 **PGXP Precision** keeps extra precision as vertices move through the game's
 math, then uses it for steadier geometry and perspective-correct texture mapping.
